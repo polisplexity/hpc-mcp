@@ -1,0 +1,507 @@
+{
+  "transport": "stdio",
+  "reference": {
+    "method": "native program verified by trial division",
+    "output": {
+      "windows": [
+        {
+          "count": 55,
+          "start": 10043
+        },
+        {
+          "count": 54,
+          "start": 19011
+        },
+        {
+          "count": 62,
+          "start": 4933
+        },
+        {
+          "count": 51,
+          "start": 34342
+        },
+        {
+          "count": 54,
+          "start": 22649
+        },
+        {
+          "count": 41,
+          "start": 27157
+        }
+      ]
+    }
+  },
+  "runs": [
+    {
+      "profile": "local",
+      "cli": {
+        "version": "polisplexity.hpc.result.v1",
+        "job_id": "858bad8d-42e3-4f8d-b95d-59155762be4f",
+        "manifest_sha256": "a04cc67f568d43cf50107ad5601e26644ffb8dc21f5262ac6b936cd43d059c75",
+        "profile": "local",
+        "native_id": "1042",
+        "runtime_version": "3.10.12",
+        "started_at": "2026-11-23T17:34:12.282+00:00",
+        "finished_at": "2026-11-23T17:34:12.348+00:00",
+        "resources": {
+          "cpus": 1,
+          "memory_mib": 128,
+          "wall_time_seconds": 10
+        },
+        "status": "succeeded",
+        "exit_code": 0,
+        "artifacts": [
+          {
+            "path": "result.json",
+            "size_bytes": 175,
+            "sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed",
+            "base64": "eyJ3aW5kb3dzIjpbeyJjb3VudCI6NTUsInN0YXJ0IjoxMDA0M30seyJjb3VudCI6NTQsInN0YXJ0IjoxOTAxMX0seyJjb3VudCI6NjIsInN0YXJ0Ijo0OTMzfSx7ImNvdW50Ijo1MSwic3RhcnQiOjM0MzQyfSx7ImNvdW50Ijo1NCwic3RhcnQiOjIyNjQ5fSx7ImNvdW50Ijo0MSwic3RhcnQiOjI3MTU3fV19Cg=="
+          }
+        ],
+        "unavailable_outputs": [],
+        "logs": {
+          "stdout": {
+            "path": "stdout",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          },
+          "stderr": {
+            "path": "stderr",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          }
+        }
+      },
+      "mcp": {
+        "version": "polisplexity.hpc.result.v1",
+        "job_id": "76f5bf68-58de-4be6-8787-9555d5fc90af",
+        "manifest_sha256": "a04cc67f568d43cf50107ad5601e26644ffb8dc21f5262ac6b936cd43d059c75",
+        "profile": "local",
+        "native_id": "1044",
+        "runtime_version": "3.10.12",
+        "started_at": "2026-11-23T17:34:12.405+00:00",
+        "finished_at": "2026-11-23T17:34:12.440+00:00",
+        "resources": {
+          "cpus": 1,
+          "memory_mib": 128,
+          "wall_time_seconds": 10
+        },
+        "status": "succeeded",
+        "exit_code": 0,
+        "artifacts": [
+          {
+            "path": "result.json",
+            "size_bytes": 175,
+            "sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed",
+            "base64": "eyJ3aW5kb3dzIjpbeyJjb3VudCI6NTUsInN0YXJ0IjoxMDA0M30seyJjb3VudCI6NTQsInN0YXJ0IjoxOTAxMX0seyJjb3VudCI6NjIsInN0YXJ0Ijo0OTMzfSx7ImNvdW50Ijo1MSwic3RhcnQiOjM0MzQyfSx7ImNvdW50Ijo1NCwic3RhcnQiOjIyNjQ5fSx7ImNvdW50Ijo0MSwic3RhcnQiOjI3MTU3fV19Cg=="
+          }
+        ],
+        "unavailable_outputs": [],
+        "logs": {
+          "stdout": {
+            "path": "stdout",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          },
+          "stderr": {
+            "path": "stderr",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          }
+        }
+      },
+      "negative": {
+        "failed": {
+          "version": "polisplexity.hpc.result.v1",
+          "job_id": "7468b727-de31-477d-9dac-df82a7e442f6",
+          "manifest_sha256": "3fb633086c45f5c4369a3fa5ae3583f5f76602153abe1f673df2072ccf135287",
+          "profile": "local",
+          "native_id": "1046",
+          "runtime_version": "3.10.12",
+          "started_at": "2026-11-23T17:34:12.488+00:00",
+          "finished_at": "2026-11-23T17:34:12.522+00:00",
+          "resources": {
+            "cpus": 1,
+            "memory_mib": 128,
+            "wall_time_seconds": 10
+          },
+          "status": "failed",
+          "exit_code": 7,
+          "artifacts": [],
+          "unavailable_outputs": [
+            "result.json"
+          ],
+          "logs": {
+            "stdout": {
+              "path": "stdout",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            },
+            "stderr": {
+              "path": "stderr",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            }
+          }
+        },
+        "missing_outputs": {
+          "version": "polisplexity.hpc.result.v1",
+          "job_id": "790fef63-430d-415b-b3a2-ac154d0361fd",
+          "manifest_sha256": "9555d91502191bcf1cc5c0c10d38a2ad8ee1657146b6aa489127c5ed5dbee322",
+          "profile": "local",
+          "native_id": "1048",
+          "runtime_version": "3.10.12",
+          "started_at": "2026-11-23T17:34:12.567+00:00",
+          "finished_at": "2026-11-23T17:34:12.602+00:00",
+          "resources": {
+            "cpus": 1,
+            "memory_mib": 128,
+            "wall_time_seconds": 10
+          },
+          "status": "missing_outputs",
+          "exit_code": 0,
+          "artifacts": [],
+          "unavailable_outputs": [
+            "result.json"
+          ],
+          "logs": {
+            "stdout": {
+              "path": "stdout",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            },
+            "stderr": {
+              "path": "stderr",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            }
+          }
+        },
+        "timed_out": {
+          "version": "polisplexity.hpc.result.v1",
+          "job_id": "d3925ee0-b4f7-49cc-b214-d8324bed5e00",
+          "manifest_sha256": "a6857fb687664fd0d724000e40f7bcaa214975a49a37721134b0c495f981cdb1",
+          "profile": "local",
+          "native_id": "1050",
+          "runtime_version": "3.10.12",
+          "started_at": "2026-11-23T17:34:12.649+00:00",
+          "finished_at": "2026-11-23T17:34:13.652+00:00",
+          "resources": {
+            "cpus": 1,
+            "memory_mib": 128,
+            "wall_time_seconds": 1
+          },
+          "status": "timed_out",
+          "exit_code": -9,
+          "artifacts": [],
+          "unavailable_outputs": [
+            "result.json"
+          ],
+          "logs": {
+            "stdout": {
+              "path": "stdout",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            },
+            "stderr": {
+              "path": "stderr",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            }
+          }
+        }
+      },
+      "pre_launch_rejections": [
+        "changed.json",
+        "over-budget.json",
+        "../job.json"
+      ],
+      "new_entrypoint": {
+        "version": "polisplexity.hpc.result.v1",
+        "job_id": "5d98d1ea-62a2-4bf4-b384-38088179d567",
+        "manifest_sha256": "2b2de018beeec2172e406891f7201f8a1139becdcf564e012871de92b001001f",
+        "profile": "local",
+        "native_id": "1052",
+        "runtime_version": "3.10.12",
+        "started_at": "2026-11-23T17:34:13.706+00:00",
+        "finished_at": "2026-11-23T17:34:13.772+00:00",
+        "resources": {
+          "cpus": 1,
+          "memory_mib": 128,
+          "wall_time_seconds": 10
+        },
+        "status": "succeeded",
+        "exit_code": 0,
+        "artifacts": [
+          {
+            "path": "variance.txt",
+            "size_bytes": 2,
+            "sha256": "f0b5c2c2211c8d67ed15e75e656c7862d086e9245420892a7de62cd9ec582a06",
+            "base64": "NQo="
+          }
+        ],
+        "unavailable_outputs": [],
+        "logs": {
+          "stdout": {
+            "path": "stdout",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          },
+          "stderr": {
+            "path": "stderr",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          }
+        }
+      }
+    },
+    {
+      "profile": "ssh",
+      "cli": {
+        "version": "polisplexity.hpc.result.v1",
+        "job_id": "aecf2c66-baf0-4c8f-874c-9df3416668e6",
+        "manifest_sha256": "a04cc67f568d43cf50107ad5601e26644ffb8dc21f5262ac6b936cd43d059c75",
+        "profile": "ssh",
+        "native_id": "505979",
+        "runtime_version": "3.10.12",
+        "started_at": "2026-11-23T17:34:14.989+00:00",
+        "finished_at": "2026-11-23T17:34:15.022+00:00",
+        "resources": {
+          "cpus": 1,
+          "memory_mib": 128,
+          "wall_time_seconds": 10
+        },
+        "status": "succeeded",
+        "exit_code": 0,
+        "artifacts": [
+          {
+            "path": "result.json",
+            "size_bytes": 175,
+            "sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed",
+            "base64": "eyJ3aW5kb3dzIjpbeyJjb3VudCI6NTUsInN0YXJ0IjoxMDA0M30seyJjb3VudCI6NTQsInN0YXJ0IjoxOTAxMX0seyJjb3VudCI6NjIsInN0YXJ0Ijo0OTMzfSx7ImNvdW50Ijo1MSwic3RhcnQiOjM0MzQyfSx7ImNvdW50Ijo1NCwic3RhcnQiOjIyNjQ5fSx7ImNvdW50Ijo0MSwic3RhcnQiOjI3MTU3fV19Cg=="
+          }
+        ],
+        "unavailable_outputs": [],
+        "logs": {
+          "stdout": {
+            "path": "stdout",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          },
+          "stderr": {
+            "path": "stderr",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          }
+        }
+      },
+      "mcp": {
+        "version": "polisplexity.hpc.result.v1",
+        "job_id": "a0c0035d-3df6-4a2a-bb05-74bf1db6ed12",
+        "manifest_sha256": "a04cc67f568d43cf50107ad5601e26644ffb8dc21f5262ac6b936cd43d059c75",
+        "profile": "ssh",
+        "native_id": "506031",
+        "runtime_version": "3.10.12",
+        "started_at": "2026-11-23T17:34:15.791+00:00",
+        "finished_at": "2026-11-23T17:34:15.824+00:00",
+        "resources": {
+          "cpus": 1,
+          "memory_mib": 128,
+          "wall_time_seconds": 10
+        },
+        "status": "succeeded",
+        "exit_code": 0,
+        "artifacts": [
+          {
+            "path": "result.json",
+            "size_bytes": 175,
+            "sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed",
+            "base64": "eyJ3aW5kb3dzIjpbeyJjb3VudCI6NTUsInN0YXJ0IjoxMDA0M30seyJjb3VudCI6NTQsInN0YXJ0IjoxOTAxMX0seyJjb3VudCI6NjIsInN0YXJ0Ijo0OTMzfSx7ImNvdW50Ijo1MSwic3RhcnQiOjM0MzQyfSx7ImNvdW50Ijo1NCwic3RhcnQiOjIyNjQ5fSx7ImNvdW50Ijo0MSwic3RhcnQiOjI3MTU3fV19Cg=="
+          }
+        ],
+        "unavailable_outputs": [],
+        "logs": {
+          "stdout": {
+            "path": "stdout",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          },
+          "stderr": {
+            "path": "stderr",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          }
+        }
+      },
+      "negative": {
+        "failed": {
+          "version": "polisplexity.hpc.result.v1",
+          "job_id": "92e9368d-b52b-4f6c-92f8-3948788d48f2",
+          "manifest_sha256": "3fb633086c45f5c4369a3fa5ae3583f5f76602153abe1f673df2072ccf135287",
+          "profile": "ssh",
+          "native_id": "506083",
+          "runtime_version": "3.10.12",
+          "started_at": "2026-11-23T17:34:16.640+00:00",
+          "finished_at": "2026-11-23T17:34:16.673+00:00",
+          "resources": {
+            "cpus": 1,
+            "memory_mib": 128,
+            "wall_time_seconds": 10
+          },
+          "status": "failed",
+          "exit_code": 7,
+          "artifacts": [],
+          "unavailable_outputs": [
+            "result.json"
+          ],
+          "logs": {
+            "stdout": {
+              "path": "stdout",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            },
+            "stderr": {
+              "path": "stderr",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            }
+          }
+        },
+        "missing_outputs": {
+          "version": "polisplexity.hpc.result.v1",
+          "job_id": "cfaff3b2-c369-47ef-be07-90698e817d05",
+          "manifest_sha256": "9555d91502191bcf1cc5c0c10d38a2ad8ee1657146b6aa489127c5ed5dbee322",
+          "profile": "ssh",
+          "native_id": "506135",
+          "runtime_version": "3.10.12",
+          "started_at": "2026-11-23T17:34:17.418+00:00",
+          "finished_at": "2026-11-23T17:34:17.451+00:00",
+          "resources": {
+            "cpus": 1,
+            "memory_mib": 128,
+            "wall_time_seconds": 10
+          },
+          "status": "missing_outputs",
+          "exit_code": 0,
+          "artifacts": [],
+          "unavailable_outputs": [
+            "result.json"
+          ],
+          "logs": {
+            "stdout": {
+              "path": "stdout",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            },
+            "stderr": {
+              "path": "stderr",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            }
+          }
+        },
+        "timed_out": {
+          "version": "polisplexity.hpc.result.v1",
+          "job_id": "bb154d84-65c2-46a7-8431-19461a999eec",
+          "manifest_sha256": "a6857fb687664fd0d724000e40f7bcaa214975a49a37721134b0c495f981cdb1",
+          "profile": "ssh",
+          "native_id": "506187",
+          "runtime_version": "3.10.12",
+          "started_at": "2026-11-23T17:34:18.210+00:00",
+          "finished_at": "2026-11-23T17:34:19.213+00:00",
+          "resources": {
+            "cpus": 1,
+            "memory_mib": 128,
+            "wall_time_seconds": 1
+          },
+          "status": "timed_out",
+          "exit_code": -9,
+          "artifacts": [],
+          "unavailable_outputs": [
+            "result.json"
+          ],
+          "logs": {
+            "stdout": {
+              "path": "stdout",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            },
+            "stderr": {
+              "path": "stderr",
+              "size_bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "base64": ""
+            }
+          }
+        }
+      },
+      "pre_launch_rejections": [
+        "changed.json",
+        "over-budget.json",
+        "../job.json",
+        "over-ssh-budget.json"
+      ],
+      "new_entrypoint": {
+        "version": "polisplexity.hpc.result.v1",
+        "job_id": "b60a1e6b-11d2-49ef-b07b-7b7d3eab8c02",
+        "manifest_sha256": "2b2de018beeec2172e406891f7201f8a1139becdcf564e012871de92b001001f",
+        "profile": "ssh",
+        "native_id": "506239",
+        "runtime_version": "3.10.12",
+        "started_at": "2026-11-23T17:34:19.999+00:00",
+        "finished_at": "2026-11-23T17:34:20.032+00:00",
+        "resources": {
+          "cpus": 1,
+          "memory_mib": 128,
+          "wall_time_seconds": 10
+        },
+        "status": "succeeded",
+        "exit_code": 0,
+        "artifacts": [
+          {
+            "path": "variance.txt",
+            "size_bytes": 2,
+            "sha256": "f0b5c2c2211c8d67ed15e75e656c7862d086e9245420892a7de62cd9ec582a06",
+            "base64": "NQo="
+          }
+        ],
+        "unavailable_outputs": [],
+        "logs": {
+          "stdout": {
+            "path": "stdout",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          },
+          "stderr": {
+            "path": "stderr",
+            "size_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "base64": ""
+          }
+        }
+      }
+    }
+  ]
+}

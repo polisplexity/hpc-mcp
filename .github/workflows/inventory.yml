@@ -17,3 +17,4 @@ jobs:
       - run: python cases/cimat-guanajuato/run_cpu_pilot.py
       - run: python -m pip install -r cases/cimat-guanajuato/requirements-mcp.txt
       - run: python cases/cimat-guanajuato/check_fixture_mcp.py
+      - run: python -m tools.check_portable_job
