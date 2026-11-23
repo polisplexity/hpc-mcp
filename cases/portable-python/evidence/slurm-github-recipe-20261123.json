@@ -1,0 +1,45 @@
+{
+  "source": "https://github.com/polisplexity/hpc-mcp",
+  "revision": "1ee420b73fad62ac88f18f04d66769b27428fd0a",
+  "environment": "clean checkout on the authorized CIMAT Docker host",
+  "docker": "29.4.1",
+  "slurm": "slurm-wlm 26.05.5",
+  "python": "3.14.10",
+  "clean_checkout": true,
+  "native": {
+    "native_id": "1",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "artifact_sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed"
+  },
+  "mcp": {
+    "native_id": "2",
+    "artifact_sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed",
+    "failed_native_exit": "7:0"
+  },
+  "recovered": {
+    "native_id": "4",
+    "accounting_allocations": 1,
+    "artifact_sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed",
+    "unconfirmed_state": "unknown"
+  },
+  "concurrent_requests": {
+    "shared_request": {
+      "job_id": "b26b6bf5-8050-48de-9c7b-12d09c258982",
+      "native_id": "5",
+      "native_state": "COMPLETED",
+      "accounting_allocations": 1,
+      "artifact_sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed"
+    },
+    "distinct_request": {
+      "job_id": "fbcaf5e9-b08d-4f1c-b5ac-b60737b6be39",
+      "native_id": "6",
+      "native_state": "COMPLETED",
+      "accounting_allocations": 1,
+      "artifact_sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed"
+    },
+    "clients": 2,
+    "conflicting_manifest_rejected": true
+  },
+  "remaining_containers": 0
+}

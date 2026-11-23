@@ -1,0 +1,75 @@
+{
+  "revision": "1ee420b73fad62ac88f18f04d66769b27428fd0a",
+  "environment": "CIMAT Docker development scheduler",
+  "native_reference": {
+    "result": {
+      "intercept": "76/21",
+      "observations": 6,
+      "slope": "94/35"
+    },
+    "artifact_sha256": "f1110031a3798ffebdb342f562a8c704d116f8ddbb01f0bc95a3e8ac5865f748"
+  },
+  "clients": [
+    {
+      "client": "codex",
+      "version": "0.171.0-alpha.13",
+      "tools_called": [
+        "hpc_prepare",
+        "hpc_slurm_submit",
+        "hpc_slurm_status"
+      ],
+      "prepared": {
+        "version": "polisplexity.hpc.job.v1",
+        "profile": "slurm",
+        "manifest_sha256": "9a7012be3c60037bd0ad9b0e7fdfa3c1865494f24cb672677c0bc2b367c759c5",
+        "resources": {
+          "cpus": 1,
+          "memory_mib": 128,
+          "wall_time_seconds": 10
+        },
+        "outputs": [
+          "fit-result.json"
+        ]
+      },
+      "request_id": "5a8f9de1-9516-4fce-a119-3a01c0105001",
+      "scheduler": {
+        "native_id": "1",
+        "exit_code": "0:0"
+      },
+      "final_claims": {
+        "state": "succeeded",
+        "native_id": "1",
+        "artifact_sha256": "f1110031a3798ffebdb342f562a8c704d116f8ddbb01f0bc95a3e8ac5865f748",
+        "exit_code": 0
+      }
+    }
+  ],
+  "hermes_transport": {
+    "client": "hermes",
+    "version": "0.18.2",
+    "method": "Hermes MCP tool registry dispatch",
+    "tools_called": [
+      "hpc_prepare",
+      "hpc_slurm_submit",
+      "hpc_slurm_status"
+    ],
+    "request_id": "5a8f9de1-9516-4fce-a119-3a01c0105003",
+    "scheduler": {
+      "native_id": "1",
+      "exit_code": "0:0"
+    },
+    "artifact_sha256": "f1110031a3798ffebdb342f562a8c704d116f8ddbb01f0bc95a3e8ac5865f748"
+  },
+  "hermes_agent": {
+    "version": "0.18.2",
+    "result": "verification_failed",
+    "actual_tool_calls": 0,
+    "notes": "After tool discovery, agent sessions reported job IDs and hashes absent from the MCP trace. The failure was reproduced after correcting the toolset selector.",
+    "issue": "https://github.com/polisplexity/hpc-mcp/issues/6"
+  },
+  "codex_initial_attempt": {
+    "result": "blocked_by_client_approval",
+    "actual_tool_calls": 0,
+    "notes": "The successful retry explicitly authorized only prepare, submit and status in the isolated test client."
+  }
+}

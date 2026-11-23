@@ -83,6 +83,10 @@ request in `concurrent_requests`. A distinct request gets its own allocation.
 Slurm IDs, request UUIDs and timestamps vary from run to run. The container's
 accounting and job files live for the duration of that run.
 
+The [clean GitHub checkout receipt](evidence/slurm-github-recipe-20261123.json)
+records the tested source revision, Docker 29.4.1, Python 3.14.10 and the
+matching native, MCP and recovered artifact hashes from a build at CIMAT.
+
 ## Verify a new workload from an MCP client
 
 Configure an MCP stdio server with the command below. Use an absolute path to
@@ -100,6 +104,13 @@ intercept is `76/21` and its slope is `94/35`, derived independently from the
 two normal equations. Compare the result artifact and its digest with a direct
 run of `fit.py`. Record the client version, native job ID, receipt and final
 answer as separate observations.
+
+The [client receipt](evidence/slurm-clients-20261123.json) confirms the
+Codex result and direct Hermes MCP dispatch. Codex required an explicit
+authorization for the three test tools in the unattended session. The Hermes
+agent trial failed verification because its completion claims had no matching
+tool exchanges. Follow [issue #6](https://github.com/polisplexity/hpc-mcp/issues/6)
+for agent acceptance.
 
 ## Reproduce the comparison
 
