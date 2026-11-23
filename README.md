@@ -10,6 +10,21 @@ Start with the [integration inventory](docs/INVENTORY.md), the
 [The master record](MASTER_TEST_RECORD.md) distinguishes access evidence from
 MCP execution evidence.
 
+## Reproduce the Slurm pilot
+
+On a Linux x86-64 host with Git, Bash and an authorized Docker engine, run the
+following from a checkout of this revision.
+
+```sh
+bash cases/portable-python/docker/build.sh
+bash cases/portable-python/docker/check.sh > slurm-test.json
+```
+
+The [Docker recipe](cases/portable-python/SLURM.md#reproduce-from-a-clean-checkout)
+describes the inputs, package versions, limits and expected receipt.
+
+## Job contract
+
 A job describes a program, inputs, runtime, requested resources and expected
 outputs. A saved recipe is a convenient way to repeat that description. The
 institutional profile supplies the authorized execution route and resource
@@ -21,8 +36,14 @@ interface with its own program and data.
 
 The [job](schemas/job-v1.json) and [result](schemas/result-v1.json) schemas cover
 synchronous Python jobs on trusted Linux profiles. A portable job ran via CLI
-and MCP on a local worker and an authorized CIMAT SSH profile. Queued submission,
-status recovery after a disconnect and scheduler accounting are future stages.
+and MCP on a local worker and an authorized CIMAT SSH profile. The
+[Slurm profile](cases/portable-python/SLURM.md) also ran the job in a development
+cluster and in a Docker development instance hosted at CIMAT. Both verified
+recovery after interruption.
+The independent workload passed in Codex. Direct Hermes MCP dispatch passed,
+and [Hermes agent verification](https://github.com/polisplexity/hpc-mcp/issues/6)
+remains open. The [master record](MASTER_TEST_RECORD.md) links the observed
+results for each client.
 The catalog verifier needs Python 3.10 or later and the standard library.
 
 ```sh

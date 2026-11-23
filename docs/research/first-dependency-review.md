@@ -21,6 +21,12 @@ for project admission. The CIMAT CPU receipt verifies the bounded SSH
 fixture. The local research observations above apply to their described
 operations and environments.
 
+The [Slurm development case](../../cases/portable-python/SLURM.md) compares
+the pinned Silogen provider with the native scheduler. Silogen's queue output
+truncates job names and its accounting tool queries by a known job ID or a
+time window. Polisplexity uses the native Slurm interfaces for exact request
+reconciliation when a client has yet to receive a job ID.
+
 ## Proposed issues in order
 
 ### 1. Version the specification and admit a general-purpose fixture

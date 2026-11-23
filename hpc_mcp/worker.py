@@ -18,7 +18,7 @@ JOB_VERSION = "polisplexity.hpc.job.v1"
 RESULT_VERSION = "polisplexity.hpc.result.v1"
 MAX_FILE_BYTES = 256 * 1024
 MAX_FILES = 8
-PROFILES = {"local": (4, 512, 30), "ssh": (1, 128, 15)}
+PROFILES = {"local": (4, 512, 30), "ssh": (1, 128, 15), "slurm": (4, 512, 30)}
 PATH_SEGMENT = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}")
 
 
@@ -110,12 +110,15 @@ def timestamp():
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
 
 
-def execute(manifest, files, profile):
+def execute(manifest, files, profile, job_id=None):
     if sys.platform != "linux":
         raise ValueError("The direct worker requires Linux")
     import resource
 
     validate_manifest(manifest, profile)
+    slurm_id = os.getenv("SLURM_JOB_ID", "") if profile == "slurm" else None
+    if slurm_id is not None and not re.fullmatch(r"[1-9][0-9]*", slurm_id):
+        raise ValueError("A Slurm worker requires its native job ID before launch")
     require_keys(files, {item["path"] for item in manifest["inputs"]})
     limits = manifest["resources"]
     available_cpus = sorted(os.sched_getaffinity(0))
@@ -182,10 +185,10 @@ def execute(manifest, files, profile):
             status = "succeeded"
         return {
             "version": RESULT_VERSION,
-            "job_id": str(uuid.uuid4()),
+            "job_id": job_id or str(uuid.uuid4()),
             "manifest_sha256": digest(canonical(manifest)),
             "profile": profile,
-            "native_id": str(process.pid),
+            "native_id": slurm_id or str(process.pid),
             "runtime_version": ".".join(map(str, sys.version_info[:3])),
             "started_at": started_at,
             "finished_at": finished_at,

@@ -13,7 +13,9 @@ Write public documentation, issues and code comments in English.
    Compare artifacts, structured claims and the final narrative separately.
 5. Submit reviewed evidence and update the master record. A recipe should state
    the licensed fixture, source versions, native commands, required allocation,
-   actual measurement scope and known limits.
+   actual measurement scope and known limits. Verify the documented command
+   from a clean checkout on an authorized host, and record the Git revision
+   alongside its result.
 
 Public code and documents follow [the MIT license](LICENSE). Third-party
 software, fixtures, outputs and provider accounts retain their own terms.

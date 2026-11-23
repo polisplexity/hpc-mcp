@@ -1,0 +1,18 @@
+{
+  "version": "polisplexity.hpc.job.v1",
+  "runtime": "python3",
+  "entrypoint": "fit.py",
+  "argv": ["points.json", "fit-result.json"],
+  "inputs": [
+    {
+      "path": "fit.py",
+      "sha256": "42911099c39004d4637e0874dbc5fa97ea50bc4377a873610b5dc58b6baaecde"
+    },
+    {
+      "path": "points.json",
+      "sha256": "2bf43cfcf2c26c62f5aa694addf822dff5bbcbe7ec099d0cc48bd1630be36a88"
+    }
+  ],
+  "outputs": ["fit-result.json"],
+  "resources": {"cpus": 1, "memory_mib": 128, "wall_time_seconds": 10}
+}
