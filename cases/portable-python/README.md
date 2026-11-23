@@ -56,5 +56,6 @@ and safe retry after a lost response require durable backend state.
 The [CIMAT SSH and local report](evidence/portable-20261123.json) covers the
 reference output, normal completion, exit 7, a missing output despite exit 0,
 a one-second timeout, rejection before launch, and the second program. It
-covers direct SSH execution and MCP over local stdio. Slurm qualification is
-tracked separately.
+covers direct SSH execution and MCP over local stdio. The
+[Slurm case](SLURM.md) uses the same workload and exercises queued submission
+and recovery.

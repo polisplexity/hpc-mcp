@@ -100,7 +100,7 @@ def main():
     parser.add_argument("action", choices=("prepare", "run"))
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--manifest", required=True)
-    parser.add_argument("--profile", choices=worker.PROFILES, default="local")
+    parser.add_argument("--profile", choices=("local", "ssh"), default="local")
     args = parser.parse_args()
     try:
         package = prepare(args.root, args.manifest, args.profile)

@@ -149,7 +149,7 @@ async def compare(directory, ssh_alias):
         async with ClientSession(reader, writer) as session:
             await session.initialize()
             names = {tool.name for tool in (await session.list_tools()).tools}
-            check(names == {"hpc_prepare", "hpc_run"}, "Unexpected MCP tools")
+            check({"hpc_prepare", "hpc_run"} <= names, "Missing portable MCP tools")
             for profile in ("local", "ssh") if ssh_alias else ("local",):
                 direct = subprocess.run(
                     [sys.executable, "-m", "hpc_mcp.client", "run", "--root", str(directory),

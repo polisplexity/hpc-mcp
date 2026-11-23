@@ -10,7 +10,8 @@ Edition: 2026-11-23.
 | Fixed CIMAT CPU workload | Native passed | [Native receipt](cases/cimat-guanajuato/evidence/native-cpu-20261122.json) records local and remote byte parity and sum 333338333350000. |
 | Fixed CIMAT CPU workload via MCP stdio | MCP passed | [MCP receipt](cases/cimat-guanajuato/evidence/mcp-cpu-20261122.json) records matching native/MCP outputs and an out-of-scope target rejection. The first harness attempt received a valid text result without structuredContent. The client now accepts a JSON text block, and the tool advertises a structured return. |
 | Portable Python job via CLI and MCP stdio | Local and CIMAT SSH passed | [Portable job evidence](cases/portable-python/evidence/portable-20261123.json) records byte parity with a native comparator, exit 7, exit 0 with missing output, timeout, input rejection, and a separately supplied program. Both workers used Python 3.10.12. The successful SSH run used one CPU in its affinity, a 128 MiB address-space ceiling and a 10-second wall timeout. |
-| Slurm, durable submission, applied cases, Codex and Hermes | Pending | See [RFC 0001](docs/rfc/0001-hpc-job-contract.md) and the [research review](docs/research/first-dependency-review.md). |
+| Slurm submission and recovery in development | Passed | [Slurm laboratory evidence](cases/portable-python/evidence/slurm-lab-20261123.json) records native CLI, the pinned Silogen MCP provider, Polisplexity MCP, exit 7, a denied preflight, and recovery of exactly one allocation after losing the acknowledgment. An interrupted request with no evidence stayed unknown. |
+| CIMAT Slurm, applied cases, Codex and Hermes | Pending | See the [Slurm qualification issue](https://github.com/polisplexity/hpc-mcp/issues/3) and [RFC 0001](docs/rfc/0001-hpc-job-contract.md). |
 
 Record each actual run with source revision, execution route, recipe and input
 hashes, resource allocation, provider/worker job ID, timestamps, captured exit
