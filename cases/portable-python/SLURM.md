@@ -55,6 +55,34 @@ Scheduler timestamps are returned as reported by `sacct`. They give the
 submit, start and end times, plus elapsed run time where available. Job
 files use the shared filesystem. The profile does not measure transfer time.
 
+## Reproduce from a clean checkout
+
+Check out the GitHub release or PR revision that contains this case. On an
+authorized Linux x86-64 Docker host, run the build and check from that
+checkout. The build sends a list of files committed at `HEAD` to Docker.
+It uses the Debian base image digest and signed package snapshot in
+the [Docker files](docker/), Slurm 26.05.5 and the recorded Python dependency
+versions. The build needs access to Docker Hub, Debian Snapshot and PyPI.
+Git, Bash and GNU `timeout` provide the host-side commands.
+
+```sh
+bash cases/portable-python/docker/build.sh
+bash cases/portable-python/docker/check.sh > slurm-test.json
+```
+
+The check starts one test node with MUNGE and MariaDB-backed accounting.
+Docker bounds the container to one CPU and 1 GiB on a temporary internal
+network. The container uses its own files and publishes zero host ports.
+The test report goes to stdout and diagnostics go to stderr. On exit, the
+check removes the container and network and keeps the built image for reuse.
+
+Compare the report's native SHA-256 with the MCP receipt and the recovered
+artifact. The report should show exit `7:0` for the intentional failure,
+`unknown` when acceptance is unconfirmed, and one allocation for the shared
+request in `concurrent_requests`. A distinct request gets its own allocation.
+Slurm IDs, request UUIDs and timestamps vary from run to run. The container's
+accounting and job files live for the duration of that run.
+
 ## Reproduce the comparison
 
 ```sh

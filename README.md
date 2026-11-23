@@ -10,6 +10,21 @@ Start with the [integration inventory](docs/INVENTORY.md), the
 [The master record](MASTER_TEST_RECORD.md) distinguishes access evidence from
 MCP execution evidence.
 
+## Reproduce the Slurm pilot
+
+On a Linux x86-64 host with Git, Bash and an authorized Docker engine, run the
+following from a checkout of this revision.
+
+```sh
+bash cases/portable-python/docker/build.sh
+bash cases/portable-python/docker/check.sh > slurm-test.json
+```
+
+The [Docker recipe](cases/portable-python/SLURM.md#reproduce-from-a-clean-checkout)
+describes the inputs, package versions, limits and expected receipt.
+
+## Job contract
+
 A job describes a program, inputs, runtime, requested resources and expected
 outputs. A saved recipe is a convenient way to repeat that description. The
 institutional profile supplies the authorized execution route and resource
