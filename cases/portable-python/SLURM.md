@@ -83,6 +83,24 @@ request in `concurrent_requests`. A distinct request gets its own allocation.
 Slurm IDs, request UUIDs and timestamps vary from run to run. The container's
 accounting and job files live for the duration of that run.
 
+## Verify a new workload from an MCP client
+
+Configure an MCP stdio server with the command below. Use an absolute path to
+the checkout when the client starts in a separate workspace.
+
+```sh
+bash cases/portable-python/docker/check.sh polisplexity-hpc/slurm-test:local \
+  /opt/polis-venv/bin/python -m hpc_mcp.server
+```
+
+Ask the client to prepare `client-example/job.json` with profile `slurm`,
+submit the job with a new request UUID, and retrieve its verified result
+using the same UUID. The program fits a line to six synthetic points. Its
+intercept is `76/21` and its slope is `94/35`, derived independently from the
+two normal equations. Compare the result artifact and its digest with a direct
+run of `fit.py`. Record the client version, native job ID, receipt and final
+answer as separate observations.
+
 ## Reproduce the comparison
 
 ```sh

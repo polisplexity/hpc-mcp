@@ -11,6 +11,7 @@ COPY hpc_mcp/ ./hpc_mcp/
 COPY schemas/ ./schemas/
 COPY tools/check_portable_job.py tools/check_slurm_job.py ./tools/
 COPY cases/portable-python/job.json cases/portable-python/program.py cases/portable-python/parameters.json ./cases/portable-python/
+COPY cases/portable-python/client-example/ ./cases/portable-python/client-example/
 COPY cases/portable-python/docker/start.sh /usr/local/bin/polis-slurm-test
 ENTRYPOINT ["/bin/sh", "/usr/local/bin/polis-slurm-test"]
 CMD ["/opt/polis-venv/bin/python", "-m", "tools.check_slurm_job"]
