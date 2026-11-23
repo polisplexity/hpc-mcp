@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Polisplexity HPC result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "job_id", "manifest_sha256", "profile", "native_id", "runtime_version",
+    "started_at", "finished_at", "resources", "status", "exit_code", "artifacts",
+    "unavailable_outputs", "logs"
+  ],
+  "properties": {
+    "version": {"const": "polisplexity.hpc.result.v1"},
+    "job_id": {"type": "string", "format": "uuid"},
+    "manifest_sha256": {"$ref": "#/$defs/digest"},
+    "profile": {"enum": ["local", "ssh"]},
+    "native_id": {"type": "string", "pattern": "^[1-9][0-9]*$"},
+    "runtime_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": "string", "format": "date-time"},
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cpus", "memory_mib", "wall_time_seconds"],
+      "properties": {
+        "cpus": {"type": "integer", "minimum": 1, "maximum": 4},
+        "memory_mib": {"type": "integer", "minimum": 64, "maximum": 512},
+        "wall_time_seconds": {"type": "integer", "minimum": 1, "maximum": 30}
+      }
+    },
+    "status": {"enum": ["succeeded", "failed", "timed_out", "missing_outputs"]},
+    "exit_code": {"type": "integer"},
+    "artifacts": {"type": "array", "maxItems": 8, "items": {"$ref": "#/$defs/artifact"}},
+    "unavailable_outputs": {"type": "array", "maxItems": 8, "items": {"type": "string"}},
+    "logs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stdout", "stderr"],
+      "properties": {
+        "stdout": {"$ref": "#/$defs/log"},
+        "stderr": {"$ref": "#/$defs/log"}
+      }
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "minLength": 64, "maxLength": 64, "pattern": "^[a-f0-9]{64}$"},
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "size_bytes", "sha256", "base64"],
+      "properties": {
+        "path": {"type": "string"},
+        "size_bytes": {"type": "integer", "minimum": 0, "maximum": 262144},
+        "sha256": {"$ref": "#/$defs/digest"},
+        "base64": {"type": "string", "contentEncoding": "base64"}
+      }
+    },
+    "log": {"anyOf": [{"$ref": "#/$defs/artifact"}, {"type": "null"}]}
+  }
+}

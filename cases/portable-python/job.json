@@ -1,0 +1,22 @@
+{
+  "version": "polisplexity.hpc.job.v1",
+  "runtime": "python3",
+  "entrypoint": "program.py",
+  "argv": ["parameters.json", "result.json"],
+  "inputs": [
+    {
+      "path": "program.py",
+      "sha256": "bb69c60d8e61e31f53e465378f1b6ad6eb9a79f4a50c77bf584b21f380a48488"
+    },
+    {
+      "path": "parameters.json",
+      "sha256": "8965cb941457ae05559de4c8c1a0e705b9e22f71bdd285283cc68388a4d3fcd0"
+    }
+  ],
+  "outputs": ["result.json"],
+  "resources": {
+    "cpus": 1,
+    "memory_mib": 128,
+    "wall_time_seconds": 10
+  }
+}
