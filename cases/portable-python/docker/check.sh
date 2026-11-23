@@ -6,6 +6,10 @@ if (( $# > 0 )); then
     image=$1
     shift
 fi
+stdin=()
+if (( $# > 0 )); then
+    stdin=(--interactive)
+fi
 read -r id </proc/sys/kernel/random/uuid
 container="polisplexity-slurm-test-$id"
 network="polisplexity-slurm-test-net-$id"
@@ -27,7 +31,7 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-timeout --foreground 180 docker run --rm --init --interactive --name "$container" --label "$owner" \
+timeout --foreground 180 docker run --rm --init "${stdin[@]}" --name "$container" --label "$owner" \
     --network "$network" --hostname polis-slurm --add-host polis-slurm:127.0.0.1 \
     --cpus 1 --memory 1g --memory-swap 1g --pids-limit 192 \
     --security-opt no-new-privileges --cap-drop NET_RAW "$image" "$@"
