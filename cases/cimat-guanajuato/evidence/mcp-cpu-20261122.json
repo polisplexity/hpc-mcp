@@ -1,0 +1,29 @@
+{
+  "transport": "stdio",
+  "runs": [
+    {
+      "target": "local",
+      "fixture_sha256": "63825d098eaf78f62e9ff81fcf96cec101d2cc5b5c0a8312fe68d5ad8c5d9e79",
+      "output_sha256": "4f540a8a4e99b02ff0a01a5df0b920cabb8cccd8ea30d1545635af2342ac41ff",
+      "result": {
+        "limit": 100000,
+        "sum_of_squares": 333338333350000
+      },
+      "elapsed_seconds": 0.035
+    },
+    {
+      "target": "cimat",
+      "fixture_sha256": "63825d098eaf78f62e9ff81fcf96cec101d2cc5b5c0a8312fe68d5ad8c5d9e79",
+      "output_sha256": "4f540a8a4e99b02ff0a01a5df0b920cabb8cccd8ea30d1545635af2342ac41ff",
+      "result": {
+        "limit": 100000,
+        "sum_of_squares": 333338333350000
+      },
+      "elapsed_seconds": 0.97
+    }
+  ],
+  "tools": [
+    "run_cpu_probe"
+  ],
+  "invalid_target_rejected": true
+}

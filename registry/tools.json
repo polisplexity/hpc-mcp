@@ -1,0 +1,602 @@
+{
+  "schema_version": 1,
+  "project": "Polisplexity HPC MCP",
+  "edition": "2026-11-22",
+  "first_entry": "cimat",
+  "entries": [
+    {
+      "id": "cimat",
+      "name": "CIMAT Guanajuato",
+      "family": "Institutional targets",
+      "decision": "pilot",
+      "upstream": "Authorized institutional account; public Slurm manual",
+      "reuse": "Use the account's available submission mechanism, and the site's allocation, storage and identity rules.",
+      "build": "Add a local connection profile with capability discovery. Choose the bounded SSH worker or the supported queue after checking the assigned host. Keep credentials and site-specific paths outside this repository.",
+      "test": "Check account capabilities and scratch read/write with synthetic data. Run a fixed CPU fixture natively and through MCP, then transfer a public Guanajuato tile package and verify the output in OLDT. Record the available queue and actual consumption.",
+      "sources": [
+        "https://hpc.cimat.mx/Manuales_hpc",
+        "https://hpc.cimat.mx/Infraestructura_HPC"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "openssh",
+      "name": "OpenSSH",
+      "family": "Institutional targets",
+      "decision": "pilot",
+      "upstream": "SSH client with approved host identity handling",
+      "reuse": "Use the system SSH client and existing authorized authentication and host-key policy.",
+      "build": "Implement a constrained worker profile for sites that permit direct execution. Pass typed recipe arguments, constrain working paths and persist the handoff before dispatch.",
+      "test": "Exercise a known host, host-key mismatch, permission denial and disconnect after dispatch. Reconcile the existing work without submitting it twice.",
+      "sources": [
+        "https://www.openssh.com/manual.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "oldt-data-factory",
+      "name": "OLDT Data Factory",
+      "family": "Workloads and acceptance",
+      "decision": "pilot",
+      "upstream": "External-worker dispatch, HPC package generator and result import",
+      "reuse": "Reuse dispatch manifests, viewer-artifacts stage, portable inputs and existing result and artifact contracts.",
+      "build": "Bind the worker and MCP job IDs to the OLDT dispatch and revision. Return artifacts for explicit import and validation.",
+      "test": "Run the same permitted Guanajuato package locally and remotely. Check manifest, CRS, coverage, feature IDs, MVT/PMTiles/3D Tiles validity and successful opening in a test Twin.",
+      "sources": [
+        "https://raw.githubusercontent.com/polisplexity/open-local-digital-twin/main/docs/DATA_FACTORY_REMOTE_SERVER_CONFIGURATION.md"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "local-worker",
+      "name": "Local CPU reference runner",
+      "family": "Workloads and acceptance",
+      "decision": "pilot",
+      "upstream": "Reviewed fixed local recipe and OS process lifecycle",
+      "reuse": "Reuse the same versioned program and input bundle used in the remote job.",
+      "build": "Create a tiny native reference and shared expected output. Preserve resource limits and a stable exit status in its lifecycle receipt.",
+      "test": "Verify exact synthetic results, nonzero exit handling and timeout. Compare with the first remote and MCP results.",
+      "sources": [
+        "https://github.com/polisplexity/open-local-digital-twin"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "slurm-cli",
+      "name": "Slurm CLI",
+      "family": "Schedulers",
+      "decision": "pilot",
+      "upstream": "sbatch, squeue, sacct, scancel and site QoS",
+      "reuse": "Reuse native scheduler, resource requests, accounting and cancellation semantics.",
+      "build": "Map typed resource requests and native states, including arrays and jobs no longer visible in the queue. Reconcile unknown submission outcomes.",
+      "test": "Submit a small job and array using an authorized account. Check pending, success, failure, cancellation, accounting retention and native versus MCP output.",
+      "sources": [
+        "https://slurm.schedmd.com/quickstart.html",
+        "https://slurm.schedmd.com/job_array.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "slurm-rest",
+      "name": "slurmrestd",
+      "family": "Schedulers",
+      "decision": "alternate",
+      "upstream": "Versioned OpenAPI via a site-enabled Slurm REST service",
+      "reuse": "Reuse the site's authenticated REST entry point and advertised API version.",
+      "build": "Add conformance against the common job fields, preserving provider errors and version differences.",
+      "test": "Compare submit, query and cancel with the CLI on the same test cluster. Verify unavailable service, authorization refusal and unsupported schema.",
+      "sources": [
+        "https://slurm.schedmd.com/rest.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "openpbs",
+      "name": "OpenPBS",
+      "family": "Schedulers",
+      "decision": "alternate",
+      "upstream": "qsub, qstat and qdel",
+      "reuse": "Reuse PBS job scripts, resource syntax, arrays and lifecycle commands.",
+      "build": "Translate the typed job request into the existing OLDT PBS bundle and normalize state only where meanings match.",
+      "test": "Run a two-task job, retain per-task results, test rejection and cancellation, and compare PBS output with direct execution.",
+      "sources": [
+        "https://github.com/openpbs/openpbs",
+        "https://raw.githubusercontent.com/openpbs/openpbs/master/doc/man1/qsub.1B"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "htcondor",
+      "name": "HTCondor",
+      "family": "Schedulers",
+      "decision": "alternate",
+      "upstream": "Python bindings and submit descriptions",
+      "reuse": "Reuse Schedd queries, native submit API and file-transfer features.",
+      "build": "Map independent scenario tasks and preserve the cluster and process identity for each output.",
+      "test": "Run an independently verifiable batch, force one job into a held state and compare job history and outputs with the native path.",
+      "sources": [
+        "https://htcondor.readthedocs.io/en/main/apis/python-bindings/tutorials/Submitting-and-Managing-Jobs.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "lsf",
+      "name": "IBM Spectrum LSF",
+      "family": "Schedulers",
+      "decision": "research",
+      "upstream": "bsub, bjobs and bkill at an approved installation",
+      "reuse": "Reuse the native queue and resource request syntax.",
+      "build": "Add a profile only for a confirmed site and inspect its licensed client and parsing interface.",
+      "test": "Check successful and rejected jobs and compare owner-scoped cancellation and accounting with direct LSF operation.",
+      "sources": [
+        "https://www.ibm.com/products/spectrum-lsf",
+        "https://github.com/IBMSpectrumComputing/lsf-integrations"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "flux",
+      "name": "Flux Framework",
+      "family": "Schedulers",
+      "decision": "research",
+      "upstream": "Flux job CLI and Python API",
+      "reuse": "Reuse Flux resource and job abstractions at sites with a supported deployment.",
+      "build": "Map one allocation-scoped workload and keep nested job IDs and parent allocation visible.",
+      "test": "Run a job in a non-production Flux allocation and verify resources, completion and cancellation against the native receipt.",
+      "sources": [
+        "https://flux-framework.readthedocs.io/en/latest/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "csc-mcp",
+      "name": "CSC Slurm MCP",
+      "family": "Existing MCP and service APIs",
+      "decision": "evaluate",
+      "upstream": "Site-provided MCP for Slurm",
+      "reuse": "Inspect the actual tool contract and reuse bounded scheduler tools if the site offers a supported path.",
+      "build": "Add a profile and result-bundle translation only for required operations absent from the current tool contract.",
+      "test": "List tools, run a permitted fixture using native and MCP paths, compare results and test a disallowed operation in the authorized profile.",
+      "sources": [
+        "https://docs.csc.fi/supercomputing/ai-tools/agent-env/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "community-hpc-mcp",
+      "name": "Community HPC MCP",
+      "family": "Existing MCP and service APIs",
+      "decision": "evaluate",
+      "upstream": "Per-user Slurm and PBS MCP project",
+      "reuse": "Review the current license, tool list, scheduler-only configuration and versions.",
+      "build": "Use only the operations required by the project and keep shell and general file editing outside the integration profile.",
+      "test": "In an isolated lab review all exposed tools, then compare a fixed job with the native scheduler and verify the configured scope.",
+      "sources": [
+        "https://github.com/mfukudaQED/hpc-mcp"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "firecrest",
+      "name": "FirecREST",
+      "family": "Existing MCP and service APIs",
+      "decision": "alternate",
+      "upstream": "CSCS REST and client endpoints for jobs and transfer",
+      "reuse": "Use the site-provided authorization, scheduler and staged transfer APIs.",
+      "build": "Preserve remote job and transfer IDs in a shared receipt and map site-specific availability into discovery.",
+      "test": "Run a fixture with approved test data, compare the returned job record, verify checksums and handle token expiration and transfer failure.",
+      "sources": [
+        "https://docs.cscs.ch/access/firecrest/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "globus-compute",
+      "name": "Globus Compute",
+      "family": "Existing MCP and service APIs",
+      "decision": "research",
+      "upstream": "Compute endpoint and service API",
+      "reuse": "Use the institution's provisioned endpoint and task lifecycle where accepted.",
+      "build": "Register fixed compute functions or reviewed recipes through the existing endpoint and reconcile their task IDs.",
+      "test": "Submit an approved deterministic CPU fixture and exercise lost client connection, duplicate handling and expired credentials.",
+      "sources": [
+        "https://compute.api.globus.org/redoc"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "open-ondemand",
+      "name": "Open OnDemand",
+      "family": "Existing MCP and service APIs",
+      "decision": "reference",
+      "upstream": "Institutional web portal and job tooling",
+      "reuse": "Use the site portal as a human reference for available queues and job states.",
+      "build": "Record the supported automation route offered by the site. Treat UI functions as operator references when a stable API is unavailable.",
+      "test": "Compare a test job view and accounting fields against the scheduler path with the same authorized account.",
+      "sources": [
+        "https://osc.github.io/ood-documentation/latest/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "sftp",
+      "name": "SFTP",
+      "family": "Data movement",
+      "decision": "pilot",
+      "upstream": "OpenSSH file transfer",
+      "reuse": "Reuse authorized SFTP with separate input and output paths.",
+      "build": "Add a manifest for file IDs, bytes and hashes, transfer to a temporary name and publish a completed artifact only after verification.",
+      "test": "Interrupt a transfer, resume or retry via the supported mechanism, and reject a changed hash or out-of-scope target path.",
+      "sources": [
+        "https://man.openbsd.org/sftp.1"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "rsync",
+      "name": "rsync",
+      "family": "Data movement",
+      "decision": "alternate",
+      "upstream": "SSH-backed incremental file synchronization",
+      "reuse": "Reuse the existing Data Factory transfer plans and native rsync features.",
+      "build": "Execute against configured source and destination roots and return a checked transfer receipt.",
+      "test": "Run initial and restart transfers on a test bundle, attempt an out-of-scope symlink, then verify exact output hashes.",
+      "sources": [
+        "https://rsync.samba.org/documentation.html",
+        "https://raw.githubusercontent.com/polisplexity/open-local-digital-twin/main/docs/DATA_FACTORY_REMOTE_SERVER_CONFIGURATION.md"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "globus-transfer",
+      "name": "Globus Transfer",
+      "family": "Data movement",
+      "decision": "alternate",
+      "upstream": "Managed transfers between configured collections",
+      "reuse": "Use the existing task and monitoring API and supported checksum mode.",
+      "build": "Bind the two collection identities, transfer task and artifact checksums to the job receipt.",
+      "test": "Transfer a permitted test bundle, compare hashes, and exercise cancellation, authorization failure and retry.",
+      "sources": [
+        "https://docs.globus.org/api/transfer/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "s3-artifacts",
+      "name": "S3-compatible object storage",
+      "family": "Data movement",
+      "decision": "alternate",
+      "upstream": "Provider SDK and explicit artifact URIs",
+      "reuse": "Reuse a configured bucket, object versions and supported checksum metadata.",
+      "build": "Keep per-job prefixes and preserve exact version, size, content SHA-256 and expiry in the import manifest.",
+      "test": "Test upload, interrupted retrieval, object replacement and checksum rejection without relying on multipart ETags as content hashes.",
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "docker",
+      "name": "Docker Engine",
+      "family": "Execution environments",
+      "decision": "pilot",
+      "upstream": "Images and controlled runtime configuration",
+      "reuse": "Reuse the permitted site runtime, with fixed images addressed by digest.",
+      "build": "Pin the command, mounts, CPU and memory settings at the worker boundary and separate logs from results.",
+      "test": "Run the same image twice, verify results and limits, and confirm that a disallowed mount or resource request is rejected upstream of submission.",
+      "sources": [
+        "https://docs.docker.com/engine/containers/resource_constraints/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "apptainer",
+      "name": "Apptainer",
+      "family": "Execution environments",
+      "decision": "alternate",
+      "upstream": "SIF containers and site MPI integration",
+      "reuse": "Use the center-supported container execution and bind-mount policy.",
+      "build": "Add a compatible SIF build or approved digest reference and map launcher and MPI compatibility.",
+      "test": "Repeat a CPU fixture and two-rank MPI fixture under the authorized scheduler, checking image identity and portability.",
+      "sources": [
+        "https://apptainer.org/docs/user/latest/mpi.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "environment-modules",
+      "name": "Environment Modules",
+      "family": "Execution environments",
+      "decision": "alternate",
+      "upstream": "Site-defined modulefiles and versions",
+      "reuse": "Reuse the module stack provided at the institution.",
+      "build": "Record loaded modules and compiler/runtime versions in the job manifest.",
+      "test": "Rebuild a fixture in a clean job environment and show an unavailable module gives a clear failure rather than a fallback.",
+      "sources": [
+        "https://modules.readthedocs.io/en/latest/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "spack",
+      "name": "Spack",
+      "family": "Execution environments",
+      "decision": "research",
+      "upstream": "Locked scientific software environments",
+      "reuse": "Use a site-approved Spack environment, compiler and external dependency definitions.",
+      "build": "Store a recipe reference and lock-file digest, with compatibility rules for the chosen node.",
+      "test": "Build the same fixture from a fresh environment and compare runtime dependencies and outputs across two authorized targets.",
+      "sources": [
+        "https://spack.readthedocs.io/en/latest/environments.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "openmpi",
+      "name": "Open MPI",
+      "family": "Execution environments",
+      "decision": "evaluate",
+      "upstream": "MPI runtime and launcher",
+      "reuse": "Reuse the scientific application's MPI implementation and the scheduler's allocation.",
+      "build": "Record ranks, CPUs per task, topology and image/host MPI compatibility. Leave scientific parallelization to the workload.",
+      "test": "Verify a two-rank numerical reduction with a serial reference before testing multi-node communication and speedup.",
+      "sources": [
+        "https://docs.open-mpi.org/en/main/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "nextflow",
+      "name": "Nextflow",
+      "family": "Scientific workflows",
+      "decision": "evaluate",
+      "upstream": "Native workflow executors and run metadata",
+      "reuse": "Use versioned Nextflow pipelines and existing scheduler executors.",
+      "build": "Map pipeline parameters and final artifacts without reimplementing its DAG or task retry engine.",
+      "test": "Run a three-step synthetic workflow locally and on a test queue. Force one step to fail and verify restart and artifact identity.",
+      "sources": [
+        "https://docs.seqera.io/nextflow/executor"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "snakemake",
+      "name": "Snakemake",
+      "family": "Scientific workflows",
+      "decision": "alternate",
+      "upstream": "Rules, workflow execution and Slurm executor plugin",
+      "reuse": "Reuse the original rules and supported executor plugin.",
+      "build": "Bind input assets, selected targets and output manifest to the MCP job request.",
+      "test": "Compare local and Slurm output hashes for a three-rule workflow, check missing input and resumption.",
+      "sources": [
+        "https://snakemake.github.io/snakemake-plugin-catalog/plugins/executor/slurm.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "parsl",
+      "name": "Parsl",
+      "family": "Scientific workflows",
+      "decision": "research",
+      "upstream": "Python workflow and execution providers",
+      "reuse": "Reuse the application's Python DAG and supported execution provider.",
+      "build": "Register versioned workflows and capture outputs and statuses at the recipe boundary.",
+      "test": "Run an independent-task workload, fail one task and verify final artifacts and failure scope with a direct Parsl run.",
+      "sources": [
+        "https://parsl.readthedocs.io/en/stable/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "dask-jobqueue",
+      "name": "Dask Jobqueue",
+      "family": "Scientific workflows",
+      "decision": "alternate",
+      "upstream": "Native Dask cluster launchers for batch systems",
+      "reuse": "Reuse the application's Dask tasks and existing cluster factory.",
+      "build": "Add a scoped resource request for the scheduler and record worker counts, failure and cleanup.",
+      "test": "Compare a partitioned spatial summary to a serial reference and test a worker failure without losing the final job state.",
+      "sources": [
+        "https://jobqueue.dask.org/en/stable/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "ray-jobs",
+      "name": "Ray Jobs",
+      "family": "Scientific workflows",
+      "decision": "research",
+      "upstream": "Jobs API on a configured Ray deployment",
+      "reuse": "Reuse JobSubmissionClient and existing workload definitions.",
+      "build": "Bind Ray submission and logs to the common receipt and record which cluster provisioned the resources.",
+      "test": "Run a small parallel fixture, recover the receipt after client exit and confirm cancellation only affects the owned job.",
+      "sources": [
+        "https://docs.ray.io/en/latest/cluster/running-applications/job-submission/index.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "kueue",
+      "name": "Kubernetes Jobs + Kueue",
+      "family": "Cloud and institutional batch",
+      "decision": "research",
+      "upstream": "Kubernetes Job API and Kueue admission and quotas",
+      "reuse": "Reuse Job and queue policies in an approved namespace.",
+      "build": "Map recipes to approved Job templates and keep the workload admission state distinct from execution.",
+      "test": "Check one admitted job, one job pending quota and one failed pod. Verify output access is scoped to the job namespace.",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+        "https://kueue.sigs.k8s.io/docs/overview/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "aws-batch",
+      "name": "AWS Batch",
+      "family": "Cloud and institutional batch",
+      "decision": "research",
+      "upstream": "Batch job definitions, queues, arrays and multi-node jobs",
+      "reuse": "Reuse official batch APIs and the selected job definition.",
+      "build": "Add identity for queue and job definition versions, permitted project and cost/capacity fields where available.",
+      "test": "Run a bounded CPU job and array in an authorized environment. Capture native IDs, failure reason, artifacts and observable billing units.",
+      "sources": [
+        "https://docs.aws.amazon.com/batch/latest/userguide/jobs.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "azure-batch",
+      "name": "Azure Batch",
+      "family": "Cloud and institutional batch",
+      "decision": "research",
+      "upstream": "Batch pools, jobs and tasks",
+      "reuse": "Reuse official Batch client and an approved pool.",
+      "build": "Map tasks and their children to per-job outputs and preserve pool sizing and start latency.",
+      "test": "Run a fixed task on an authorized pool, verify outputs and compare lifecycle after a failing task and client reconnection.",
+      "sources": [
+        "https://learn.microsoft.com/en-us/azure/batch/batch-technical-overview"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "google-batch",
+      "name": "Google Cloud Batch",
+      "family": "Cloud and institutional batch",
+      "decision": "research",
+      "upstream": "Jobs API, tasks and configured compute resources",
+      "reuse": "Reuse the existing Batch service and permitted storage identities.",
+      "build": "Map the native job and task groups into the project receipt and preserve region and resource profile.",
+      "test": "Run a bounded fixture with a fixed image, verify the output hash, handle quota rejection and reconcile the same job ID after reconnect.",
+      "sources": [
+        "https://cloud.google.com/batch/docs/get-started"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "slurm-accounting",
+      "name": "Slurm accounting and efficiency",
+      "family": "Observability",
+      "decision": "evaluate",
+      "upstream": "sacct and available site accounting data",
+      "reuse": "Use native elapsed, CPU and memory fields where available.",
+      "build": "Record units, observation scope and unavailable fields, keeping allocated resources distinct from consumption.",
+      "test": "Compare MCP metrics with native accounting for a short CPU job and check the missing-accounting case.",
+      "sources": [
+        "https://slurm.schedmd.com/sacct.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "dcgm",
+      "name": "NVIDIA DCGM Exporter",
+      "family": "Observability",
+      "decision": "research",
+      "upstream": "DCGM metrics exposed to Prometheus",
+      "reuse": "Reuse site-approved GPU telemetry with access to authorized labels.",
+      "build": "Bind available samples to the job allocation, and represent shared-device and missing attribution accurately.",
+      "test": "Run a fixed GPU job where permitted, compare receipt times with telemetry, and record missing or shared metrics explicitly.",
+      "sources": [
+        "https://docs.nvidia.com/datacenter/dcgm/latest/gpu-telemetry/dcgm-exporter.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "urban-swmm",
+      "name": "Urban MCP SWMM",
+      "family": "Workloads and acceptance",
+      "decision": "evaluate",
+      "upstream": "Existing EPA SWMM and PySWMM case and observed rainfall fixtures",
+      "reuse": "Reuse the historical case, engine, inputs and permitted recipes.",
+      "build": "Make a typed parameter-sweep workload, preserving model baseline and one output per scenario.",
+      "test": "Compare all per-node rows against native independent runs within declared tolerances, test one failed task and measure batch overhead.",
+      "sources": [
+        "https://github.com/polisplexity/urban-mcp/tree/main/cases/two-city-swmm"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "urban-sumo",
+      "name": "Urban MCP SUMO",
+      "family": "Workloads and acceptance",
+      "decision": "evaluate",
+      "upstream": "Existing SUMO experiment, model and fixed seeds",
+      "reuse": "Reuse native models and outputs, including interrupted and incomplete trips.",
+      "build": "Schedule independent repetitions and aggregate them without changing per-trip meaning.",
+      "test": "Compare fixed-seed outputs with native single runs and preserve all trip, teleport and censor accounting when aggregating.",
+      "sources": [
+        "https://github.com/polisplexity/urban-mcp/tree/main/cases/two-city-sumo"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "cuda-q-hpc",
+      "name": "CUDA-Q distributed simulation",
+      "family": "Workloads and acceptance",
+      "decision": "research",
+      "upstream": "CUDA-Q distributed backends and MPI",
+      "reuse": "Use the simulation runtime and CUDA-aware infrastructure, with the Quantum circuit manifest as input.",
+      "build": "Bind circuit identity and simulator configuration to an HPC recipe and return measurements to Quantum.",
+      "test": "Check a known circuit locally and across the authorized MPI allocation. Compare probabilities within tolerance and report simulator configuration.",
+      "sources": [
+        "https://nvidia.github.io/cuda-quantum/latest/using/backends/simulators.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "lmod",
+      "name": "Lmod",
+      "family": "Execution environments",
+      "decision": "alternate",
+      "upstream": "Lua modulefiles and site environment hierarchy",
+      "reuse": "Reuse the active module hierarchy on the authorized cluster.",
+      "build": "Record exact modules and resolve environment dependencies through the site's normal startup path.",
+      "test": "Compare interactive discovery with a clean batch run, verify the same modules are loaded and report a missing dependency explicitly.",
+      "sources": [
+        "https://lmod.readthedocs.io/en/stable/index.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "openmp",
+      "name": "OpenMP",
+      "family": "Execution environments",
+      "decision": "dependency",
+      "upstream": "Threads and affinity settings in a compatible compiled workload",
+      "reuse": "Use the existing workload's OpenMP parallel regions.",
+      "build": "Bind the requested CPUs to explicit thread settings and record the observed environment.",
+      "test": "Compare a serial and threaded reference reduction, verify thread allocation and measure overhead without assuming speedup.",
+      "sources": [
+        "https://www.openmp.org/specifications/"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "dmtcp",
+      "name": "DMTCP",
+      "family": "Recovery",
+      "decision": "research",
+      "upstream": "Checkpoint and restart for compatible Linux processes",
+      "reuse": "Reuse the workload's own checkpoint when available and evaluate DMTCP for a supported process.",
+      "build": "Associate checkpoint version, hash and compatible target scope with an explicit resume operation.",
+      "test": "Interrupt a permitted job, restore from its checkpoint and verify final results and restricted checkpoint access.",
+      "sources": [
+        "https://dmtcp.github.io/quick-start.html"
+      ],
+      "status": "candidate"
+    },
+    {
+      "id": "ibm-lsf-quantum",
+      "name": "IBM LSF quantum plugins",
+      "family": "Workloads and acceptance",
+      "decision": "research",
+      "upstream": "Vendor-backed integration of LSF workload management and QPU dispatch",
+      "reuse": "Inspect existing plugin code, dependencies and target support at a site already authorized to use LSF and a quantum backend.",
+      "build": "Map the scheduler job and quantum execution IDs into linked receipts if the original tools expose both. Reuse the existing scheduler and provider queue.",
+      "test": "Run one fixed simulator-backed job first. In an authorized QPU experiment verify independent scheduler and device states, result provenance and the scope of cancellation.",
+      "sources": [
+        "https://github.com/IBM/lsf-quantum"
+      ],
+      "status": "candidate"
+    }
+  ]
+}
