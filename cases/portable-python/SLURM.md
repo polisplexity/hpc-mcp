@@ -62,10 +62,14 @@ python -m tools.check_slurm_job --out result.json
 ```
 
 The verifier compares native `sbatch` with actual MCP calls, checks exit
-code 7 and rejected partition and account examples, and terminates its own test server around
-the submission boundary. When Slurm accepted the request, a fresh client
+code 7 and rejected partition and account examples, and terminates its own
+test server around the submission boundary. When Slurm accepted the request, a fresh client
 recovers the result and verifies that accounting contains exactly one
-allocation. A fault before submission is exercised separately.
+allocation. A fault before submission is exercised separately. Two independent
+MCP clients also submit the same request concurrently. The verifier checks
+that accounting contains one allocation for their shared UUID, a separate
+allocation for a new UUID using the same manifest, and that a conflicting
+manifest for the first UUID is rejected.
 
 The verifier can compare the optional Silogen MCP provider from a separate
 virtual environment. Install the reviewed revision in that environment
@@ -81,5 +85,10 @@ python -m tools.check_slurm_job --silogen-python /path/to/silogen-venv/bin/pytho
 The [recorded development run](evidence/slurm-lab-20261123.json) used
 Ubuntu Base 24.04.5 in WSL2 with Slurm 23.11.4, one compute node, MUNGE and
 MariaDB-backed `slurmdbd`. The lab used Linux process tracking and Slurm's
-development cgroup configuration without systemd. Site qualification on
-CIMAT Slurm is tracked in [issue #3](https://github.com/polisplexity/hpc-mcp/issues/3).
+development cgroup configuration without systemd. The
+[CIMAT Docker development run](evidence/slurm-cimat-docker-20261123.json)
+used Slurm 26.05.5 on an internal Docker network with a one-CPU and 1 GiB
+container limit.
+
+The [site scheduler qualification issue](https://github.com/polisplexity/hpc-mcp/issues/3)
+records the checks for a future workload that requires a site-managed queue.

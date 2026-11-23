@@ -23,8 +23,8 @@ The [job](schemas/job-v1.json) and [result](schemas/result-v1.json) schemas cove
 synchronous Python jobs on trusted Linux profiles. A portable job ran via CLI
 and MCP on a local worker and an authorized CIMAT SSH profile. The
 [Slurm profile](cases/portable-python/SLURM.md) also ran the job in a development
-cluster and recovered its result after interruption. CIMAT Slurm qualification
-is pending.
+cluster and in a Docker development instance hosted at CIMAT. Both verified
+recovery after interruption.
 The catalog verifier needs Python 3.10 or later and the standard library.
 
 ```sh

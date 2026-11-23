@@ -1,0 +1,217 @@
+{
+  "environment": "development Slurm in Docker at CIMAT",
+  "native": {
+    "native_id": "1",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "artifact_sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed"
+  },
+  "preflight": {
+    "version": "slurm-wlm 26.05.5",
+    "partition_visible": true,
+    "partition_state": "up",
+    "account_configured": true
+  },
+  "succeeded": {
+    "job_id": "ea2a0686-805b-450d-a164-73ae72cf04ed",
+    "state": "succeeded",
+    "native_id": "2",
+    "sources": {
+      "squeue": true,
+      "sacct": true
+    },
+    "native_state": "COMPLETED",
+    "native_exit_code": "0:0",
+    "timing": {
+      "submitted": "2026-11-23T19:37:23",
+      "started": "2026-11-23T19:37:24",
+      "ended": "2026-11-23T19:37:24",
+      "elapsed_seconds": 0
+    },
+    "receipt": {
+      "artifacts": [
+        {
+          "base64": "eyJ3aW5kb3dzIjpbeyJjb3VudCI6NTUsInN0YXJ0IjoxMDA0M30seyJjb3VudCI6NTQsInN0YXJ0IjoxOTAxMX0seyJjb3VudCI6NjIsInN0YXJ0Ijo0OTMzfSx7ImNvdW50Ijo1MSwic3RhcnQiOjM0MzQyfSx7ImNvdW50Ijo1NCwic3RhcnQiOjIyNjQ5fSx7ImNvdW50Ijo0MSwic3RhcnQiOjI3MTU3fV19Cg==",
+          "path": "result.json",
+          "sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed",
+          "size_bytes": 175
+        }
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-23T19:37:24.111+00:00",
+      "job_id": "ea2a0686-805b-450d-a164-73ae72cf04ed",
+      "logs": {
+        "stderr": {
+          "base64": "",
+          "path": "stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0
+        },
+        "stdout": {
+          "base64": "",
+          "path": "stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0
+        }
+      },
+      "manifest_sha256": "a04cc67f568d43cf50107ad5601e26644ffb8dc21f5262ac6b936cd43d059c75",
+      "native_id": "2",
+      "profile": "slurm",
+      "resources": {
+        "cpus": 1,
+        "memory_mib": 128,
+        "wall_time_seconds": 10
+      },
+      "runtime_version": "3.14.10",
+      "started_at": "2026-11-23T19:37:24.045+00:00",
+      "status": "succeeded",
+      "unavailable_outputs": [],
+      "version": "polisplexity.hpc.result.v1"
+    }
+  },
+  "failed": {
+    "job_id": "5b46cf25-9157-4573-8796-e4628489c024",
+    "state": "failed",
+    "native_id": "3",
+    "sources": {
+      "squeue": true,
+      "sacct": true
+    },
+    "native_state": "FAILED",
+    "native_exit_code": "7:0",
+    "timing": {
+      "submitted": "2026-11-23T19:37:24",
+      "started": "2026-11-23T19:37:27",
+      "ended": "2026-11-23T19:37:27",
+      "elapsed_seconds": 0
+    },
+    "receipt": {
+      "artifacts": [],
+      "exit_code": 7,
+      "finished_at": "2026-11-23T19:37:27.111+00:00",
+      "job_id": "5b46cf25-9157-4573-8796-e4628489c024",
+      "logs": {
+        "stderr": {
+          "base64": "",
+          "path": "stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0
+        },
+        "stdout": {
+          "base64": "",
+          "path": "stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0
+        }
+      },
+      "manifest_sha256": "3fb633086c45f5c4369a3fa5ae3583f5f76602153abe1f673df2072ccf135287",
+      "native_id": "3",
+      "profile": "slurm",
+      "resources": {
+        "cpus": 1,
+        "memory_mib": 128,
+        "wall_time_seconds": 10
+      },
+      "runtime_version": "3.14.10",
+      "started_at": "2026-11-23T19:37:27.045+00:00",
+      "status": "failed",
+      "unavailable_outputs": [
+        "result.json"
+      ],
+      "version": "polisplexity.hpc.result.v1"
+    }
+  },
+  "accepted_before_disconnect": {
+    "job_id": "66f34e98-31b1-4f4d-81f4-3a2695adb97a",
+    "state": "succeeded",
+    "native_id": "4",
+    "sources": {
+      "squeue": true,
+      "sacct": true
+    },
+    "native_state": "COMPLETED",
+    "native_exit_code": "0:0",
+    "timing": {
+      "submitted": "2026-11-23T19:37:27",
+      "started": "2026-11-23T19:37:30",
+      "ended": "2026-11-23T19:37:31",
+      "elapsed_seconds": 1
+    },
+    "receipt": {
+      "artifacts": [
+        {
+          "base64": "eyJ3aW5kb3dzIjpbeyJjb3VudCI6NTUsInN0YXJ0IjoxMDA0M30seyJjb3VudCI6NTQsInN0YXJ0IjoxOTAxMX0seyJjb3VudCI6NjIsInN0YXJ0Ijo0OTMzfSx7ImNvdW50Ijo1MSwic3RhcnQiOjM0MzQyfSx7ImNvdW50Ijo1NCwic3RhcnQiOjIyNjQ5fSx7ImNvdW50Ijo0MSwic3RhcnQiOjI3MTU3fV19Cg==",
+          "path": "result.json",
+          "sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed",
+          "size_bytes": 175
+        }
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-11-23T19:37:31.108+00:00",
+      "job_id": "66f34e98-31b1-4f4d-81f4-3a2695adb97a",
+      "logs": {
+        "stderr": {
+          "base64": "",
+          "path": "stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0
+        },
+        "stdout": {
+          "base64": "",
+          "path": "stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0
+        }
+      },
+      "manifest_sha256": "a04cc67f568d43cf50107ad5601e26644ffb8dc21f5262ac6b936cd43d059c75",
+      "native_id": "4",
+      "profile": "slurm",
+      "resources": {
+        "cpus": 1,
+        "memory_mib": 128,
+        "wall_time_seconds": 10
+      },
+      "runtime_version": "3.14.10",
+      "started_at": "2026-11-23T19:37:31.042+00:00",
+      "status": "succeeded",
+      "unavailable_outputs": [],
+      "version": "polisplexity.hpc.result.v1"
+    },
+    "accounting_allocations": 1
+  },
+  "no_evidence_of_acceptance": {
+    "job_id": "58f1a4de-f461-4cc8-a18a-a1bedc717522",
+    "state": "unknown",
+    "native_id": null,
+    "sources": {
+      "squeue": true,
+      "sacct": true
+    }
+  },
+  "concurrent_requests": {
+    "shared_request": {
+      "job_id": "b7bb2511-31c1-43e4-a911-bb308f7468a0",
+      "native_id": "5",
+      "native_state": "COMPLETED",
+      "accounting_allocations": 1,
+      "artifact_sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed"
+    },
+    "distinct_request": {
+      "job_id": "55191ab7-ee1d-4b52-bf54-f331c6a70cfe",
+      "native_id": "6",
+      "native_state": "COMPLETED",
+      "accounting_allocations": 1,
+      "artifact_sha256": "ce533572bfe8e8896c6f8ed4103db537233a435727bbeedfad32d397d4bf75ed"
+    },
+    "clients": 2,
+    "conflicting_manifest_rejected": true
+  },
+  "rejected_test_only": {
+    "partition": {
+      "native_exit_code": 1
+    },
+    "account": {
+      "native_exit_code": 1
+    }
+  }
+}

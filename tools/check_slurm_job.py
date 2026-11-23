@@ -139,6 +139,16 @@ async def silogen_reference(profile, directory, python, expected):
     return {**accounting, "revision": SILOGEN_REVISION, "artifact_sha256": sha256(expected).hexdigest()}
 
 
+def verify_single_allocation(request_id, native_id):
+    job_name = f"polishpc-{UUID(request_id).hex}"
+    rows = observed([
+        "sacct", "--noheader", "--parsable2", "--allocations", f"--user={os.getuid()}",
+        f"--name={job_name}", "--format=JobIDRaw,JobName%80",
+    ])
+    check(rows == [[native_id, job_name]], "Accounting did not show exactly one submitted job")
+    return len(rows)
+
+
 async def interrupted(directory, profile, action):
     request_id = str(uuid4())
     args = {"manifest": "job.json", "request_id": request_id}
@@ -161,13 +171,41 @@ async def interrupted(directory, profile, action):
         check(result["job_id"] == request_id, "Fresh client recovered another request")
         repeated = await call(session, "hpc_slurm_submit", args)
         check(repeated["native_id"] == result["native_id"], "A retry changed the native job")
-        job_name = f"polishpc-{UUID(request_id).hex}"
-        rows = observed([
-            "sacct", "--noheader", "--parsable2", "--allocations", f"--user={os.getuid()}",
-            f"--name={job_name}", "--format=JobIDRaw,JobName%80",
-        ])
-        check(rows == [[result["native_id"], job_name]], "Accounting did not show exactly one submitted job")
-        return {**result, "accounting_allocations": len(rows)}
+        return {**result, "accounting_allocations": verify_single_allocation(request_id, result["native_id"])}
+
+
+async def concurrent_requests(directory, expected):
+    shared_id = str(uuid4())
+    other_id = str(uuid4())
+    shared_args = {"manifest": "job.json", "request_id": shared_id}
+    other_args = {"manifest": "job.json", "request_id": other_id}
+    async with connect(directory) as first, connect(directory) as second:
+        left, right = await asyncio.gather(
+            call(first, "hpc_slurm_submit", shared_args),
+            call(second, "hpc_slurm_submit", shared_args),
+        )
+        check(sum(response["state"] == "submitted" for response in (left, right)) == 1,
+              "Only one client should receive a new submission acknowledgement")
+        check(left["native_id"] and left["native_id"] == right["native_id"],
+              "Simultaneous requests did not resolve to the same native job")
+        other = await call(second, "hpc_slurm_submit", other_args)
+        check(other["state"] == "submitted" and other["native_id"] != left["native_id"],
+              "The same manifest under a distinct UUID did not receive a new allocation")
+        conflict = await second.call_tool("hpc_slurm_submit", {"manifest": "fail.json", "request_id": shared_id})
+        check(conflict.isError, "A request UUID was rebound to a different manifest")
+        results = await asyncio.gather(terminal(first, shared_id), terminal(second, other_id))
+
+    cases = {}
+    for key, result in zip(("shared_request", "distinct_request"), results):
+        check(result["state"] == "succeeded", "Concurrent test workload failed")
+        verified_artifact(result["receipt"], expected)
+        cases[key] = {
+            "job_id": result["job_id"], "native_id": result["native_id"],
+            "native_state": result["native_state"],
+            "accounting_allocations": verify_single_allocation(result["job_id"], result["native_id"]),
+            "artifact_sha256": result["receipt"]["artifacts"][0]["sha256"],
+        }
+    return {**cases, "clients": 2, "conflicting_manifest_rejected": True}
 
 
 async def compare(profile, directory, silogen_python):
@@ -199,6 +237,7 @@ async def compare(profile, directory, silogen_python):
     check(report["accepted_before_disconnect"]["state"] == "succeeded", "Interrupted job failed")
     verified_artifact(receipt, expected)
     report["no_evidence_of_acceptance"] = await interrupted(directory, profile, "before_send")
+    report["concurrent_requests"] = await concurrent_requests(directory, expected)
     missing = "missing-" + uuid4().hex
     denials = {"partition": [f"--partition={missing}"]}
     if profile.account:
