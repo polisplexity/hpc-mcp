@@ -49,3 +49,7 @@ jobs:
         run: |
           python -m tools.run_hermes_r_storage --verify-only \
             --output cases/ssh-r-environment/evidence/cimat-storage-20261124
+      - name: Verify recorded Hermes large artifact save and fetch
+        run: |
+          python -m tools.run_hermes_r_download --verify-only \
+            --output cases/ssh-r-environment/evidence/cimat-download-20261124

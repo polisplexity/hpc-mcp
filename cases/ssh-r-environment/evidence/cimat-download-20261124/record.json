@@ -1,0 +1,38 @@
+{
+  "source_revision": "13ce95d7c82a1d9480a2a9f273ca1058ea0c4d0b",
+  "hermes": "Hermes Agent v0.18.2 (2026.7.7.2)",
+  "model": "claude-sonnet-4-6",
+  "save_answer": {
+    "reference": "hpc-artifact:sha256:1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3",
+    "sha256": "1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3",
+    "size_bytes": 1146924
+  },
+  "fetch_answer": {
+    "reference": "hpc-artifact:sha256:1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3",
+    "sha256": "1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3",
+    "size_bytes": 1146924,
+    "filename": "1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3",
+    "verified": true
+  },
+  "verified": {
+    "artifact": {
+      "path": "orders-with-revenue.csv",
+      "size_bytes": 1146924,
+      "sha256": "1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3",
+      "reference": "hpc-artifact:sha256:1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3"
+    },
+    "filename": "1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3",
+    "rows": 65536,
+    "native_id": "ea3730d2644c28e5e12b41693ecd298489f4725b340160b09340df4a60a67cd8",
+    "r_version": "4.5.2",
+    "route": "docker"
+  },
+  "downloaded_file": {
+    "size_bytes": 1146924,
+    "sha256": "1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3"
+  },
+  "independent_node_file": {
+    "size_bytes": 1146924,
+    "sha256": "1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3"
+  }
+}
