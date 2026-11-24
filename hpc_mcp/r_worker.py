@@ -10,6 +10,10 @@ import subprocess
 from uuid import uuid4
 
 
+class DockerFailure(ValueError):
+    """A safe diagnostic for a fixed Docker operation."""
+
+
 class RRuntime:
     def __init__(self, file_limit):
         self.file_limit = file_limit
@@ -23,10 +27,13 @@ class RRuntime:
     def docker_output(self, *arguments, timeout=8):
         if not self.docker:
             raise ValueError("Docker is unavailable on the approved SSH target")
-        result = subprocess.run(
-            self.docker_args(*arguments), env=self.docker_env, stdin=subprocess.DEVNULL,
-            capture_output=True, text=True, timeout=timeout, check=True,
-        )
+        try:
+            result = subprocess.run(
+                self.docker_args(*arguments), env=self.docker_env, stdin=subprocess.DEVNULL,
+                capture_output=True, text=True, timeout=timeout, check=True,
+            )
+        except (OSError, subprocess.SubprocessError) as error:
+            raise DockerFailure(f"Docker {arguments[0]} {arguments[1]} failed ({type(error).__name__})") from None
         return result.stdout.strip()
 
     def native_version(self):
@@ -49,7 +56,7 @@ class RRuntime:
             return None
         try:
             image = self.docker_output("image", "inspect", "--format", "{{.Id}} {{.Os}}/{{.Architecture}}", lock["image"])
-        except (OSError, subprocess.SubprocessError):
+        except DockerFailure:
             return None
         image_id, platform = image.split()
         if not re.fullmatch(r"sha256:[a-f0-9]{64}", image_id) or platform != lock["platform"]:
@@ -77,7 +84,7 @@ class RRuntime:
         if image_id is None and allow_pull:
             try:
                 self.docker_output("image", "pull", "--platform", lock["platform"], lock["image"], timeout=180)
-            except (OSError, subprocess.SubprocessError):
+            except DockerFailure:
                 raise ValueError("Docker could not pull the approved image from its registry") from None
             image_id = self.image_id(lock)
             status = "pulled"
@@ -115,7 +122,7 @@ class RRuntime:
         try:
             image_id = self.docker_output("container", "inspect", "--format", "{{.Image}}", container)
             if image_id != selection["image_id"]:
-                raise RuntimeError("The started container does not match the selected image")
+                raise ValueError("The job container does not match the selected image")
             try:
                 result = subprocess.run(
                     self.docker_args("container", "start", "--attach", container), env=self.docker_env,
@@ -124,10 +131,10 @@ class RRuntime:
                 )
             except subprocess.TimeoutExpired:
                 return -9, True, container
-            state = json.loads(self.docker_output("container", "inspect", "--format", "{{json .State}}", container))
-            if state["Status"] != "exited" or state["ExitCode"] != result.returncode:
-                raise RuntimeError("Docker did not return a confirmed exit code")
-            return state["ExitCode"], False, container
+            native_exit = self.docker_output("container", "wait", container)
+            if not native_exit.isdecimal() or int(native_exit) != result.returncode:
+                raise ValueError("Docker attach and wait returned different execution results")
+            return int(native_exit), False, container
         finally:
             self.docker_output("container", "rm", "--force", container, timeout=12)
 

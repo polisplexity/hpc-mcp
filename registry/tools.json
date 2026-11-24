@@ -36,6 +36,21 @@
       "status": "agent-reviewed"
     },
     {
+      "id": "ssh-r-environment",
+      "name": "Native R and pinned Rocker images over SSH",
+      "family": "Workloads and acceptance",
+      "decision": "pilot",
+      "upstream": "Rscript and Rocker runtime images on the account's local Docker daemon",
+      "reuse": "Use the managed environment tools, trusted workspace manifests, Rscript and verified job receipts.",
+      "build": "Select native R when its version matches the lock. Otherwise prepare a digest-pinned Docker image and bind jobs to the observed environment ID.",
+      "test": "Have Hermes discover R availability, prepare the approved environment, and run the same CSV summary twice. Compare independent totals and confirm the same environment and separate native jobs.",
+      "sources": [
+        "https://rocker-project.org/images/versioned/r-ver",
+        "https://docs.docker.com/reference/cli/docker/container/run/"
+      ],
+      "status": "agent-reviewed"
+    },
+    {
       "id": "openssh",
       "name": "OpenSSH",
       "family": "Institutional targets",

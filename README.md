@@ -10,6 +10,8 @@ engine and configured Hermes model.
 Use the [managed SSH environment test](cases/ssh-environment/README.md) to
 inspect an authorized Linux account, install a locked dependency and run and
 repeat an independent batch through Hermes.
+The [R over SSH case](cases/ssh-r-environment/README.md) lets Hermes discover
+whether native R can run a job and reuse an approved Docker image when needed.
 
 Start with the [integration inventory](docs/INVENTORY.md), the
 [CIMAT connectivity pilot](cases/cimat-guanajuato/README.md) and
