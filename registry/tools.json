@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "project": "Polisplexity HPC MCP",
-  "edition": "2026-11-22",
+  "edition": "2026-11-24",
   "first_entry": "cimat",
   "entries": [
     {
@@ -342,6 +342,21 @@
       "test": "Compare one, two and four ranks for a fixed periodic heat stencil on one node. Require identical field digests and agreement with the analytic solution, and record speedup separately for the kernel and launcher.",
       "sources": [
         "https://docs.open-mpi.org/en/main/"
+      ],
+      "status": "mcp-verified"
+    },
+    {
+      "id": "lammps",
+      "name": "LAMMPS",
+      "family": "Scientific workflows",
+      "decision": "evaluate",
+      "upstream": "Molecular dynamics executable and documented input format",
+      "reuse": "Run the packaged MPI executable and use its distributed force calculations and thermodynamic output.",
+      "build": "Stage the simulation inputs with hashes and recover thermodynamic samples through the existing Slurm job contract.",
+      "test": "Run fixed-volume copper dynamics with one, two and four ranks. Require matching thermodynamic curves within tolerance, atom conservation and bounded energy deviation.",
+      "sources": [
+        "https://docs.lammps.org/stable/pair_eam.html",
+        "https://doi.org/10.1103/PhysRevB.33.7983"
       ],
       "status": "mcp-verified"
     },
