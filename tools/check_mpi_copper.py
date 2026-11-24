@@ -47,11 +47,11 @@ def stage(directory, workload):
     return {item["path"]: item["sha256"] for item in inputs}
 
 
-async def measure(session, ranks, prepared, result_schema):
+async def submit_receipt(session, manifest, ranks, prepared, result_schema):
     request_id = str(uuid4())
     started = perf_counter()
     submitted = await call(session, "hpc_slurm_submit", {
-        "manifest": f"ranks-{ranks}.json", "request_id": request_id,
+        "manifest": manifest, "request_id": request_id,
     })
     check(submitted["state"] == "submitted", "Slurm did not acknowledge the copper simulation")
     result = await terminal(session, request_id)
@@ -73,19 +73,30 @@ async def measure(session, ranks, prepared, result_schema):
         "--format=JobIDRaw,AllocCPUS,State,ExitCode",
     ])
     check(accounting == [[native_id, str(ranks), "COMPLETED", "0:0"]], "Slurm CPU count differs")
-    artifact, = receipt["artifacts"]
+    return result, receipt_seconds
+
+
+def verified_bytes(artifact):
     data = base64.b64decode(artifact["base64"], validate=True)
-    check(artifact["path"] == "copper-result.json" and digest(data) == artifact["sha256"],
-          "Copper artifact failed digest verification")
-    sample = json.loads(data)
+    check(len(data) == artifact["size_bytes"] and digest(data) == artifact["sha256"],
+          "Copper artifact failed size or digest verification")
+    return data
+
+
+async def measure(session, ranks, prepared, result_schema):
+    result, receipt_seconds = await submit_receipt(session, f"ranks-{ranks}.json", ranks, prepared, result_schema)
+    receipt = result["receipt"]
+    artifact, = receipt["artifacts"]
+    check(artifact["path"] == "copper-result.json", "Unexpected thermodynamics artifact")
+    sample = json.loads(verified_bytes(artifact))
     check(sample["ranks"] == sample["pinned_cpus"] == ranks, "MPI rank affinity differs")
     check(all(math.isfinite(sample[key]) for key in ("launcher_seconds", "kernel_seconds"))
           and 0 < sample["kernel_seconds"] <= sample["launcher_seconds"] <= receipt_seconds,
           "Invalid timing evidence")
-    print(f"Slurm job {native_id}: {ranks} ranks, LAMMPS loop {sample['kernel_seconds']:.3f}s",
+    print(f"Slurm job {receipt['native_id']}: {ranks} ranks, LAMMPS loop {sample['kernel_seconds']:.3f}s",
           file=sys.stderr)
     return {
-        **sample, "request_id": request_id, "native_job_id": native_id,
+        **sample, "request_id": receipt["job_id"], "native_job_id": receipt["native_id"],
         "allocated_cpus": ranks, "native_state": result["native_state"],
         "native_exit_code": result["native_exit_code"], "artifact_sha256": artifact["sha256"],
         "manifest_sha256": receipt["manifest_sha256"], "started_at": receipt["started_at"],

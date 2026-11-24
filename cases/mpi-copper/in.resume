@@ -1,0 +1,13 @@
+# Reapply the parameters and integrator that the binary restart omits.
+read_restart copper.restart
+pair_style eam
+pair_coeff * * ${potential}
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+fix integrate all nve
+timestep 0.002
+thermo ${sample_every}
+thermo_style custom step atoms temp pe etotal press
+thermo_modify norm no lost error flush yes format float %.15g
+run ${steps}

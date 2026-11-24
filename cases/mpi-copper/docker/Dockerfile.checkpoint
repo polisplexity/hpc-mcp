@@ -1,0 +1,6 @@
+ARG BASE_IMAGE=polisplexity-hpc/mpi-copper:local
+FROM ${BASE_IMAGE}
+
+COPY cases/mpi-copper/run.py cases/mpi-copper/in.checkpoint cases/mpi-copper/in.resume ./cases/mpi-copper/
+COPY tools/check_mpi_copper.py tools/check_mpi_copper_checkpoint.py ./tools/
+CMD ["/opt/polis-venv/bin/python", "-m", "tools.check_mpi_copper_checkpoint"]
