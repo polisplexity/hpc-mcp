@@ -69,7 +69,7 @@ async def call(session, tool, arguments=None):
 async def terminal(session, request_id):
     for _ in range(45):
         result = await call(session, "hpc_slurm_status", {"request_id": request_id})
-        if result["state"] in {"succeeded", "failed", "missing_outputs", "timed_out"}:
+        if result["state"] in {"succeeded", "failed", "missing_outputs", "timed_out", "cancelled"}:
             return result
         await asyncio.sleep(1)
     raise RuntimeError(f"Slurm did not provide terminal evidence: {result}")

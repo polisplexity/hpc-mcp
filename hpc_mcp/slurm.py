@@ -38,7 +38,7 @@ raise SystemExit(exit_code if exit_code >= 0 else 128 - exit_code)
 
 def native(command, *, data=None):
     env = {key: value for key, value in os.environ.items()
-           if not key.startswith("SBATCH_") and key != "SLURM_CLUSTERS"}
+           if not key.startswith(("SBATCH_", "SCANCEL_")) and key != "SLURM_CLUSTERS"}
     env["LC_ALL"] = "C"
     return subprocess.run(
         command, input=data, capture_output=True, timeout=15,
@@ -172,6 +172,41 @@ class SlurmProfile:
                 return {"job_id": job_id, "native_id": native_id, "state": "submitted"}
             return self.status(job_id)
 
+    def cancel(self, request_id):
+        import fcntl
+
+        job_id = str(UUID(request_id))
+        directory = self.location / job_id
+        if not (directory / "intent.json").is_file():
+            raise ValueError("Unknown Slurm request ID in the local state directory")
+        with (directory / "dispatch.lock").open("ab") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            snapshot = self.status(job_id)
+            if snapshot["state"] != "active" or snapshot["native_state"] == "COMPLETING":
+                return snapshot
+            if (directory / "cancel-ack.json").is_file():
+                return snapshot
+            native_id = snapshot["native_id"]
+            if not re.fullmatch(r"[1-9][0-9]*", native_id):
+                raise RuntimeError("Slurm did not report a single numeric allocation")
+            job_name = f"polishpc-{UUID(job_id).hex}"
+            identity = [f"--user={os.getuid()}", f"--name={job_name}", f"--partition={self.partition}"]
+            queued = observed(["squeue", "--noheader", *identity, "--format=%i|%j"])
+            if queued != [[native_id, job_name]]:
+                return self.status(job_id)
+            try:
+                reply = native(["scancel", "--ctld", "--quiet", *identity, native_id])
+            except subprocess.TimeoutExpired:
+                return self.status(job_id)
+            except OSError:
+                raise RuntimeError("Slurm cancellation client is unavailable") from None
+            if reply.returncode == 0:
+                atomic_json(directory / "cancel-ack.json", {"native_id": native_id})
+            latest = self.status(job_id)
+            if reply.returncode and latest["state"] == "active":
+                raise RuntimeError("Slurm did not acknowledge cancellation of the allocation")
+            return latest
+
     def status(self, request_id):
         job_id = str(UUID(request_id))
         directory = self.location / job_id
@@ -215,6 +250,8 @@ class SlurmProfile:
         })
         if state not in TERMINAL:
             return {**snapshot, "state": "active"}
+        if state == "CANCELLED":
+            return {**snapshot, "state": "cancelled"}
         receipt_path = directory / "receipt.json"
         if not receipt_path.is_file():
             return {**snapshot, "state": "failed" if state != "COMPLETED" else "unknown"}
