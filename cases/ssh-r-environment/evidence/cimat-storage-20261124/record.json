@@ -1,0 +1,63 @@
+{
+  "source_revision": "28abf910ba238242300f359f679ff863a0da667c",
+  "hermes": "Hermes Agent v0.18.2 (2026.7.7.2)",
+  "model": "claude-sonnet-4-6",
+  "agent_answer": {
+    "reference": "hpc-artifact:sha256:b70ff35d2218a7a2bde748d26c8329ad2a0a9169dc1cd5d79680e28043083503",
+    "sha256": "b70ff35d2218a7a2bde748d26c8329ad2a0a9169dc1cd5d79680e28043083503",
+    "size_bytes": 230,
+    "verified": true
+  },
+  "verified": {
+    "tool_calls": [
+      "hpc_environment_probe",
+      "hpc_environment_prepare",
+      "hpc_environment_run_batch",
+      "hpc_verify_artifact"
+    ],
+    "input": {
+      "path": "orders.csv",
+      "source": "orders-large.csv",
+      "size_bytes": 819230,
+      "sha256": "401f79f3fa74645ba3dcfc472149567afc5f0859a95870a4ca3814cf62e5883b"
+    },
+    "script_sha256": "d73e27182f507d7f002ea2f3cdc4c586e1709f77d813c1b3df923ec8f71efed6",
+    "artifact": {
+      "path": "summary.json",
+      "size_bytes": 230,
+      "sha256": "b70ff35d2218a7a2bde748d26c8329ad2a0a9169dc1cd5d79680e28043083503",
+      "reference": "hpc-artifact:sha256:b70ff35d2218a7a2bde748d26c8329ad2a0a9169dc1cd5d79680e28043083503"
+    },
+    "route": "docker",
+    "r_version": "4.5.2",
+    "native_id": "ec24cbb6ae3ad8f447dad1f30282891129bd50c6c54bcc53265a76662f7b33e0",
+    "started_at": "2026-11-24T20:36:52.739+00:00"
+  },
+  "native_audit": {
+    "rows": 65536,
+    "summary": {
+      "r_version": "4.5.2",
+      "rows": 65536,
+      "total_revenue_cents": 411156480,
+      "regions": {
+        "centro": {
+          "units": 147456,
+          "revenue_cents": 163020800
+        },
+        "norte": {
+          "units": 65536,
+          "revenue_cents": 118784000
+        },
+        "sur": {
+          "units": 106496,
+          "revenue_cents": 129351680
+        }
+      }
+    },
+    "input_size_bytes": 819230,
+    "input_sha256": "401f79f3fa74645ba3dcfc472149567afc5f0859a95870a4ca3814cf62e5883b",
+    "input_mtime_epoch": 1795552598.943072,
+    "output_size_bytes": 230,
+    "output_sha256": "b70ff35d2218a7a2bde748d26c8329ad2a0a9169dc1cd5d79680e28043083503"
+  }
+}
