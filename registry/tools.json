@@ -352,8 +352,8 @@
       "decision": "evaluate",
       "upstream": "Molecular dynamics executable and documented input format",
       "reuse": "Run the packaged MPI executable and use its distributed force calculations and thermodynamic output.",
-      "build": "Stage the simulation inputs with hashes and recover thermodynamic samples through the existing Slurm job contract.",
-      "test": "Run fixed-volume copper dynamics with one, two and four ranks. Require matching thermodynamic curves within tolerance, atom conservation and bounded energy deviation.",
+      "build": "Stage hashed simulation inputs and recover thermodynamic samples and a restart file through the Slurm job contract. Use the verified restart file as input to a successor job.",
+      "test": "Run fixed-volume copper dynamics with one, two and four ranks and check thermodynamic agreement, atom conservation and energy deviation. Compare a continuous run with two checkpointed jobs and reject an altered checkpoint before allocation.",
       "sources": [
         "https://docs.lammps.org/stable/pair_eam.html",
         "https://doi.org/10.1103/PhysRevB.33.7983"

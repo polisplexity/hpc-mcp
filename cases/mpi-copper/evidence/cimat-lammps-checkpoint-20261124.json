@@ -1,0 +1,591 @@
+{
+  "environment": "authorized CIMAT single-node Docker pilot",
+  "date_local": "2026-11-24",
+  "timezone": "America/Mexico_City",
+  "source_revision": "990024b62e399339359be6dfdcc102ef62f2ef6e",
+  "base_source_revision": "cd1a9effbb3f2f8ab9572bdb9b1a50862e71eddb",
+  "docker_image_id": "sha256:50b0b1065be66a043f11a5b0fa999d3475eb447363baeca2a0fed909ffda17fd",
+  "base_docker_image_id": "sha256:024a31858ff35d21ebe9c8e37920df5a4333344b9c95645a653f8f6c06b34798",
+  "docker_engine": "29.4.1",
+  "mpi_transport": "Open MPI local TCP on one node",
+  "case": "checkpoint and restart of periodic fcc copper",
+  "workload": {
+    "cells_per_side": 8,
+    "atoms": 2048,
+    "ranks": 2,
+    "steps": 140,
+    "checkpoint_step": 70,
+    "sample_every": 10
+  },
+  "slurm_version": "slurm-wlm 26.05.5",
+  "mpi_version": "mpirun (Open MPI) 6.0.0rc2",
+  "input_sha256": {
+    "run.py": "ebedfeb856f497f9af595f8305d10747b08837d44e4ee38ac6a929ec196329cc",
+    "pin.py": "3461407e13b19ae0bafce06da8dfc13e0b1318173f03a88ceeca841bddce013b",
+    "in.copper": "20713501039f8d5e967472ce87671de7036778aff8c0944c8acf2650f11de0c7",
+    "in.checkpoint": "1d46297127dcaa4b3926144a7ca7191973bfb37d690b8e5b37321a72e7f6e828",
+    "in.resume": "0c166addcb91bcbd4f4cfd8d2a6a6810a4848ed4777d060a22f9b9865df32637",
+    "Cu_u3.eam": "3436c491a4c75ea8b7141adbc6ee382a118f5fdb47f609c2a660fc1eb772599f",
+    "copper.restart": "8cd79fb1c35c224608be5562dd969f43cb8688f6ae8429f9275432581c758603"
+  },
+  "checkpoint": {
+    "sha256": "8cd79fb1c35c224608be5562dd969f43cb8688f6ae8429f9275432581c758603",
+    "size_bytes": 181128,
+    "step": 70,
+    "worker_limit_bytes": 262144,
+    "resume_input_sha256": "8cd79fb1c35c224608be5562dd969f43cb8688f6ae8429f9275432581c758603"
+  },
+  "native_reference": {
+    "atoms": 2048,
+    "kernel_seconds": 0.198888,
+    "lammps_version": "4 Jul 2026",
+    "launcher_seconds": 0.9351020408794284,
+    "pinned_cpus": 2,
+    "processor_grid": [
+      1,
+      1,
+      2
+    ],
+    "ranks": 2,
+    "steps": 140,
+    "thermo": [
+      {
+        "potential_ev_per_atom": -3.5400000022802782,
+        "pressure_bar": 10515.9393520404,
+        "step": 0,
+        "temperature_k": 900.0,
+        "total_ev_per_atom": -3.4237226755549366
+      },
+      {
+        "potential_ev_per_atom": -3.497956875790542,
+        "pressure_bar": 25017.581083819,
+        "step": 10,
+        "temperature_k": 575.010494589987,
+        "total_ev_per_atom": -3.423667227846162
+      },
+      {
+        "potential_ev_per_atom": -3.449902959811191,
+        "pressure_bar": 39851.5902587246,
+        "step": 20,
+        "temperature_k": 203.521322805031,
+        "total_ev_per_atom": -3.42360860942522
+      },
+      {
+        "potential_ev_per_atom": -3.467473663630913,
+        "pressure_bar": 32557.9910260752,
+        "step": 30,
+        "temperature_k": 339.037132567165,
+        "total_ev_per_atom": -3.4236710731469824
+      },
+      {
+        "potential_ev_per_atom": -3.4804984803088233,
+        "pressure_bar": 28091.092141929,
+        "step": 40,
+        "temperature_k": 439.826029300234,
+        "total_ev_per_atom": -3.4236742637407667
+      },
+      {
+        "potential_ev_per_atom": -3.4752255574738133,
+        "pressure_bar": 31237.7532921273,
+        "step": 50,
+        "temperature_k": 399.206723157412,
+        "total_ev_per_atom": -3.423649234607671
+      },
+      {
+        "potential_ev_per_atom": -3.4827337124155955,
+        "pressure_bar": 28896.2122913936,
+        "step": 60,
+        "temperature_k": 457.233493931981,
+        "total_ev_per_atom": -3.423660503122593
+      },
+      {
+        "potential_ev_per_atom": -3.4907952999503027,
+        "pressure_bar": 25716.2417792496,
+        "step": 70,
+        "temperature_k": 519.53519659737,
+        "total_ev_per_atom": -3.4236728957280076
+      },
+      {
+        "potential_ev_per_atom": -3.483068736050557,
+        "pressure_bar": 28738.547026548,
+        "step": 80,
+        "temperature_k": 459.837508178823,
+        "total_ev_per_atom": -3.423659095851582
+      },
+      {
+        "potential_ev_per_atom": -3.477277400469834,
+        "pressure_bar": 30853.0534056074,
+        "step": 90,
+        "temperature_k": 415.07123882561,
+        "total_ev_per_atom": -3.4236514293018114
+      },
+      {
+        "potential_ev_per_atom": -3.4833725451524806,
+        "pressure_bar": 28263.0977264244,
+        "step": 100,
+        "temperature_k": 462.136554645718,
+        "total_ev_per_atom": -3.4236658749788575
+      },
+      {
+        "potential_ev_per_atom": -3.483706797500122,
+        "pressure_bar": 28031.5761786362,
+        "step": 110,
+        "temperature_k": 464.728385987368,
+        "total_ev_per_atom": -3.423665270415684
+      },
+      {
+        "potential_ev_per_atom": -3.4780326447561425,
+        "pressure_bar": 30327.1607439212,
+        "step": 120,
+        "temperature_k": 420.898072881683,
+        "total_ev_per_atom": -3.4236538639355567
+      },
+      {
+        "potential_ev_per_atom": -3.4805343701211964,
+        "pressure_bar": 29411.7876561478,
+        "step": 130,
+        "temperature_k": 440.21691559117,
+        "total_ev_per_atom": -3.4236596522054006
+      },
+      {
+        "potential_ev_per_atom": -3.4845535313515086,
+        "pressure_bar": 27866.2954078871,
+        "step": 140,
+        "temperature_k": 471.27285286599,
+        "total_ev_per_atom": -3.423666478585415
+      }
+    ],
+    "timing_share_percent": {
+      "Comm": 6.81,
+      "Neigh": 0.0,
+      "Pair": 91.17
+    }
+  },
+  "continuous": {
+    "request_id": "1c70b651-e91d-43e9-82cb-71362239f049",
+    "native_job_id": "1",
+    "native_state": "COMPLETED",
+    "native_exit_code": "0:0",
+    "manifest_sha256": "4af45f1ac94a7735e075d79a9276e9c2203a6c189e1216bf39b45cff67a33c5e",
+    "resources": {
+      "cpus": 2,
+      "memory_mib": 512,
+      "wall_time_seconds": 30
+    },
+    "started_at": "2026-11-24T07:20:45.047+00:00",
+    "finished_at": "2026-11-24T07:20:46.064+00:00",
+    "artifacts": {
+      "copper-result.json": {
+        "sha256": "2c78200e8b2e01efb90c2bbbefbff49ba0c01cf2c4e8499d9938a50a6f7e99bc",
+        "size_bytes": 2807
+      }
+    },
+    "simulation": {
+      "atoms": 2048,
+      "kernel_seconds": 0.198504,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 0.9458260461688042,
+      "pinned_cpus": 2,
+      "processor_grid": [
+        1,
+        1,
+        2
+      ],
+      "ranks": 2,
+      "steps": 140,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.5400000022802782,
+          "pressure_bar": 10515.9393520404,
+          "step": 0,
+          "temperature_k": 900.0,
+          "total_ev_per_atom": -3.4237226755549366
+        },
+        {
+          "potential_ev_per_atom": -3.497956875790542,
+          "pressure_bar": 25017.581083819,
+          "step": 10,
+          "temperature_k": 575.010494589987,
+          "total_ev_per_atom": -3.423667227846162
+        },
+        {
+          "potential_ev_per_atom": -3.449902959811191,
+          "pressure_bar": 39851.5902587246,
+          "step": 20,
+          "temperature_k": 203.521322805031,
+          "total_ev_per_atom": -3.42360860942522
+        },
+        {
+          "potential_ev_per_atom": -3.467473663630913,
+          "pressure_bar": 32557.9910260752,
+          "step": 30,
+          "temperature_k": 339.037132567165,
+          "total_ev_per_atom": -3.4236710731469824
+        },
+        {
+          "potential_ev_per_atom": -3.4804984803088233,
+          "pressure_bar": 28091.092141929,
+          "step": 40,
+          "temperature_k": 439.826029300234,
+          "total_ev_per_atom": -3.4236742637407667
+        },
+        {
+          "potential_ev_per_atom": -3.4752255574738133,
+          "pressure_bar": 31237.7532921273,
+          "step": 50,
+          "temperature_k": 399.206723157412,
+          "total_ev_per_atom": -3.423649234607671
+        },
+        {
+          "potential_ev_per_atom": -3.4827337124155955,
+          "pressure_bar": 28896.2122913936,
+          "step": 60,
+          "temperature_k": 457.233493931981,
+          "total_ev_per_atom": -3.423660503122593
+        },
+        {
+          "potential_ev_per_atom": -3.4907952999503027,
+          "pressure_bar": 25716.2417792496,
+          "step": 70,
+          "temperature_k": 519.53519659737,
+          "total_ev_per_atom": -3.4236728957280076
+        },
+        {
+          "potential_ev_per_atom": -3.483068736050557,
+          "pressure_bar": 28738.547026548,
+          "step": 80,
+          "temperature_k": 459.837508178823,
+          "total_ev_per_atom": -3.423659095851582
+        },
+        {
+          "potential_ev_per_atom": -3.477277400469834,
+          "pressure_bar": 30853.0534056074,
+          "step": 90,
+          "temperature_k": 415.07123882561,
+          "total_ev_per_atom": -3.4236514293018114
+        },
+        {
+          "potential_ev_per_atom": -3.4833725451524806,
+          "pressure_bar": 28263.0977264244,
+          "step": 100,
+          "temperature_k": 462.136554645718,
+          "total_ev_per_atom": -3.4236658749788575
+        },
+        {
+          "potential_ev_per_atom": -3.483706797500122,
+          "pressure_bar": 28031.5761786362,
+          "step": 110,
+          "temperature_k": 464.728385987368,
+          "total_ev_per_atom": -3.423665270415684
+        },
+        {
+          "potential_ev_per_atom": -3.4780326447561425,
+          "pressure_bar": 30327.1607439212,
+          "step": 120,
+          "temperature_k": 420.898072881683,
+          "total_ev_per_atom": -3.4236538639355567
+        },
+        {
+          "potential_ev_per_atom": -3.4805343701211964,
+          "pressure_bar": 29411.7876561478,
+          "step": 130,
+          "temperature_k": 440.21691559117,
+          "total_ev_per_atom": -3.4236596522054006
+        },
+        {
+          "potential_ev_per_atom": -3.4845535313515086,
+          "pressure_bar": 27866.2954078871,
+          "step": 140,
+          "temperature_k": 471.27285286599,
+          "total_ev_per_atom": -3.423666478585415
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 6.45,
+        "Neigh": 0.0,
+        "Pair": 91.56
+      }
+    }
+  },
+  "save": {
+    "request_id": "5abc62c5-f94c-466e-9f36-e9ce0ca7fa16",
+    "native_job_id": "2",
+    "native_state": "COMPLETED",
+    "native_exit_code": "0:0",
+    "manifest_sha256": "fd51af7b11dc6d40db44266d667aab3d279a0c98c2a7af4cf6e013fe9c5a765c",
+    "resources": {
+      "cpus": 2,
+      "memory_mib": 512,
+      "wall_time_seconds": 30
+    },
+    "started_at": "2026-11-24T07:20:49.045+00:00",
+    "finished_at": "2026-11-24T07:20:49.962+00:00",
+    "artifacts": {
+      "copper-result.json": {
+        "sha256": "805612ccd0936b7f1b10d920f3a5f4e974e4cdd73f808f900585691db3583036",
+        "size_bytes": 1611
+      },
+      "copper.restart": {
+        "sha256": "8cd79fb1c35c224608be5562dd969f43cb8688f6ae8429f9275432581c758603",
+        "size_bytes": 181128
+      }
+    },
+    "simulation": {
+      "atoms": 2048,
+      "kernel_seconds": 0.1069,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 0.8481749901548028,
+      "pinned_cpus": 2,
+      "processor_grid": [
+        1,
+        1,
+        2
+      ],
+      "ranks": 2,
+      "steps": 70,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.5400000022802782,
+          "pressure_bar": 10515.9393520404,
+          "step": 0,
+          "temperature_k": 900.0,
+          "total_ev_per_atom": -3.4237226755549366
+        },
+        {
+          "potential_ev_per_atom": -3.497956875790542,
+          "pressure_bar": 25017.581083819,
+          "step": 10,
+          "temperature_k": 575.010494589987,
+          "total_ev_per_atom": -3.423667227846162
+        },
+        {
+          "potential_ev_per_atom": -3.449902959811191,
+          "pressure_bar": 39851.5902587246,
+          "step": 20,
+          "temperature_k": 203.521322805031,
+          "total_ev_per_atom": -3.42360860942522
+        },
+        {
+          "potential_ev_per_atom": -3.467473663630913,
+          "pressure_bar": 32557.9910260752,
+          "step": 30,
+          "temperature_k": 339.037132567165,
+          "total_ev_per_atom": -3.4236710731469824
+        },
+        {
+          "potential_ev_per_atom": -3.4804984803088233,
+          "pressure_bar": 28091.092141929,
+          "step": 40,
+          "temperature_k": 439.826029300234,
+          "total_ev_per_atom": -3.4236742637407667
+        },
+        {
+          "potential_ev_per_atom": -3.4752255574738133,
+          "pressure_bar": 31237.7532921273,
+          "step": 50,
+          "temperature_k": 399.206723157412,
+          "total_ev_per_atom": -3.423649234607671
+        },
+        {
+          "potential_ev_per_atom": -3.4827337124155955,
+          "pressure_bar": 28896.2122913936,
+          "step": 60,
+          "temperature_k": 457.233493931981,
+          "total_ev_per_atom": -3.423660503122593
+        },
+        {
+          "potential_ev_per_atom": -3.4907952999503027,
+          "pressure_bar": 25716.2417792496,
+          "step": 70,
+          "temperature_k": 519.53519659737,
+          "total_ev_per_atom": -3.4236728957280076
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 9.1,
+        "Neigh": 0.0,
+        "Pair": 88.36
+      }
+    }
+  },
+  "resume": {
+    "request_id": "b9f1cf7c-f318-4c21-9978-9a7b18f05118",
+    "native_job_id": "3",
+    "native_state": "COMPLETED",
+    "native_exit_code": "0:0",
+    "manifest_sha256": "78adecec5abd4290d3f94aad33361fe09c4855340cd9d3080cc4c02e5ca0f654",
+    "resources": {
+      "cpus": 2,
+      "memory_mib": 512,
+      "wall_time_seconds": 30
+    },
+    "started_at": "2026-11-24T07:20:51.048+00:00",
+    "finished_at": "2026-11-24T07:20:51.966+00:00",
+    "artifacts": {
+      "copper-result.json": {
+        "sha256": "1f2e0b17f5595140842047d01db19388436782fc3b9afcafb11a77317576fa2a",
+        "size_bytes": 1628
+      }
+    },
+    "simulation": {
+      "atoms": 2048,
+      "kernel_seconds": 0.102472,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 0.8442005831748247,
+      "pinned_cpus": 2,
+      "processor_grid": [
+        1,
+        1,
+        2
+      ],
+      "ranks": 2,
+      "steps": 70,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.490795299950298,
+          "pressure_bar": 25716.2417792496,
+          "step": 70,
+          "temperature_k": 519.53519659737,
+          "total_ev_per_atom": -3.423672895728003
+        },
+        {
+          "potential_ev_per_atom": -3.483068736050557,
+          "pressure_bar": 28738.547026548,
+          "step": 80,
+          "temperature_k": 459.837508178823,
+          "total_ev_per_atom": -3.423659095851587
+        },
+        {
+          "potential_ev_per_atom": -3.4772774004698195,
+          "pressure_bar": 30853.0534056074,
+          "step": 90,
+          "temperature_k": 415.07123882561,
+          "total_ev_per_atom": -3.4236514293018017
+        },
+        {
+          "potential_ev_per_atom": -3.4833725451524757,
+          "pressure_bar": 28263.0977264245,
+          "step": 100,
+          "temperature_k": 462.136554645718,
+          "total_ev_per_atom": -3.423665874978848
+        },
+        {
+          "potential_ev_per_atom": -3.4837067975001075,
+          "pressure_bar": 28031.5761786362,
+          "step": 110,
+          "temperature_k": 464.728385987368,
+          "total_ev_per_atom": -3.423665270415669
+        },
+        {
+          "potential_ev_per_atom": -3.4780326447561327,
+          "pressure_bar": 30327.1607439212,
+          "step": 120,
+          "temperature_k": 420.898072881682,
+          "total_ev_per_atom": -3.423653863935542
+        },
+        {
+          "potential_ev_per_atom": -3.480534370121221,
+          "pressure_bar": 29411.7876561478,
+          "step": 130,
+          "temperature_k": 440.21691559117,
+          "total_ev_per_atom": -3.423659652205425
+        },
+        {
+          "potential_ev_per_atom": -3.4845535313515232,
+          "pressure_bar": 27866.2954078871,
+          "step": 140,
+          "temperature_k": 471.27285286599,
+          "total_ev_per_atom": -3.4236664785854347
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 6.12,
+        "Neigh": 0.0,
+        "Pair": 91.91
+      }
+    }
+  },
+  "modified_checkpoint": {
+    "request_id": "74bedf04-6e17-4a6a-a75d-b21a56f09ae4",
+    "altered_sha256": "9aba6f6033a847339336f63631d355eeae4f63ba21af5cfce08512c83841ec13",
+    "tool_errors": {
+      "hpc_prepare": "Error executing tool hpc_prepare: Input hash mismatch: copper.restart",
+      "hpc_slurm_submit": "Error executing tool hpc_slurm_submit: Input hash mismatch: copper.restart"
+    },
+    "submission_intent_created": false,
+    "squeue_rows": [],
+    "sacct_rows": []
+  },
+  "validation": {
+    "absolute_tolerances": {
+      "temperature_k": 0.002,
+      "potential_ev_per_atom": 1e-06,
+      "total_ev_per_atom": 1e-06,
+      "pressure_bar": 0.02
+    },
+    "continuous_vs_native": {
+      "temperature_k": 0.0,
+      "potential_ev_per_atom": 0.0,
+      "total_ev_per_atom": 0.0,
+      "pressure_bar": 0.0
+    },
+    "save_vs_continuous": {
+      "temperature_k": 0.0,
+      "potential_ev_per_atom": 0.0,
+      "total_ev_per_atom": 0.0,
+      "pressure_bar": 0.0
+    },
+    "resume_vs_continuous": {
+      "temperature_k": 9.663381206337363e-13,
+      "potential_ev_per_atom": 2.4424906541753444e-14,
+      "total_ev_per_atom": 2.4424906541753444e-14,
+      "pressure_bar": 1.0186340659856796e-10
+    },
+    "restart_boundary": {
+      "temperature_k": 0.0,
+      "potential_ev_per_atom": 4.884981308350689e-15,
+      "total_ev_per_atom": 4.440892098500626e-15,
+      "pressure_bar": 0.0
+    }
+  },
+  "copper_benchmark_smoke": {
+    "atoms": 6912,
+    "steps": 12,
+    "checks": [
+      {
+        "allocated_cpus": 1,
+        "ranks": 1,
+        "native_state": "COMPLETED",
+        "native_exit_code": "0:0"
+      },
+      {
+        "allocated_cpus": 2,
+        "ranks": 2,
+        "native_state": "COMPLETED",
+        "native_exit_code": "0:0"
+      },
+      {
+        "allocated_cpus": 4,
+        "ranks": 4,
+        "native_state": "COMPLETED",
+        "native_exit_code": "0:0"
+      }
+    ],
+    "validation": {
+      "max_difference_vs_one_rank": {
+        "temperature_k": 7.048583938740194e-12,
+        "potential_ev_per_atom": 6.437961275196358e-12,
+        "total_ev_per_atom": 6.437961275196358e-12,
+        "pressure_bar": 1.0186340659856796e-10
+      },
+      "absolute_tolerances": {
+        "temperature_k": 0.002,
+        "potential_ev_per_atom": 1e-06,
+        "total_ev_per_atom": 1e-06,
+        "pressure_bar": 0.02
+      },
+      "max_energy_deviation_ev_per_atom": 7.556918810713853e-05,
+      "energy_deviation_limit_ev_per_atom": 0.002
+    }
+  }
+}
