@@ -110,7 +110,7 @@ def timestamp():
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
 
 
-def execute(manifest, files, profile, job_id=None):
+def execute(manifest, files, profile, job_id=None, *, python_executable=None):
     if sys.platform != "linux":
         raise ValueError("The direct worker requires Linux")
     import resource
@@ -147,7 +147,7 @@ def execute(manifest, files, profile, job_id=None):
         timed_out = False
         with (root / "stdout").open("wb") as stdout, (root / "stderr").open("wb") as stderr:
             process = subprocess.Popen(
-                [sys.executable, "-I", "-B", manifest["entrypoint"], *manifest["argv"]],
+                [python_executable or sys.executable, "-I", "-B", manifest["entrypoint"], *manifest["argv"]],
                 cwd=root,
                 env={"LANG": "C.UTF-8"},
                 stdin=subprocess.DEVNULL,

@@ -9,7 +9,7 @@ from typing import Any, Literal
 from mcp.server.fastmcp import FastMCP
 
 from .client import JOB_ROOT, SSH_ALIAS, describe, prepare, run
-from . import recipes
+from . import environments, recipes
 from .slurm import SlurmProfile
 
 
@@ -51,6 +51,24 @@ def hpc_list_recipes() -> dict[str, Any]:
 def hpc_prepare_recipe(recipe: str, parameters: dict[str, Any]) -> dict[str, Any]:
     """Prepare an approved recipe from bounded parameters and return a manifest for submission."""
     return recipes.prepare_recipe(workspace(), recipe, parameters)
+
+
+@server.tool()
+def hpc_environment_probe() -> dict[str, Any]:
+    """Inspect the approved SSH target and list approved Python environments and their readiness."""
+    return environments.probe(workspace() if os.getenv(JOB_ROOT) else None)
+
+
+@server.tool()
+def hpc_environment_prepare(environment: str) -> dict[str, Any]:
+    """Install or reuse an operator-approved, wheel-locked Python environment in the SSH account."""
+    return environments.prepare(workspace(), environment)
+
+
+@server.tool()
+def hpc_environment_run_batch(environment: str, manifests: list[str]) -> dict[str, Any]:
+    """Run up to four distinct trusted workspace manifests sequentially in a prepared SSH environment."""
+    return environments.run_batch(workspace(), environment, manifests)
 
 
 @server.tool()

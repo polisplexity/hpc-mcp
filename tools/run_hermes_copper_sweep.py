@@ -23,7 +23,7 @@ TOOLS = [
 ]
 
 
-def make_profile(path, source, output, backend):
+def make_profile(path, source, output, backend, *, tools=TOOLS, tool_timeout=20):
     import yaml
 
     existing = yaml.safe_load((source / "config.yaml").read_text(encoding="utf-8"))
@@ -37,8 +37,8 @@ def make_profile(path, source, output, backend):
             "command": sys.executable,
             "args": [str(ROOT / "tools/trace_mcp.py"), "--trace", str(output / "mcp.jsonl"),
                      "--backend-stderr", str(output / "backend.stderr"), "--", *backend],
-            "connect_timeout": 45, "timeout": 20,
-            "tools": {"include": TOOLS, "resources": False, "prompts": False},
+            "connect_timeout": 45, "timeout": tool_timeout,
+            "tools": {"include": tools, "resources": False, "prompts": False},
         }},
     })
     path.mkdir(mode=0o700)
