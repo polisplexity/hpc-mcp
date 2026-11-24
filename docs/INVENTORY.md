@@ -312,12 +312,12 @@ or benchmark reference), research (later experiment).
 <a id="openmpi"></a>
 ## Open MPI
 
-**Family** — Execution environments. **Decision** — evaluate. **Status** — candidate.
+**Family** — Execution environments. **Decision** — evaluate. **Status** — mcp-verified.
 
 - **Upstream interface** — MPI runtime and launcher
-- **Reuse** — Reuse the scientific application's MPI implementation and the scheduler's allocation.
-- **Build** — Record ranks, CPUs per task, topology and image/host MPI compatibility. Leave scientific parallelization to the workload.
-- **Acceptance test** — Verify a two-rank numerical reduction with a serial reference before testing multi-node communication and speedup.
+- **Reuse** — Reuse Open MPI for process launch and communication within a Slurm allocation.
+- **Build** — Record ranks, allocated CPUs, rank affinity, transport and image versions. Leave scientific parallelization to the workload.
+- **Acceptance test** — Compare one, two and four ranks for a fixed periodic heat stencil on one node. Require identical field digests and agreement with the analytic solution, and record speedup separately for the kernel and launcher.
 - **Sources** — [Upstream source 1](https://docs.open-mpi.org/en/main/)
 
 <a id="nextflow"></a>

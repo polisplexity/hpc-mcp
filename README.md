@@ -22,6 +22,8 @@ bash cases/portable-python/docker/check.sh > slurm-test.json
 
 The [Docker recipe](cases/portable-python/SLURM.md#reproduce-from-a-clean-checkout)
 describes the inputs, package versions, limits and expected receipt.
+The [MPI heat stencil](cases/mpi-stencil/README.md) uses the same pilot to
+compare one, two and four processes on four physical cores at CIMAT.
 
 ## Job contract
 
