@@ -54,3 +54,24 @@ python -m tools.run_hermes_r --verify-only --output runs/ssh-r-environment
 
 Review any trace before sharing it. Keep the connection configuration and
 diagnostic logs private.
+
+## CIMAT acceptance on November 24, 2026
+
+Hermes probed the assigned SSH account and found no native `Rscript`. Its
+first preparation pulled the approved Rocker image. The first launch after
+the pull returned no verified receipt. A repeat on the cached image returned
+the expected artifact. The initial trace preserves that sequence.
+[Initial pull and first launch trace](evidence/cimat-hermes-20261124/cold-mcp.jsonl)
+
+The verified run confirmed exit status with Docker directly. Hermes repeated
+the complete prepare-and-run sequence twice, using the cached image and the
+same environment ID. Both jobs produced the same bytes. R 4.5.2 processed
+eight order rows and returned 50,190 total cents, with 19,900 for centro,
+14,500 for norte and 15,790 for sur. Separate Docker event reads confirmed
+that both containers started, exited 0 and were removed, and that the pinned
+image remained cached.
+[Verified MCP trace](evidence/cimat-hermes-20261124/mcp.jsonl) · [Result record](evidence/cimat-hermes-20261124/record.json) · [Docker audit](evidence/cimat-hermes-20261124/docker-audit.json)
+
+Additional MCP checks rejected a mismatched environment ID and distinguished
+an R process exiting 7 from a wall-time timeout. The public traces redact
+the transient free disk figure.

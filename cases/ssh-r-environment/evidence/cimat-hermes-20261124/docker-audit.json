@@ -1,0 +1,32 @@
+{
+  "manifest": "docker.io/rocker/r-ver@sha256:62a0fbe9896e02bf19b408a39518da1fa1bca0d6fb85b4076c8d0fd33e588123",
+  "cached_image_id": "sha256:7a38a736e48e007b30443632afe5ae59811ab7cf27a56f1023cb662f57b419e5",
+  "jobs": {
+    "58035edd0e47eb713e2c4947487003a345a63a605d8e7995e1da805886d265a2": {
+      "present_after_run": false,
+      "events": [
+        "create",
+        "attach",
+        "start",
+        "die",
+        "destroy"
+      ],
+      "exit_codes": [
+        "0"
+      ]
+    },
+    "3f9a0d765010b922990c14a7f54e54cfbf1e0a4c66d2270f83e2657eeb4dfd85": {
+      "present_after_run": false,
+      "events": [
+        "create",
+        "attach",
+        "start",
+        "die",
+        "destroy"
+      ],
+      "exit_codes": [
+        "0"
+      ]
+    }
+  }
+}

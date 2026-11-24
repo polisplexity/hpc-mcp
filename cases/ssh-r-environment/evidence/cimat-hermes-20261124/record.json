@@ -1,0 +1,50 @@
+{
+  "source_revision": "9604e47e1e30b7467b39dd41e49cbfbe43e32c17",
+  "hermes": "Hermes Agent v0.18.2 (2026.7.7.2)",
+  "model": "claude-sonnet-4-6",
+  "agent_answer": {
+    "route": "docker",
+    "environment_id": "860cd2a542ec2dba01068b80cf7b32ca1589275c518a465ad929f2cd8b1e4911",
+    "r_version": "4.5.2",
+    "total_revenue_cents": 50190,
+    "artifact_sha256": "2cce4b6c66c5d9427cf56560f8edb028635de6ee6d94483da6bcec0005e3d471",
+    "reused": true
+  },
+  "verified": {
+    "tool_calls": [
+      "hpc_environment_probe",
+      "hpc_environment_prepare",
+      "hpc_environment_run_batch",
+      "hpc_environment_prepare",
+      "hpc_environment_run_batch"
+    ],
+    "route": "docker",
+    "initial_status": "reused",
+    "environment_id": "860cd2a542ec2dba01068b80cf7b32ca1589275c518a465ad929f2cd8b1e4911",
+    "native_ids": [
+      "58035edd0e47eb713e2c4947487003a345a63a605d8e7995e1da805886d265a2",
+      "3f9a0d765010b922990c14a7f54e54cfbf1e0a4c66d2270f83e2657eeb4dfd85"
+    ],
+    "image_id": "sha256:7a38a736e48e007b30443632afe5ae59811ab7cf27a56f1023cb662f57b419e5",
+    "artifact_sha256": "2cce4b6c66c5d9427cf56560f8edb028635de6ee6d94483da6bcec0005e3d471",
+    "summary": {
+      "r_version": "4.5.2",
+      "rows": 8,
+      "regions": {
+        "centro": {
+          "units": 18,
+          "revenue_cents": 19900
+        },
+        "norte": {
+          "units": 8,
+          "revenue_cents": 14500
+        },
+        "sur": {
+          "units": 13,
+          "revenue_cents": 15790
+        }
+      },
+      "total_revenue_cents": 50190
+    }
+  }
+}
