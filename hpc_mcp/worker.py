@@ -18,7 +18,7 @@ JOB_VERSION = "polisplexity.hpc.job.v1"
 RESULT_VERSION = "polisplexity.hpc.result.v1"
 MAX_FILE_BYTES = 256 * 1024
 MAX_FILES = 8
-PROFILES = {"local": (4, 512, 30), "ssh": (1, 128, 15), "slurm": (4, 512, 30)}
+PROFILES = {"local": (4, 512, 30), "ssh": (1, 128, 15), "ssh-env": (1, 1024, 15), "slurm": (4, 512, 30)}
 PATH_SEGMENT = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}")
 
 
@@ -110,7 +110,7 @@ def timestamp():
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
 
 
-def execute(manifest, files, profile, job_id=None):
+def execute(manifest, files, profile, job_id=None, *, python_executable=None):
     if sys.platform != "linux":
         raise ValueError("The direct worker requires Linux")
     import resource
@@ -147,7 +147,7 @@ def execute(manifest, files, profile, job_id=None):
         timed_out = False
         with (root / "stdout").open("wb") as stdout, (root / "stderr").open("wb") as stderr:
             process = subprocess.Popen(
-                [sys.executable, "-I", "-B", manifest["entrypoint"], *manifest["argv"]],
+                [python_executable or sys.executable, "-I", "-B", manifest["entrypoint"], *manifest["argv"]],
                 cwd=root,
                 env={"LANG": "C.UTF-8"},
                 stdin=subprocess.DEVNULL,

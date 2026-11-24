@@ -12,7 +12,7 @@
     "version": {"const": "polisplexity.hpc.result.v1"},
     "job_id": {"type": "string", "format": "uuid"},
     "manifest_sha256": {"$ref": "#/$defs/digest"},
-    "profile": {"enum": ["local", "ssh", "slurm"]},
+    "profile": {"enum": ["local", "ssh", "ssh-env", "slurm"]},
     "native_id": {"type": "string", "pattern": "^[1-9][0-9]*$"},
     "runtime_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
     "started_at": {"type": "string", "format": "date-time"},
@@ -23,7 +23,7 @@
       "required": ["cpus", "memory_mib", "wall_time_seconds"],
       "properties": {
         "cpus": {"type": "integer", "minimum": 1, "maximum": 4},
-        "memory_mib": {"type": "integer", "minimum": 64, "maximum": 512},
+        "memory_mib": {"type": "integer", "minimum": 64, "maximum": 1024},
         "wall_time_seconds": {"type": "integer", "minimum": 1, "maximum": 30}
       }
     },

@@ -20,6 +20,22 @@
       "status": "candidate"
     },
     {
+      "id": "ssh-environment",
+      "name": "Managed Python environment over SSH",
+      "family": "Workloads and acceptance",
+      "decision": "pilot",
+      "upstream": "Python venv and pip wheel locks, executed through the authorized OpenSSH profile",
+      "reuse": "Use the existing SSH launcher, trusted workspace manifests and verified job receipts.",
+      "build": "Inspect visible resources and command availability. Prepare a pinned user environment and run a bounded batch with that interpreter.",
+      "test": "Start with a fresh private account directory. Have Hermes discover, install, run three DuckDB CSV jobs, and repeat while reusing the same installation. Verify artifact hashes and independently computed totals.",
+      "sources": [
+        "https://docs.python.org/3/library/venv.html",
+        "https://pip.pypa.io/en/stable/topics/secure-installs/",
+        "https://pypi.org/project/duckdb/1.4.5/"
+      ],
+      "status": "agent-reviewed"
+    },
+    {
       "id": "openssh",
       "name": "OpenSSH",
       "family": "Institutional targets",

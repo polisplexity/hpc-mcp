@@ -1,0 +1,55 @@
+{
+  "source_revision": "a3fdc8244d63434f227f59d39dacd3822ffca5e9",
+  "hermes": "Hermes Agent v0.18.2 (2026.7.7.2)",
+  "model": "claude-sonnet-4-6",
+  "agent_answer": {
+    "installation_id": "1232633f-e0f9-43db-a0cf-d2558b27c8ba",
+    "installed": true,
+    "reused": true,
+    "partitions": [
+      {
+        "manifest": "orders-1/job.json",
+        "total_units": 48941,
+        "sha256": "cd27f1c707e341133acaa5512f9cd21be62c75e260776631d0a75602e26ed589"
+      },
+      {
+        "manifest": "orders-2/job.json",
+        "total_units": 97973,
+        "sha256": "349039ab76ec953bcd8537f4f95dbc1c969f0e698aae20d57a0d6efcff85903f"
+      },
+      {
+        "manifest": "orders-3/job.json",
+        "total_units": 146921,
+        "sha256": "1a6f8a7d09af4eaf5702186db4c451738f0e06460c7ab9059728662b5a31435a"
+      }
+    ]
+  },
+  "verified": {
+    "tool_calls": [
+      "hpc_environment_probe",
+      "hpc_environment_prepare",
+      "hpc_environment_run_batch",
+      "hpc_environment_prepare",
+      "hpc_environment_run_batch"
+    ],
+    "installation_id": "1232633f-e0f9-43db-a0cf-d2558b27c8ba",
+    "jobs": 6,
+    "partition_results": [
+      {
+        "manifest": "orders-1/job.json",
+        "total_units": 48941,
+        "sha256": "cd27f1c707e341133acaa5512f9cd21be62c75e260776631d0a75602e26ed589"
+      },
+      {
+        "manifest": "orders-2/job.json",
+        "total_units": 97973,
+        "sha256": "349039ab76ec953bcd8537f4f95dbc1c969f0e698aae20d57a0d6efcff85903f"
+      },
+      {
+        "manifest": "orders-3/job.json",
+        "total_units": 146921,
+        "sha256": "1a6f8a7d09af4eaf5702186db4c451738f0e06460c7ab9059728662b5a31435a"
+      }
+    ]
+  }
+}

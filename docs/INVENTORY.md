@@ -1,6 +1,6 @@
 # Polisplexity HPC MCP integration inventory
 
-Edition 2026-11-24 · 43 entries.
+Edition 2026-11-24 · 44 entries.
 
 Generated from [the source registry](../registry/tools.json).
 The catalog includes deployment targets, connectors, dependencies,
@@ -14,6 +14,7 @@ or benchmark reference), research (later experiment).
 ## Contents
 
 - [CIMAT Guanajuato](#cimat) — Institutional targets
+- [Managed Python environment over SSH](#ssh-environment) — Workloads and acceptance
 - [OpenSSH](#openssh) — Institutional targets
 - [OLDT Data Factory](#oldt-data-factory) — Workloads and acceptance
 - [Local CPU reference runner](#local-worker) — Workloads and acceptance
@@ -67,6 +68,17 @@ or benchmark reference), research (later experiment).
 - **Build** — Add a local connection profile with capability discovery. Choose the bounded SSH worker or the supported queue after checking the assigned host. Keep credentials and site-specific paths outside this repository.
 - **Acceptance test** — Check account capabilities and scratch read/write with synthetic data. Run a fixed CPU fixture natively and through MCP, then transfer a public Guanajuato tile package and verify the output in OLDT. Record the available queue and actual consumption.
 - **Sources** — [Upstream source 1](https://hpc.cimat.mx/Manuales_hpc), [Upstream source 2](https://hpc.cimat.mx/Infraestructura_HPC)
+
+<a id="ssh-environment"></a>
+## Managed Python environment over SSH
+
+**Family** — Workloads and acceptance. **Decision** — pilot. **Status** — agent-reviewed.
+
+- **Upstream interface** — Python venv and pip wheel locks, executed through the authorized OpenSSH profile
+- **Reuse** — Use the existing SSH launcher, trusted workspace manifests and verified job receipts.
+- **Build** — Inspect visible resources and command availability. Prepare a pinned user environment and run a bounded batch with that interpreter.
+- **Acceptance test** — Start with a fresh private account directory. Have Hermes discover, install, run three DuckDB CSV jobs, and repeat while reusing the same installation. Verify artifact hashes and independently computed totals.
+- **Sources** — [Upstream source 1](https://docs.python.org/3/library/venv.html), [Upstream source 2](https://pip.pypa.io/en/stable/topics/secure-installs/), [Upstream source 3](https://pypi.org/project/duckdb/1.4.5/)
 
 <a id="openssh"></a>
 ## OpenSSH
