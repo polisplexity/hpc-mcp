@@ -1,4 +1,4 @@
-"""Validate and execute a bounded Python job on a trusted Linux profile."""
+"""Validate and execute a bounded job on a trusted Linux profile."""
 
 import base64
 from datetime import datetime, timezone
@@ -18,7 +18,10 @@ JOB_VERSION = "polisplexity.hpc.job.v1"
 RESULT_VERSION = "polisplexity.hpc.result.v1"
 MAX_FILE_BYTES = 256 * 1024
 MAX_FILES = 8
-PROFILES = {"local": (4, 512, 30), "ssh": (1, 128, 15), "ssh-env": (1, 1024, 15), "slurm": (4, 512, 30)}
+PROFILES = {
+    "local": (4, 512, 30), "ssh": (1, 128, 15), "ssh-env": (1, 1024, 15),
+    "ssh-r": (1, 1024, 15), "slurm": (4, 512, 30),
+}
 PATH_SEGMENT = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}")
 
 
@@ -45,8 +48,9 @@ def require_keys(value, keys):
 
 def validate_manifest(manifest, profile="local"):
     require_keys(manifest, {"version", "runtime", "entrypoint", "argv", "inputs", "outputs", "resources"})
-    if manifest["version"] != JOB_VERSION or manifest["runtime"] != "python3":
-        raise ValueError("Expected job v1 with the python3 runtime")
+    runtime = "rscript" if profile == "ssh-r" else "python3"
+    if manifest["version"] != JOB_VERSION or manifest["runtime"] != runtime:
+        raise ValueError(f"Expected job v1 with the {runtime} runtime")
     entrypoint = checked_path(manifest["entrypoint"])
     argv = manifest["argv"]
     if not isinstance(argv, list) or len(argv) > 32 or any(
@@ -66,8 +70,9 @@ def validate_manifest(manifest, profile="local"):
         if not isinstance(item["sha256"], str) or not re.fullmatch("[a-f0-9]{64}", item["sha256"]):
             raise ValueError("Input digests must be lowercase SHA-256 strings")
     output_paths = [checked_path(name) for name in outputs]
-    if entrypoint not in input_paths or entrypoint.suffix != ".py":
-        raise ValueError("The Python entrypoint must also be a hashed input")
+    suffix = ".R" if runtime == "rscript" else ".py"
+    if entrypoint not in input_paths or entrypoint.suffix != suffix:
+        raise ValueError(f"The {suffix} entrypoint must also be a hashed input")
     paths = input_paths + output_paths
     if len(paths) != len(set(paths)) or any(parent in paths for path in paths for parent in path.parents):
         raise ValueError("Input and output paths must be distinct files")
@@ -110,17 +115,9 @@ def timestamp():
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
 
 
-def execute(manifest, files, profile, job_id=None, *, python_executable=None):
-    if sys.platform != "linux":
-        raise ValueError("The direct worker requires Linux")
+def execute_native(command, root, limits, stdout, stderr):
     import resource
 
-    validate_manifest(manifest, profile)
-    slurm_id = os.getenv("SLURM_JOB_ID", "") if profile == "slurm" else None
-    if slurm_id is not None and not re.fullmatch(r"[1-9][0-9]*", slurm_id):
-        raise ValueError("A Slurm worker requires its native job ID before launch")
-    require_keys(files, {item["path"] for item in manifest["inputs"]})
-    limits = manifest["resources"]
     available_cpus = sorted(os.sched_getaffinity(0))
     if len(available_cpus) < limits["cpus"]:
         raise ValueError("Requested CPU count exceeds the worker's visible affinity")
@@ -131,6 +128,37 @@ def execute(manifest, files, profile, job_id=None, *, python_executable=None):
         resource.setrlimit(resource.RLIMIT_CPU, (limits["wall_time_seconds"],) * 2)
         resource.setrlimit(resource.RLIMIT_FSIZE, (MAX_FILE_BYTES,) * 2)
         resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+
+    process = subprocess.Popen(
+        command, cwd=root, env={"LANG": "C.UTF-8"}, stdin=subprocess.DEVNULL, stdout=stdout,
+        stderr=stderr, start_new_session=True, preexec_fn=apply_limits,
+    )
+    timed_out = False
+    try:
+        process.wait(timeout=limits["wall_time_seconds"])
+    except subprocess.TimeoutExpired:
+        timed_out = True
+    finally:
+        # Reap children that stayed in the job's process group before reading outputs.
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        process.wait()
+    return process.returncode, timed_out, str(process.pid)
+
+
+def execute(manifest, files, profile, job_id=None, *, python_executable=None, launcher=None, runtime_version=None):
+    if sys.platform != "linux":
+        raise ValueError("The direct worker requires Linux")
+    validate_manifest(manifest, profile)
+    if profile == "ssh-r" and (launcher is None or runtime_version is None):
+        raise ValueError("The R job requires a prepared R environment")
+    slurm_id = os.getenv("SLURM_JOB_ID", "") if profile == "slurm" else None
+    if slurm_id is not None and not re.fullmatch(r"[1-9][0-9]*", slurm_id):
+        raise ValueError("A Slurm worker requires its native job ID before launch")
+    require_keys(files, {item["path"] for item in manifest["inputs"]})
+    limits = manifest["resources"]
 
     with TemporaryDirectory(prefix="polisplexity-hpc-") as directory:
         root = Path(directory).resolve()
@@ -144,29 +172,12 @@ def execute(manifest, files, profile, job_id=None, *, python_executable=None):
             target.write_bytes(data)
 
         started_at = timestamp()
-        timed_out = False
         with (root / "stdout").open("wb") as stdout, (root / "stderr").open("wb") as stderr:
-            process = subprocess.Popen(
-                [python_executable or sys.executable, "-I", "-B", manifest["entrypoint"], *manifest["argv"]],
-                cwd=root,
-                env={"LANG": "C.UTF-8"},
-                stdin=subprocess.DEVNULL,
-                stdout=stdout,
-                stderr=stderr,
-                start_new_session=True,
-                preexec_fn=apply_limits,
-            )
-            try:
-                process.wait(timeout=limits["wall_time_seconds"])
-            except subprocess.TimeoutExpired:
-                timed_out = True
-            finally:
-                # Reap children that stayed in the job's process group before reading outputs.
-                try:
-                    os.killpg(process.pid, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
-                process.wait()
+            if launcher is None:
+                command = [python_executable or sys.executable, "-I", "-B", manifest["entrypoint"], *manifest["argv"]]
+                exit_code, timed_out, native_id = execute_native(command, root, limits, stdout, stderr)
+            else:
+                exit_code, timed_out, native_id = launcher(root, manifest, stdout, stderr)
         finished_at = timestamp()
         artifacts, unavailable = [], []
         for name in manifest["outputs"]:
@@ -177,7 +188,7 @@ def execute(manifest, files, profile, job_id=None, *, python_executable=None):
                 artifacts.append(item)
         if timed_out:
             status = "timed_out"
-        elif process.returncode:
+        elif exit_code:
             status = "failed"
         elif unavailable:
             status = "missing_outputs"
@@ -188,13 +199,13 @@ def execute(manifest, files, profile, job_id=None, *, python_executable=None):
             "job_id": job_id or str(uuid.uuid4()),
             "manifest_sha256": digest(canonical(manifest)),
             "profile": profile,
-            "native_id": slurm_id or str(process.pid),
-            "runtime_version": ".".join(map(str, sys.version_info[:3])),
+            "native_id": slurm_id or native_id,
+            "runtime_version": runtime_version or ".".join(map(str, sys.version_info[:3])),
             "started_at": started_at,
             "finished_at": finished_at,
             "resources": limits,
             "status": status,
-            "exit_code": process.returncode,
+            "exit_code": exit_code,
             "artifacts": artifacts,
             "unavailable_outputs": unavailable,
             "logs": {name: artifact(root, name) for name in ("stdout", "stderr")},

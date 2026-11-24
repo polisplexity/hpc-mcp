@@ -15,7 +15,7 @@ from .slurm import SlurmProfile
 
 server = FastMCP("Polisplexity HPC MCP")
 DirectProfile = Literal["local", "ssh"]
-Profile = Literal["local", "ssh", "ssh-env", "slurm"]
+Profile = Literal["local", "ssh", "ssh-env", "ssh-r", "slurm"]
 
 
 def workspace():
@@ -55,20 +55,22 @@ def hpc_prepare_recipe(recipe: str, parameters: dict[str, Any]) -> dict[str, Any
 
 @server.tool()
 def hpc_environment_probe() -> dict[str, Any]:
-    """Inspect the approved SSH target and list approved Python environments and their readiness."""
+    """Inspect the SSH target and list approved runtimes, including native R and approved Docker images."""
     return environments.probe(workspace() if os.getenv(JOB_ROOT) else None)
 
 
 @server.tool()
 def hpc_environment_prepare(environment: str) -> dict[str, Any]:
-    """Install or reuse an operator-approved, wheel-locked Python environment in the SSH account."""
+    """Prepare or reuse an approved Python wheel lock or R environment on the SSH target."""
     return environments.prepare(workspace(), environment)
 
 
 @server.tool()
-def hpc_environment_run_batch(environment: str, manifests: list[str]) -> dict[str, Any]:
-    """Run up to four distinct trusted workspace manifests sequentially in a prepared SSH environment."""
-    return environments.run_batch(workspace(), environment, manifests)
+def hpc_environment_run_batch(
+    environment: str, manifests: list[str], expected_environment_id: str | None = None,
+) -> dict[str, Any]:
+    """Run trusted workspace manifests sequentially. For R, supply the environment ID from prepare."""
+    return environments.run_batch(workspace(), environment, manifests, expected_environment_id)
 
 
 @server.tool()

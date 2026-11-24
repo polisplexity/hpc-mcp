@@ -6,8 +6,8 @@
   "required": ["version", "runtime", "entrypoint", "argv", "inputs", "outputs", "resources"],
   "properties": {
     "version": {"const": "polisplexity.hpc.job.v1"},
-    "runtime": {"const": "python3"},
-    "entrypoint": {"allOf": [{"$ref": "#/$defs/path"}, {"pattern": "\\.py$"}]},
+    "runtime": {"enum": ["python3", "rscript"]},
+    "entrypoint": {"$ref": "#/$defs/path"},
     "argv": {
       "type": "array",
       "maxItems": 32,
@@ -45,6 +45,13 @@
       }
     }
   },
+  "allOf": [
+    {
+      "if": {"properties": {"runtime": {"const": "rscript"}}},
+      "then": {"properties": {"entrypoint": {"pattern": "\\.R$"}}},
+      "else": {"properties": {"entrypoint": {"pattern": "\\.py$"}}}
+    }
+  ],
   "$defs": {
     "path": {
       "type": "string",

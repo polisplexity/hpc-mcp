@@ -1,4 +1,4 @@
-"""Manage operator-approved Python environments on the configured SSH target."""
+"""Manage operator-approved environments on the configured SSH target."""
 
 import base64
 import json
@@ -7,12 +7,13 @@ from pathlib import Path
 import re
 import subprocess
 
-from . import client, environment_worker, worker
+from . import client, environment_worker, r_worker, worker
 
 
 ENV_ROOT = "POLISPLEXITY_HPC_SSH_ENV_ROOT"
 MAX_BATCH_JOBS = 4
 PROFILE = "ssh-env"
+R_PROFILE = "ssh-r"
 
 
 def environment_lock(workspace, name):
@@ -22,6 +23,17 @@ def environment_lock(workspace, name):
         lock = json.loads(worker.read_file(workspace, f"environments/{name}.json"))
     except FileNotFoundError:
         raise ValueError("The environment is not approved in this workspace") from None
+    if isinstance(lock, dict) and "r_version" in lock:
+        worker.require_keys(lock, {"r_version", "image", "platform"})
+        if not isinstance(lock["r_version"], str) or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", lock["r_version"]):
+            raise ValueError("Specify the exact approved R version")
+        if not isinstance(lock["image"], str) or not re.fullmatch(
+            r"[a-z0-9][a-z0-9.-]*(?::[0-9]+)?(?:/[a-z0-9][a-z0-9._-]*)+@sha256:[a-f0-9]{64}", lock["image"]
+        ):
+            raise ValueError("Lock the approved R image by registry and digest")
+        if lock["platform"] not in ("linux/amd64", "linux/arm64"):
+            raise ValueError("Lock a supported Linux image platform")
+        return lock
     worker.require_keys(lock, {"packages"})
     packages = lock["packages"]
     if not isinstance(packages, list) or not 1 <= len(packages) <= 24:
@@ -49,8 +61,8 @@ def environment_lock(workspace, name):
 def request(action, timeout, **payload):
     command = client.ssh_python(os.getenv(client.SSH_ALIAS))
     body = worker.canonical({"action": action, "root": os.getenv(ENV_ROOT), **payload})
-    source = Path(worker.__file__).read_bytes() + b"\n" + Path(environment_worker.__file__).read_bytes()
-    source += f"\nenvironment_dispatch({body!r}, execute)\n".encode("ascii")
+    source = b"\n".join(Path(module.__file__).read_bytes() for module in (worker, environment_worker, r_worker))
+    source += f"\nenvironment_dispatch({body!r}, execute, execute_native, RRuntime(MAX_FILE_BYTES))\n".encode("ascii")
     try:
         result = subprocess.run(command, input=source, capture_output=True, check=True, timeout=timeout)
         envelope = json.loads(result.stdout)
@@ -74,16 +86,22 @@ def probe(workspace=None):
 
 
 def prepare(workspace, name):
-    return request("prepare", 120, name=name, lock=environment_lock(workspace, name))
+    lock = environment_lock(workspace, name)
+    return request("prepare", 215 if "r_version" in lock else 120, name=name, lock=lock)
 
 
-def run_batch(workspace, name, manifests):
+def run_batch(workspace, name, manifests, expected_environment_id=None):
     if not 1 <= len(manifests) <= MAX_BATCH_JOBS or len(set(manifests)) != len(manifests):
         raise ValueError("Supply one to four distinct trusted job manifests")
     lock = environment_lock(workspace, name)
-    jobs = [client.prepare(workspace, manifest, PROFILE) for manifest in manifests]
-    timeout = sum(job["manifest"]["resources"]["wall_time_seconds"] for job in jobs) + 35
-    batch = request("batch", timeout, name=name, lock=lock, jobs=jobs, profile=PROFILE)
+    profile = R_PROFILE if "r_version" in lock else PROFILE
+    if profile == R_PROFILE and not (expected_environment_id and re.fullmatch(r"[a-f0-9]{64}", expected_environment_id)):
+        raise ValueError("Supply the environment ID returned when preparing the R environment")
+    jobs = [client.prepare(workspace, manifest, profile) for manifest in manifests]
+    launch_overhead = 40 * len(jobs) if profile == R_PROFILE else 0
+    timeout = sum(job["manifest"]["resources"]["wall_time_seconds"] for job in jobs) + 35 + launch_overhead
+    batch = request("batch", timeout, name=name, lock=lock, jobs=jobs, profile=profile,
+                    expected_environment_id=expected_environment_id)
     results = []
     for manifest, receipt, job in zip(manifests, batch.pop("receipts"), jobs, strict=True):
         client.verify_receipt(receipt, job)
