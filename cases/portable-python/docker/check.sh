@@ -24,7 +24,11 @@ container="polisplexity-slurm-test-$id"
 network="polisplexity-slurm-test-net-$id"
 owner="org.polisplexity.slurm-test=$id"
 
-docker network create --internal --driver bridge --label "$owner" "$network" >/dev/null
+subnet=()
+if [[ -n ${POLISPLEXITY_SLURM_TEST_SUBNET:-} ]]; then
+    subnet=(--subnet "$POLISPLEXITY_SLURM_TEST_SUBNET")
+fi
+docker network create --internal --driver bridge "${subnet[@]}" --label "$owner" "$network" >/dev/null
 cleanup() {
     local status=$?
     trap - EXIT

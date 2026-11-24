@@ -1,7 +1,7 @@
 """Relay a stdio MCP connection and record its tool requests and responses."""
 
 import argparse
-from contextlib import suppress
+from contextlib import ExitStack, suppress
 import json
 import os
 from pathlib import Path
@@ -18,10 +18,15 @@ def message(line):
     return value if isinstance(value, dict) else {}
 
 
-def trace_stdio(command, destination):
+def trace_stdio(command, destination, backend_stderr=None):
     descriptor = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-    with os.fdopen(descriptor, "w", encoding="utf-8") as trace:
-        child = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    with ExitStack() as files:
+        trace = files.enter_context(os.fdopen(descriptor, "w", encoding="utf-8"))
+        log = None
+        if backend_stderr is not None:
+            log_fd = os.open(backend_stderr, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            log = files.enter_context(os.fdopen(log_fd, "wb"))
+        child = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=log)
         pending = set()
         lock = Lock()
 
@@ -77,12 +82,13 @@ def trace_stdio(command, destination):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--trace", required=True, type=Path)
+    parser.add_argument("--backend-stderr", type=Path, help="Write backend stderr to a separate new file")
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
     if not command:
         parser.error("Provide the MCP launch command after --")
-    sys.exit(trace_stdio(command, args.trace))
+    sys.exit(trace_stdio(command, args.trace, args.backend_stderr))
 
 
 if __name__ == "__main__":

@@ -3,6 +3,10 @@
 Open project for letting MCP-capable clients prepare, submit, track and recover
 versioned scientific jobs on high-performance computing infrastructure.
 
+Use the [installation and Hermes acceptance test](INSTALL.md) to build
+HPC MCP and reproduce the copper recipe workflow with your own Docker
+engine and configured Hermes model.
+
 Start with the [integration inventory](docs/INVENTORY.md), the
 [CIMAT connectivity pilot](cases/cimat-guanajuato/README.md) and
 [the portable Python case](cases/portable-python/README.md).

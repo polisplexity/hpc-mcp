@@ -41,6 +41,10 @@ references. [Agent trace](evidence/cimat-hermes-copper-sweep-20261124.jsonl) · 
 
 ## Reproduce
 
+For an end-to-end command that builds the full image, runs Hermes and
+verifies the comparison, follow the [release installation](../../INSTALL.md).
+The steps below describe how to connect the fixture to an existing profile.
+
 Build the base [copper image](README.md#reproduce) from a committed checkout,
 then build the recipe overlay.
 
