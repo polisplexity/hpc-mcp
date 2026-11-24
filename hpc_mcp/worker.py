@@ -18,7 +18,7 @@ JOB_VERSION = "polisplexity.hpc.job.v1"
 RESULT_VERSION = "polisplexity.hpc.result.v1"
 MAX_FILE_BYTES = 256 * 1024
 MAX_FILES = 8
-PROFILES = {"local": (4, 512, 30), "ssh": (1, 128, 15), "slurm": (4, 512, 30)}
+PROFILES = {"local": (4, 512, 30), "ssh": (1, 128, 15), "ssh-env": (1, 1024, 15), "slurm": (4, 512, 30)}
 PATH_SEGMENT = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}")
 
 

@@ -12,6 +12,7 @@ from . import client, environment_worker, worker
 
 ENV_ROOT = "POLISPLEXITY_HPC_SSH_ENV_ROOT"
 MAX_BATCH_JOBS = 4
+PROFILE = "ssh-env"
 
 
 def environment_lock(workspace, name):
@@ -65,7 +66,11 @@ def probe(workspace=None):
     if workspace is not None:
         for path in sorted((workspace / "environments").glob("*.json")):
             locks[path.stem] = environment_lock(workspace, path.stem)
-    return request("probe", 30, locks=locks)
+    cpus, memory, wall_time = worker.PROFILES[PROFILE]
+    ceilings = {"jobs_per_batch": MAX_BATCH_JOBS, "parallel_jobs_per_batch": 1,
+                "cpus_per_job": cpus, "memory_mib_per_job": memory,
+                "wall_time_seconds_per_job": wall_time, "bytes_per_file": worker.MAX_FILE_BYTES}
+    return {**request("probe", 30, locks=locks), "job_limits": ceilings}
 
 
 def prepare(workspace, name):
@@ -76,9 +81,9 @@ def run_batch(workspace, name, manifests):
     if not 1 <= len(manifests) <= MAX_BATCH_JOBS or len(set(manifests)) != len(manifests):
         raise ValueError("Supply one to four distinct trusted job manifests")
     lock = environment_lock(workspace, name)
-    jobs = [client.prepare(workspace, manifest, "ssh") for manifest in manifests]
+    jobs = [client.prepare(workspace, manifest, PROFILE) for manifest in manifests]
     timeout = sum(job["manifest"]["resources"]["wall_time_seconds"] for job in jobs) + 35
-    batch = request("batch", timeout, name=name, lock=lock, jobs=jobs)
+    batch = request("batch", timeout, name=name, lock=lock, jobs=jobs, profile=PROFILE)
     for manifest, receipt, job in zip(manifests, batch["receipts"], jobs, strict=True):
         client.verify_receipt(receipt, job)
         receipt["manifest"] = manifest

@@ -15,7 +15,7 @@ from .slurm import SlurmProfile
 
 server = FastMCP("Polisplexity HPC MCP")
 DirectProfile = Literal["local", "ssh"]
-Profile = Literal["local", "ssh", "slurm"]
+Profile = Literal["local", "ssh", "ssh-env", "slurm"]
 
 
 def workspace():

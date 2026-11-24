@@ -38,7 +38,7 @@ def fixture(workspace):
             "version": worker.JOB_VERSION, "runtime": "python3", "entrypoint": "aggregate.py", "argv": [],
             "inputs": [{"path": file, "sha256": worker.digest((folder / file).read_bytes())}
                        for file in ("aggregate.py", "orders.csv")],
-            "outputs": ["summary.json"], "resources": {"cpus": 1, "memory_mib": 128, "wall_time_seconds": 15},
+            "outputs": ["summary.json"], "resources": {"cpus": 1, "memory_mib": 1024, "wall_time_seconds": 15},
         }))
 
 
@@ -75,7 +75,7 @@ def verify(trace, claims, workspace):
                 and batch["parallel_jobs"] == 1 and batch["name"] == "duckdb", "Batch environment mismatch")
         rows = []
         for manifest, job in zip(MANIFESTS, batch["receipts"], strict=True):
-            client.verify_receipt(job, client.prepare(workspace, manifest, "ssh"))
+            client.verify_receipt(job, client.prepare(workspace, manifest, environments.PROFILE))
             require(job["manifest"] == manifest and job["status"] == "succeeded" and job["exit_code"] == 0
                     and job["native_id"].isdecimal() and job["job_id"] not in job_ids,
                     "An SSH job failed or its receipt was repeated")

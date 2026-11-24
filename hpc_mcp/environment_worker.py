@@ -128,8 +128,6 @@ def inventory(root_value, locks):
              "state": "ready" if root and ready(root / fingerprint(lock)) else "needs_preparation"}
             for name, lock in locks.items()
         ],
-        "job_limits": {"parallel_jobs_per_batch": 1, "cpus_per_job": 1, "memory_mib_per_job": 128,
-                       "wall_time_seconds_per_job": 15, "bytes_per_file": 262144},
     }
 
 
@@ -201,7 +199,7 @@ def environment_dispatch(request, execute_job):
                         raise ValueError("Prepare this approved environment before running the batch")
                     check_versions(python, versions)
                     receipts = [
-                        execute_job(job["manifest"], job["files"], "ssh", python_executable=python)
+                        execute_job(job["manifest"], job["files"], body["profile"], python_executable=python)
                         for job in body["jobs"]
                     ]
                     result = {**record, "name": body["name"], "parallel_jobs": 1, "receipts": receipts}
