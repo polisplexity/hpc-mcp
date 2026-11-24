@@ -22,11 +22,14 @@ def prepare(root, manifest_path, profile):
     root = root.resolve(strict=True)
     manifest_file = worker.checked_path(manifest_path)
     manifest = json.loads(worker.read_file(root, manifest_path))
+    return prepare_manifest(root / manifest_file.parent, manifest, profile)
+
+
+def prepare_manifest(directory, manifest, profile):
     worker.validate_manifest(manifest, profile)
-    package = root / manifest_file.parent
     files = {}
     for item in manifest["inputs"]:
-        data = worker.read_file(package, item["path"])
+        data = worker.read_file(directory, item["path"])
         if worker.digest(data) != item["sha256"]:
             raise ValueError(f"Input hash mismatch: {item['path']}")
         files[item["path"]] = base64.b64encode(data).decode("ascii")
