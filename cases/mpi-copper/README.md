@@ -77,10 +77,27 @@ was 1.51 × 10⁻¹¹ K. The largest sampled total-energy deviation from the
 initial value was 1.13 × 10⁻⁴ eV per atom. A direct one-rank run in the
 same image reproduced the thermodynamic samples.
 
+## Capacity follow-up
+
+This exploratory benchmark fits the Docker profile's four-core and 30-second
+worker limits. A future capacity review can use these measurements when an
+applied workload specifies its trajectory length and turnaround target.
+
 At four ranks, a median of 94.29% of integration time went to the force
-calculation and 3.60% to MPI communication. This supports a targeted trial
-of eight physical cores on the same node, with five minutes of worker time
-per job. The measured 140-step segment fits the current limit. A 10 ps
-trajectory would need 5,000 steps, about three minutes of integration at
-the measured four-rank rate. That estimate extrapolates the short
-trajectory's throughput. The eight-core speedup remains to be measured.
+calculation and 3.60% to MPI communication. A 10 ps trajectory would need
+5,000 steps, about three minutes of integration if the measured four-rank
+rate holds. Eight physical cores on one node and five minutes per job are
+a candidate configuration for a future trial. The time estimate is an
+extrapolation from the 140-step segment. The benchmark measures up to
+four cores.
+
+## Proposed checkpoint test
+
+Use the same Docker pilot, LAMMPS build and copper model. Choose a smaller
+crystal whose binary checkpoint fits the worker's 256 KiB per-file limit.
+Compare one continuous run with two Slurm jobs that cover the same total
+steps. The first job exports a checkpoint. The second consumes it as a
+verified input, restores the EAM settings and integrator, and continues
+from the saved timestep. Accept the result if the atom count and sampled
+thermodynamics agree within tolerance, and verify that a changed checkpoint
+is rejected before submission. [LAMMPS restart format](https://docs.lammps.org/read_restart.html) · [EAM restart behavior](https://docs.lammps.org/stable/pair_eam.html)
