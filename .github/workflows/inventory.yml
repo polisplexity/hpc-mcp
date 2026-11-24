@@ -45,3 +45,7 @@ jobs:
         run: |
           python -m tools.run_hermes_r --verify-only \
             --output cases/ssh-r-environment/evidence/cimat-hermes-20261124
+      - name: Verify recorded Hermes node data and persistent R artifact
+        run: |
+          python -m tools.run_hermes_r_storage --verify-only \
+            --output cases/ssh-r-environment/evidence/cimat-storage-20261124

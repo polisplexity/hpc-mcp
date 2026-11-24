@@ -1,6 +1,6 @@
 # Polisplexity HPC MCP integration inventory
 
-Edition 2026-11-24 · 45 entries.
+Edition 2026-11-24 · 46 entries.
 
 Generated from [the source registry](../registry/tools.json).
 The catalog includes deployment targets, connectors, dependencies,
@@ -16,6 +16,7 @@ or benchmark reference), research (later experiment).
 - [CIMAT Guanajuato](#cimat) — Institutional targets
 - [Managed Python environment over SSH](#ssh-environment) — Workloads and acceptance
 - [Native R and pinned Rocker images over SSH](#ssh-r-environment) — Workloads and acceptance
+- [Node-resident datasets and stored output references](#ssh-data-references) — Data movement
 - [OpenSSH](#openssh) — Institutional targets
 - [OLDT Data Factory](#oldt-data-factory) — Workloads and acceptance
 - [Local CPU reference runner](#local-worker) — Workloads and acceptance
@@ -91,6 +92,17 @@ or benchmark reference), research (later experiment).
 - **Build** — Select native R when its version matches the lock. Otherwise prepare a digest-pinned Docker image and bind jobs to the observed environment ID.
 - **Acceptance test** — Have Hermes discover R availability, prepare the approved environment, and run the same CSV summary twice. Compare independent totals and confirm the same environment and separate native jobs.
 - **Sources** — [Upstream source 1](https://rocker-project.org/images/versioned/r-ver), [Upstream source 2](https://docs.docker.com/reference/cli/docker/container/run/)
+
+<a id="ssh-data-references"></a>
+## Node-resident datasets and stored output references
+
+**Family** — Data movement. **Decision** — pilot. **Status** — agent-reviewed.
+
+- **Upstream interface** — Linux account storage over the existing authorized SSH profile
+- **Reuse** — Use the trusted R manifest, input digests and portable result receipts.
+- **Build** — Stage a pinned node file beneath the private dataset root. Publish declared outputs by SHA-256 and verify a saved object through MCP.
+- **Acceptance test** — Run the same R script via Hermes against a node CSV above 256 KiB. Check the stored result against an independent calculation and verify the reference from a new session.
+- **Sources** — [Upstream source 1](https://docs.python.org/3/library/hashlib.html)
 
 <a id="openssh"></a>
 ## OpenSSH

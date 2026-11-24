@@ -55,6 +55,8 @@ python -m tools.run_hermes_r --verify-only --output runs/ssh-r-environment
 Review any trace before sharing it. Keep the connection configuration and
 diagnostic logs private.
 
+[Run the same script using a node-resident file and a stored result](STORAGE.md)
+
 ## CIMAT acceptance on November 24, 2026
 
 Hermes probed the assigned SSH account and found no native `Rscript`. Its

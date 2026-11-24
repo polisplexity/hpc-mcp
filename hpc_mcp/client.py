@@ -29,6 +29,8 @@ def prepare_manifest(directory, manifest, profile):
     worker.validate_manifest(manifest, profile)
     files = {}
     for item in manifest["inputs"]:
+        if "source" in item:
+            continue
         data = worker.read_file(directory, item["path"])
         if worker.digest(data) != item["sha256"]:
             raise ValueError(f"Input hash mismatch: {item['path']}")
@@ -57,7 +59,18 @@ def verify_receipt(receipt, package):
     available += receipt["unavailable_outputs"]
     if sorted(available) != sorted(prepared["outputs"]):
         raise RuntimeError("Worker receipt does not cover the declared outputs")
-    for item in receipt["artifacts"] + list(receipt["logs"].values()):
+    if package["manifest"].get("output_mode") == "reference":
+        for item in receipt["artifacts"]:
+            worker.require_keys(item, {"path", "size_bytes", "sha256", "reference"})
+            if not re.fullmatch(r"[a-f0-9]{64}", item["sha256"]) or (
+                item["reference"] != worker.ARTIFACT_REFERENCE + item["sha256"]
+                or type(item["size_bytes"]) is not int or not 0 <= item["size_bytes"] <= worker.MAX_FILE_BYTES
+            ):
+                raise RuntimeError("Invalid SSH artifact reference")
+        inline = []
+    else:
+        inline = receipt["artifacts"]
+    for item in inline + list(receipt["logs"].values()):
         if item is None:
             continue
         data = base64.b64decode(item["base64"], validate=True)

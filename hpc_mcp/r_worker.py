@@ -138,7 +138,7 @@ class RRuntime:
         finally:
             self.docker_output("container", "rm", "--force", container, timeout=12)
 
-    def run(self, selection, job, execute_job, execute_native):
+    def run(self, selection, job, execute_job, execute_native, storage=None):
         def launch(root, manifest, stdout, stderr):
             if selection["route"] == "docker":
                 return self.launch_container(selection, root, manifest, stdout, stderr)
@@ -146,4 +146,6 @@ class RRuntime:
             return execute_native(command, root, manifest["resources"], stdout, stderr)
 
         return execute_job(job["manifest"], job["files"], job["profile"],
-                           launcher=launch, runtime_version=selection["r_version"])
+                           launcher=launch, runtime_version=selection["r_version"],
+                           stage_input=storage.stage if storage else None,
+                           store_output=storage.store if storage else None)

@@ -51,6 +51,18 @@
       "status": "agent-reviewed"
     },
     {
+      "id": "ssh-data-references",
+      "name": "Node-resident datasets and stored output references",
+      "family": "Data movement",
+      "decision": "pilot",
+      "upstream": "Linux account storage over the existing authorized SSH profile",
+      "reuse": "Use the trusted R manifest, input digests and portable result receipts.",
+      "build": "Stage a pinned node file beneath the private dataset root. Publish declared outputs by SHA-256 and verify a saved object through MCP.",
+      "test": "Run the same R script via Hermes against a node CSV above 256 KiB. Check the stored result against an independent calculation and verify the reference from a new session.",
+      "sources": ["https://docs.python.org/3/library/hashlib.html"],
+      "status": "agent-reviewed"
+    },
+    {
       "id": "openssh",
       "name": "OpenSSH",
       "family": "Institutional targets",
