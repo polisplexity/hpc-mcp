@@ -7,7 +7,7 @@ import re
 from tempfile import NamedTemporaryFile
 
 from .client import describe, prepare_manifest
-from .worker import canonical, read_file
+from .worker import canonical, checked_path, read_file
 
 
 VERSION = "polisplexity.hpc.recipe.v1"
@@ -47,7 +47,7 @@ def prepare_recipe(root, recipe, parameters):
         for arg in template["argv"]
     ]}
     prepared = describe(prepare_manifest(root / directory, manifest, spec["profile"]))
-    path = directory / f"job-{prepared['manifest_sha256']}.json"
+    path = checked_path((directory / prepared["manifest_sha256"]).as_posix())
     with NamedTemporaryFile(dir=root / directory, delete=False) as stream:
         temporary = Path(stream.name)
         try:
