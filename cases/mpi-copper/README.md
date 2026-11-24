@@ -91,13 +91,43 @@ a candidate configuration for a future trial. The time estimate is an
 extrapolation from the 140-step segment. The benchmark measures up to
 four cores.
 
-## Proposed checkpoint test
+## Checkpoint and restart
 
-Use the same Docker pilot, LAMMPS build and copper model. Choose a smaller
-crystal whose binary checkpoint fits the worker's 256 KiB per-file limit.
-Compare one continuous run with two Slurm jobs that cover the same total
-steps. The first job exports a checkpoint. The second consumes it as a
-verified input, restores the EAM settings and integrator, and continues
-from the saved timestep. Accept the result if the atom count and sampled
-thermodynamics agree within tolerance, and verify that a changed checkpoint
-is rejected before submission. [LAMMPS restart format](https://docs.lammps.org/read_restart.html) · [EAM restart behavior](https://docs.lammps.org/stable/pair_eam.html)
+The CIMAT pilot compared 140 continuous steps with two separate 70-step jobs
+using the same model, engine and two MPI ranks on one node. The smaller
+crystal had 2,048 atoms. LAMMPS wrote a 181,128-byte binary checkpoint at
+step 70. The client recovered those bytes from the first HPC MCP receipt and
+used the verified SHA-256 as an input to the second job. The resumed input
+reapplies the EAM potential and the NVE integrator. [LAMMPS restart format](https://docs.lammps.org/read_restart.html) · [EAM restart behavior](https://docs.lammps.org/stable/pair_eam.html)
+
+All three Slurm jobs completed and retained 2,048 atoms. The continuous
+Slurm run reproduced the direct reference. Across resumed samples, the
+maximum differences from the continuous run were 9.66 × 10⁻¹³ K in
+temperature, 2.44 × 10⁻¹⁴ eV per atom in total energy, and 1.02 × 10⁻¹⁰
+bar in pressure. Both preparation and submission rejected a one-byte change
+to the checkpoint. The rejected request created zero Slurm queue or
+accounting records. [Recorded checkpoint evidence](evidence/cimat-lammps-checkpoint-20261124.json)
+
+The test covers a scheduled handoff between jobs on the same LAMMPS build
+and platform. Its checkpoint fits the portable contract's 256 KiB limit
+for each input and output file.
+
+### Reproduce the checkpoint test
+
+First build the LAMMPS image using the [copper recipe](#reproduce). Then add
+the checkpoint fixture and verifier from a committed checkout.
+
+```sh
+revision=$(git rev-parse HEAD)
+image=polisplexity-hpc/mpi-copper-checkpoint:local
+git archive "$revision" cases/mpi-copper/run.py cases/mpi-copper/in.checkpoint \
+  cases/mpi-copper/in.resume cases/mpi-copper/docker/Dockerfile.checkpoint \
+  tools/check_mpi_copper.py tools/check_mpi_copper_checkpoint.py |
+  docker build --file cases/mpi-copper/docker/Dockerfile.checkpoint \
+    --label "org.opencontainers.image.revision=$revision" --tag "$image" -
+
+# Set CPU IDs for two distinct physical cores on one NUMA node.
+cpu_ids=0,1
+POLISPLEXITY_SLURM_TEST_CPUS=2 POLISPLEXITY_SLURM_TEST_CPUSET="$cpu_ids" \
+  bash cases/portable-python/docker/check.sh "$image" > checkpoint-report.json
+```

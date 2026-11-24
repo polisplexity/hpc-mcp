@@ -14,7 +14,7 @@ THERMO_HEADER = "Step Atoms Temp PotEng TotEng Press".split()
 THERMO_KEYS = ("temperature_k", "potential_ev_per_atom", "total_ev_per_atom", "pressure_bar")
 
 
-def collect(output, ranks, cells, steps, sample_every):
+def collect(output, ranks, cells, steps, sample_every, first_step=0):
     rank_lines = re.findall(r"^POLIS_RANK (\d+)$", output, re.MULTILINE)
     if sorted(map(int, rank_lines)) != list(range(ranks)):
         raise ValueError("Expected one successful affinity check from each local MPI rank")
@@ -40,7 +40,9 @@ def collect(output, ranks, cells, steps, sample_every):
             if count != atoms or not all(map(math.isfinite, values)):
                 raise ValueError("LAMMPS lost atoms or emitted non-finite thermodynamics")
             rows.append({"step": step, **dict(zip(THERMO_KEYS, values))})
-    expected = [*range(0, steps, sample_every), steps]
+    last_step = first_step + steps
+    first_sample = first_step + (sample_every - first_step % sample_every)
+    expected = [first_step, *range(first_sample, last_step, sample_every), last_step]
     if [row["step"] for row in rows] != expected:
         raise ValueError("LAMMPS did not return every requested thermodynamic sample")
     version = re.search(r"^LAMMPS \(([^)]+)\)", output, re.MULTILINE)
@@ -63,7 +65,19 @@ def collect(output, ranks, cells, steps, sample_every):
 
 
 def main():
-    ranks, cells, steps, sample_every = map(int, sys.argv[1:])
+    ranks, cells, steps, sample_every = map(int, sys.argv[1:5])
+    args = sys.argv[5:]
+    script = "in.copper"
+    first_step = 0
+    if args == ["save"]:
+        script = "in.checkpoint"
+    elif len(args) == 2 and args[0] == "resume":
+        script = "in.resume"
+        first_step = int(args[1])
+    elif args:
+        raise ValueError("Expected save or resume with a starting timestep")
+    if cells <= 0 or steps <= 0 or sample_every <= 0 or first_step < 0:
+        raise ValueError("Invalid copper simulation dimensions or time range")
     cpus = sorted(os.sched_getaffinity(0))
     if ranks not in (1, 2, 4) or ranks != len(cpus):
         raise ValueError("The number of MPI ranks must match the worker CPU affinity")
@@ -72,7 +86,7 @@ def main():
         "/usr/bin/mpirun", "--host", f"localhost:{ranks}", "--bind-to", "none",
         "--mca", "pml", "ob1", "--mca", "btl", "self,tcp", "--mca", "btl_tcp_if_include", "lo",
         "-n", str(ranks), sys.executable, "-I", "-B", "pin.py", ",".join(map(str, cpus)),
-        "-in", "in.copper", "-log", "none", "-nocite",
+        "-in", script, "-log", "none", "-nocite",
         "-var", "cells", str(cells), "-var", "steps", str(steps),
         "-var", "sample_every", str(sample_every), "-var", "potential", "Cu_u3.eam",
     ]
@@ -90,7 +104,7 @@ def main():
         sys.stderr.write(trial.stdout[-8192:])
         trial.check_returncode()
     try:
-        report = collect(trial.stdout, ranks, cells, steps, sample_every)
+        report = collect(trial.stdout, ranks, cells, steps, sample_every, first_step)
     except ValueError:
         sys.stderr.write(trial.stdout[-8192:])
         raise
