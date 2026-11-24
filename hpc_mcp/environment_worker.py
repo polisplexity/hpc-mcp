@@ -199,28 +199,35 @@ def python_operation(root, body, execute_job):
     return {**record, "parallel_jobs": 1, "receipts": receipts}
 
 
-def r_operation(body, execute_job, execute_native, r_runtime):
+def r_operation(body, execute_job, execute_native, r_runtime, storage_factory):
     preparing = body["action"] == "prepare"
     selected = r_runtime.select(body["lock"], allow_pull=preparing)
     if preparing:
         return selected
     if body["expected_environment_id"] != selected["environment_id"]:
         raise ValueError("The R environment changed since preparation")
-    receipts = [r_runtime.run(selected, job, execute_job, execute_native) for job in body["jobs"]]
+    receipts = []
+    for job in body["jobs"]:
+        manifest = job["manifest"]
+        distinct_storage = "output_mode" in manifest or any("source" in item for item in manifest["inputs"])
+        storage = storage_factory(body["data_root"]) if distinct_storage else None
+        receipts.append(r_runtime.run(selected, job, execute_job, execute_native, storage))
     return {**selected, "parallel_jobs": 1, "receipts": receipts}
 
 
-def environment_dispatch(request, execute_job, execute_native, r_runtime):
+def environment_dispatch(request, execute_job, execute_native, r_runtime, storage_factory):
     try:
         body = json.loads(request)
         action = body["action"]
         if action == "probe":
             result = inventory(body["root"], body["locks"], r_runtime)
+        elif action == "verify_artifact":
+            result = storage_factory(body["data_root"]).verify(body["reference"])
         elif action in ("prepare", "batch"):
             root = private_root(body["root"])
             with account_lock(root):
                 if "r_version" in body["lock"]:
-                    result = r_operation(body, execute_job, execute_native, r_runtime)
+                    result = r_operation(body, execute_job, execute_native, r_runtime, storage_factory)
                 else:
                     result = python_operation(root, body, execute_job)
             result["name"] = body["name"]

@@ -74,6 +74,12 @@ def hpc_environment_run_batch(
 
 
 @server.tool()
+def hpc_verify_artifact(reference: str) -> dict[str, Any]:
+    """Rehash a stored SSH artifact by its opaque reference and return its verified metadata."""
+    return environments.verify_artifact(reference)
+
+
+@server.tool()
 def hpc_slurm_preflight() -> dict[str, Any]:
     """Inspect the authorized Slurm profile and its configured partition."""
     return SlurmProfile.configured().preflight()

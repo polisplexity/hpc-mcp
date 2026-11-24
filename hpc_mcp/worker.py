@@ -17,6 +17,8 @@ import uuid
 JOB_VERSION = "polisplexity.hpc.job.v1"
 RESULT_VERSION = "polisplexity.hpc.result.v1"
 MAX_FILE_BYTES = 256 * 1024
+MAX_REMOTE_INPUT_BYTES = 32 * 1024 * 1024
+ARTIFACT_REFERENCE = "hpc-artifact:sha256:"
 MAX_FILES = 8
 PROFILES = {
     "local": (4, 512, 30), "ssh": (1, 128, 15), "ssh-env": (1, 1024, 15),
@@ -47,7 +49,12 @@ def require_keys(value, keys):
 
 
 def validate_manifest(manifest, profile="local"):
-    require_keys(manifest, {"version", "runtime", "entrypoint", "argv", "inputs", "outputs", "resources"})
+    keys = {"version", "runtime", "entrypoint", "argv", "inputs", "outputs", "resources"}
+    if isinstance(manifest, dict) and "output_mode" in manifest:
+        if profile != "ssh-r" or manifest["output_mode"] != "reference":
+            raise ValueError("Referenced outputs require the managed R profile")
+        keys.add("output_mode")
+    require_keys(manifest, keys)
     runtime = "rscript" if profile == "ssh-r" else "python3"
     if manifest["version"] != JOB_VERSION or manifest["runtime"] != runtime:
         raise ValueError(f"Expected job v1 with the {runtime} runtime")
@@ -65,7 +72,15 @@ def validate_manifest(manifest, profile="local"):
         raise ValueError("Declare between one and eight expected output files")
     input_paths = []
     for item in inputs:
-        require_keys(item, {"path", "sha256"})
+        if isinstance(item, dict) and "source" in item:
+            require_keys(item, {"path", "sha256", "source", "size_bytes"})
+            if profile != "ssh-r" or checked_path(item["path"]) == entrypoint:
+                raise ValueError("Node references are for data in managed R jobs")
+            checked_path(item["source"])
+            if type(item["size_bytes"]) is not int or not 0 <= item["size_bytes"] <= MAX_REMOTE_INPUT_BYTES:
+                raise ValueError("Node input size is outside the supported range")
+        else:
+            require_keys(item, {"path", "sha256"})
         input_paths.append(checked_path(item["path"]))
         if not isinstance(item["sha256"], str) or not re.fullmatch("[a-f0-9]{64}", item["sha256"]):
             raise ValueError("Input digests must be lowercase SHA-256 strings")
@@ -98,17 +113,18 @@ def read_file(root, name):
     return data
 
 
-def artifact(root, name):
+def artifact(root, name, store=None):
     try:
         data = read_file(root, name)
     except (OSError, RuntimeError, ValueError):
         return None
-    return {
-        "path": name,
-        "size_bytes": len(data),
-        "sha256": digest(data),
-        "base64": base64.b64encode(data).decode("ascii"),
-    }
+    checksum = digest(data)
+    item = {"path": name, "size_bytes": len(data), "sha256": checksum}
+    if store:
+        item["reference"] = store(data, checksum)
+    else:
+        item["base64"] = base64.b64encode(data).decode("ascii")
+    return item
 
 
 def timestamp():
@@ -148,7 +164,8 @@ def execute_native(command, root, limits, stdout, stderr):
     return process.returncode, timed_out, str(process.pid)
 
 
-def execute(manifest, files, profile, job_id=None, *, python_executable=None, launcher=None, runtime_version=None):
+def execute(manifest, files, profile, job_id=None, *, python_executable=None, launcher=None, runtime_version=None,
+            stage_input=None, store_output=None):
     if sys.platform != "linux":
         raise ValueError("The direct worker requires Linux")
     validate_manifest(manifest, profile)
@@ -157,18 +174,25 @@ def execute(manifest, files, profile, job_id=None, *, python_executable=None, la
     slurm_id = os.getenv("SLURM_JOB_ID", "") if profile == "slurm" else None
     if slurm_id is not None and not re.fullmatch(r"[1-9][0-9]*", slurm_id):
         raise ValueError("A Slurm worker requires its native job ID before launch")
-    require_keys(files, {item["path"] for item in manifest["inputs"]})
+    require_keys(files, {item["path"] for item in manifest["inputs"] if "source" not in item})
+    references = manifest.get("output_mode") == "reference"
+    node_inputs = any("source" in item for item in manifest["inputs"])
+    if (references and store_output is None) or (node_inputs and stage_input is None):
+        raise ValueError("This job requires configured SSH data storage")
     limits = manifest["resources"]
 
     with TemporaryDirectory(prefix="polisplexity-hpc-") as directory:
         root = Path(directory).resolve()
         for item in manifest["inputs"]:
             name = item["path"]
+            target = root / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if "source" in item:
+                stage_input(item, target)
+                continue
             data = base64.b64decode(files[name], validate=True)
             if len(data) > MAX_FILE_BYTES or digest(data) != item["sha256"]:
                 raise ValueError(f"Input digest or size mismatch: {name}")
-            target = root / name
-            target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(data)
 
         started_at = timestamp()
@@ -181,7 +205,10 @@ def execute(manifest, files, profile, job_id=None, *, python_executable=None, la
         finished_at = timestamp()
         artifacts, unavailable = [], []
         for name in manifest["outputs"]:
-            item = artifact(root, name)
+            if references and (timed_out or exit_code):
+                unavailable.append(name)
+                continue
+            item = artifact(root, name, store_output if references else None)
             if item is None:
                 unavailable.append(name)
             else:

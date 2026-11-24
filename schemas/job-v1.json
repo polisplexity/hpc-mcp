@@ -7,6 +7,7 @@
   "properties": {
     "version": {"const": "polisplexity.hpc.job.v1"},
     "runtime": {"enum": ["python3", "rscript"]},
+    "output_mode": {"const": "reference"},
     "entrypoint": {"$ref": "#/$defs/path"},
     "argv": {
       "type": "array",
@@ -23,7 +24,13 @@
         "required": ["path", "sha256"],
         "properties": {
           "path": {"$ref": "#/$defs/path"},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$", "minLength": 64, "maxLength": 64}
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$", "minLength": 64, "maxLength": 64},
+          "source": {"$ref": "#/$defs/path"},
+          "size_bytes": {"type": "integer", "minimum": 0, "maximum": 33554432}
+        },
+        "dependentRequired": {
+          "source": ["size_bytes"],
+          "size_bytes": ["source"]
         }
       }
     },
@@ -49,7 +56,13 @@
     {
       "if": {"properties": {"runtime": {"const": "rscript"}}},
       "then": {"properties": {"entrypoint": {"pattern": "\\.R$"}}},
-      "else": {"properties": {"entrypoint": {"pattern": "\\.py$"}}}
+      "else": {
+        "not": {"required": ["output_mode"]},
+        "properties": {
+          "entrypoint": {"pattern": "\\.py$"},
+          "inputs": {"items": {"not": {"required": ["source"]}}}
+        }
+      }
     }
   ],
   "$defs": {

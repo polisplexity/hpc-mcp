@@ -7,10 +7,11 @@ from pathlib import Path
 import re
 import subprocess
 
-from . import client, environment_worker, r_worker, worker
+from . import client, environment_worker, r_worker, remote_storage, worker
 
 
 ENV_ROOT = "POLISPLEXITY_HPC_SSH_ENV_ROOT"
+DATA_ROOT = "POLISPLEXITY_HPC_SSH_DATA_ROOT"
 MAX_BATCH_JOBS = 4
 PROFILE = "ssh-env"
 R_PROFILE = "ssh-r"
@@ -60,9 +61,15 @@ def environment_lock(workspace, name):
 
 def request(action, timeout, **payload):
     command = client.ssh_python(os.getenv(client.SSH_ALIAS))
-    body = worker.canonical({"action": action, "root": os.getenv(ENV_ROOT), **payload})
-    source = b"\n".join(Path(module.__file__).read_bytes() for module in (worker, environment_worker, r_worker))
-    source += f"\nenvironment_dispatch({body!r}, execute, execute_native, RRuntime(MAX_FILE_BYTES))\n".encode("ascii")
+    body = worker.canonical({"action": action, "root": os.getenv(ENV_ROOT), "data_root": os.getenv(DATA_ROOT), **payload})
+    modules = (worker, environment_worker, r_worker, remote_storage)
+    source = b"\n".join(Path(module.__file__).read_bytes() for module in modules)
+    source += (
+        "\ndef storage_factory(path):\n"
+        "    if not path:\n        raise ValueError('Configure private SSH data storage')\n"
+        "    return RemoteStorage(private_root(path), ARTIFACT_REFERENCE, MAX_FILE_BYTES)\n"
+        f"environment_dispatch({body!r}, execute, execute_native, RRuntime(MAX_FILE_BYTES), storage_factory)\n"
+    ).encode("ascii")
     try:
         result = subprocess.run(command, input=source, capture_output=True, check=True, timeout=timeout)
         envelope = json.loads(result.stdout)
@@ -71,6 +78,15 @@ def request(action, timeout, **payload):
     if "error" in envelope:
         raise RuntimeError(envelope["error"])
     return envelope["result"]
+
+
+def verify_artifact(reference):
+    if not re.fullmatch(re.escape(worker.ARTIFACT_REFERENCE) + r"[a-f0-9]{64}", reference):
+        raise ValueError("Use a valid HPC artifact reference")
+    result = request("verify_artifact", 30, reference=reference)
+    if result["reference"] != reference or worker.ARTIFACT_REFERENCE + result["sha256"] != reference:
+        raise RuntimeError("The worker returned a different artifact")
+    return result
 
 
 def probe(workspace=None):
@@ -107,10 +123,14 @@ def run_batch(workspace, name, manifests, expected_environment_id=None):
         client.verify_receipt(receipt, job)
         json_outputs = {}
         for artifact in receipt["artifacts"]:
-            if artifact["path"].endswith(".json") and artifact["size_bytes"] <= 4096:
+            if "base64" in artifact and artifact["path"].endswith(".json") and artifact["size_bytes"] <= 4096:
                 try:
                     json_outputs[artifact["path"]] = json.loads(base64.b64decode(artifact["base64"]))
                 except (ValueError, RecursionError):
                     pass
-        results.append({"manifest": manifest, "receipt": receipt, "json_outputs": json_outputs})
+        result = {"manifest": manifest, "receipt": receipt, "json_outputs": json_outputs}
+        remote_inputs = [item for item in job["manifest"]["inputs"] if "source" in item]
+        if remote_inputs:
+            result["remote_inputs"] = remote_inputs
+        results.append(result)
     return {**batch, "results": results}
