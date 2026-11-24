@@ -15,8 +15,9 @@ class DockerFailure(ValueError):
 
 
 class RRuntime:
-    def __init__(self, file_limit):
-        self.file_limit = file_limit
+    def __init__(self, inline_limit, output_limit):
+        self.inline_limit = inline_limit
+        self.output_limit = output_limit
         self.docker = shutil.which("docker")
         self.rscript = shutil.which("Rscript")
         self.docker_env = {key: os.environ[key] for key in ("HOME", "PATH") if key in os.environ}
@@ -94,7 +95,7 @@ class RRuntime:
         return {"runtime": "rscript", "r_version": version, "route": "docker",
                 "environment_id": identity, "status": status, "image": lock["image"], "image_id": image_id}
 
-    def launch_container(self, selection, root, manifest, stdout, stderr):
+    def launch_container(self, selection, root, manifest, stdout, stderr, file_limit):
         import resource
 
         resources = manifest["resources"]
@@ -107,7 +108,7 @@ class RRuntime:
             "--label", "org.polisplexity.hpc.runtime=rscript",
             "--cap-drop=ALL", "--security-opt=no-new-privileges", "--user", f"{os.getuid()}:{os.getgid()}",
             "--cpus", str(resources["cpus"]), "--memory", memory, "--memory-swap", memory,
-            "--pids-limit=32", "--ulimit", f"fsize={self.file_limit}:{self.file_limit}", "--ulimit", "core=0:0",
+            "--pids-limit=32", "--ulimit", f"fsize={file_limit}:{file_limit}", "--ulimit", "core=0:0",
             "--log-driver=none", "--tmpfs", "/tmp:rw,noexec,nosuid,nodev,size=32m",
             "--mount", f"type=bind,source={root},target=/job", "--workdir", "/job", "--env", "HOME=/tmp",
             "--env", "OPENBLAS_NUM_THREADS=1", "--env", "OMP_NUM_THREADS=1",
@@ -117,7 +118,7 @@ class RRuntime:
             raise RuntimeError("Docker did not return a container ID")
 
         def limit_logs():
-            resource.setrlimit(resource.RLIMIT_FSIZE, (self.file_limit, self.file_limit))
+            resource.setrlimit(resource.RLIMIT_FSIZE, (self.inline_limit, self.inline_limit))
 
         try:
             image_id = self.docker_output("container", "inspect", "--format", "{{.Image}}", container)
@@ -140,10 +141,11 @@ class RRuntime:
 
     def run(self, selection, job, execute_job, execute_native, storage=None):
         def launch(root, manifest, stdout, stderr):
+            file_limit = self.output_limit if manifest.get("output_mode") == "reference" else self.inline_limit
             if selection["route"] == "docker":
-                return self.launch_container(selection, root, manifest, stdout, stderr)
+                return self.launch_container(selection, root, manifest, stdout, stderr, file_limit)
             command = [self.rscript, "--vanilla", manifest["entrypoint"], *manifest["argv"]]
-            return execute_native(command, root, manifest["resources"], stdout, stderr)
+            return execute_native(command, root, manifest["resources"], stdout, stderr, file_limit=file_limit)
 
         return execute_job(job["manifest"], job["files"], job["profile"],
                            launcher=launch, runtime_version=selection["r_version"],

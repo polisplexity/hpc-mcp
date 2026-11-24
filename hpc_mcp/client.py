@@ -64,7 +64,7 @@ def verify_receipt(receipt, package):
             worker.require_keys(item, {"path", "size_bytes", "sha256", "reference"})
             if not re.fullmatch(r"[a-f0-9]{64}", item["sha256"]) or (
                 item["reference"] != worker.ARTIFACT_REFERENCE + item["sha256"]
-                or type(item["size_bytes"]) is not int or not 0 <= item["size_bytes"] <= worker.MAX_FILE_BYTES
+                or type(item["size_bytes"]) is not int or not 0 <= item["size_bytes"] <= worker.MAX_REFERENCED_OUTPUT_BYTES
             ):
                 raise RuntimeError("Invalid SSH artifact reference")
         inline = []
@@ -82,7 +82,7 @@ def ssh_python(ssh_alias):
     if not ssh_alias or not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_.-]*", ssh_alias):
         raise ValueError("Configure an approved SSH alias for the SSH profile")
     return [
-        "ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=yes",
+        "ssh", "-T", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=yes",
         "-o", "ConnectTimeout=10", ssh_alias, "python3", "-I", "-B", "-",
     ]
 

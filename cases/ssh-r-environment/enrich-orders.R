@@ -1,0 +1,5 @@
+args <- commandArgs(trailingOnly = TRUE)
+stopifnot(length(args) == 2)
+orders <- read.csv(args[[1]], colClasses = c("character", "integer", "integer"))
+orders$revenue_cents <- as.integer(orders$units * orders$unit_price_cents)
+write.table(orders, file = args[[2]], sep = ",", row.names = FALSE, quote = FALSE, eol = "\n")

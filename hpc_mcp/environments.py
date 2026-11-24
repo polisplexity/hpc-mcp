@@ -6,12 +6,14 @@ import os
 from pathlib import Path
 import re
 import subprocess
+from tempfile import NamedTemporaryFile
 
 from . import client, environment_worker, r_worker, remote_storage, worker
 
 
 ENV_ROOT = "POLISPLEXITY_HPC_SSH_ENV_ROOT"
 DATA_ROOT = "POLISPLEXITY_HPC_SSH_DATA_ROOT"
+DOWNLOAD_ROOT = "POLISPLEXITY_HPC_DOWNLOAD_ROOT"
 MAX_BATCH_JOBS = 4
 PROFILE = "ssh-env"
 R_PROFILE = "ssh-r"
@@ -59,17 +61,22 @@ def environment_lock(workspace, name):
     return lock
 
 
-def request(action, timeout, **payload):
-    command = client.ssh_python(os.getenv(client.SSH_ALIAS))
+def remote_source(action, **payload):
     body = worker.canonical({"action": action, "root": os.getenv(ENV_ROOT), "data_root": os.getenv(DATA_ROOT), **payload})
     modules = (worker, environment_worker, r_worker, remote_storage)
     source = b"\n".join(Path(module.__file__).read_bytes() for module in modules)
-    source += (
+    return source + (
         "\ndef storage_factory(path):\n"
         "    if not path:\n        raise ValueError('Configure private SSH data storage')\n"
-        "    return RemoteStorage(private_root(path), ARTIFACT_REFERENCE, MAX_FILE_BYTES)\n"
-        f"environment_dispatch({body!r}, execute, execute_native, RRuntime(MAX_FILE_BYTES), storage_factory)\n"
+        "    return RemoteStorage(private_root(path), ARTIFACT_REFERENCE, MAX_REFERENCED_OUTPUT_BYTES)\n"
+        f"environment_dispatch({body!r}, execute, execute_native, "
+        "RRuntime(MAX_FILE_BYTES, MAX_REFERENCED_OUTPUT_BYTES), storage_factory)\n"
     ).encode("ascii")
+
+
+def request(action, timeout, **payload):
+    command = client.ssh_python(os.getenv(client.SSH_ALIAS))
+    source = remote_source(action, **payload)
     try:
         result = subprocess.run(command, input=source, capture_output=True, check=True, timeout=timeout)
         envelope = json.loads(result.stdout)
@@ -80,13 +87,40 @@ def request(action, timeout, **payload):
     return envelope["result"]
 
 
-def verify_artifact(reference):
-    if not re.fullmatch(re.escape(worker.ARTIFACT_REFERENCE) + r"[a-f0-9]{64}", reference):
+def reference_checksum(reference):
+    checksum = reference.removeprefix(worker.ARTIFACT_REFERENCE)
+    if checksum == reference or not re.fullmatch(r"[a-f0-9]{64}", checksum):
         raise ValueError("Use a valid HPC artifact reference")
+    return checksum
+
+
+def verify_artifact(reference):
+    checksum = reference_checksum(reference)
     result = request("verify_artifact", 30, reference=reference)
-    if result["reference"] != reference or worker.ARTIFACT_REFERENCE + result["sha256"] != reference:
+    if result["reference"] != reference or result["sha256"] != checksum or result["verified"] is not True:
         raise RuntimeError("The worker returned a different artifact")
     return result
+
+
+def fetch_artifact(reference):
+    checksum = reference_checksum(reference)
+    directory = os.getenv(DOWNLOAD_ROOT)
+    if not directory:
+        raise ValueError("Configure a local HPC download directory")
+    command = client.ssh_python(os.getenv(client.SSH_ALIAS))
+    try:
+        root = Path(directory).resolve(strict=True)
+        with NamedTemporaryFile(dir=root, prefix=".fetch-") as temporary:
+            subprocess.run(command, input=remote_source("fetch_artifact", reference=reference),
+                           stdout=temporary, stderr=subprocess.PIPE, check=True, timeout=45)
+            temporary.seek(0)
+            size, actual = remote_storage.hash_stream(temporary, worker.MAX_REFERENCED_OUTPUT_BYTES)
+            if actual != checksum:
+                raise ValueError("The downloaded bytes failed SHA-256 verification")
+            remote_storage.publish_blob(root, temporary, size, checksum)
+    except (OSError, subprocess.SubprocessError):
+        raise RuntimeError("Unable to retrieve and save the referenced SSH artifact") from None
+    return {"reference": reference, "filename": checksum, "size_bytes": size, "sha256": checksum, "verified": True}
 
 
 def probe(workspace=None):
@@ -97,7 +131,8 @@ def probe(workspace=None):
     cpus, memory, wall_time = worker.PROFILES[PROFILE]
     ceilings = {"jobs_per_batch": MAX_BATCH_JOBS, "parallel_jobs_per_batch": 1,
                 "cpus_per_job": cpus, "memory_mib_per_job": memory,
-                "wall_time_seconds_per_job": wall_time, "bytes_per_file": worker.MAX_FILE_BYTES}
+                "wall_time_seconds_per_job": wall_time, "bytes_per_file": worker.MAX_FILE_BYTES,
+                "referenced_output_bytes_per_file": worker.MAX_REFERENCED_OUTPUT_BYTES}
     return {**request("probe", 30, locks=locks), "job_limits": ceilings}
 
 

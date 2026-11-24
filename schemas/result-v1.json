@@ -76,7 +76,7 @@
       "required": ["path", "size_bytes", "sha256", "reference"],
       "properties": {
         "path": {"type": "string"},
-        "size_bytes": {"type": "integer", "minimum": 0, "maximum": 262144},
+        "size_bytes": {"type": "integer", "minimum": 0, "maximum": 33554432},
         "sha256": {"$ref": "#/$defs/digest"},
         "reference": {"type": "string", "pattern": "^hpc-artifact:sha256:[a-f0-9]{64}$"}
       }

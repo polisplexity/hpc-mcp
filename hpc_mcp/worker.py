@@ -18,6 +18,7 @@ JOB_VERSION = "polisplexity.hpc.job.v1"
 RESULT_VERSION = "polisplexity.hpc.result.v1"
 MAX_FILE_BYTES = 256 * 1024
 MAX_REMOTE_INPUT_BYTES = 32 * 1024 * 1024
+MAX_REFERENCED_OUTPUT_BYTES = 32 * 1024 * 1024
 ARTIFACT_REFERENCE = "hpc-artifact:sha256:"
 MAX_FILES = 8
 PROFILES = {
@@ -114,24 +115,21 @@ def read_file(root, name):
 
 
 def artifact(root, name, store=None):
+    if store:
+        return store(root, name)
     try:
         data = read_file(root, name)
     except (OSError, RuntimeError, ValueError):
         return None
-    checksum = digest(data)
-    item = {"path": name, "size_bytes": len(data), "sha256": checksum}
-    if store:
-        item["reference"] = store(data, checksum)
-    else:
-        item["base64"] = base64.b64encode(data).decode("ascii")
-    return item
+    return {"path": name, "size_bytes": len(data), "sha256": digest(data),
+            "base64": base64.b64encode(data).decode("ascii")}
 
 
 def timestamp():
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
 
 
-def execute_native(command, root, limits, stdout, stderr):
+def execute_native(command, root, limits, stdout, stderr, *, file_limit=MAX_FILE_BYTES):
     import resource
 
     available_cpus = sorted(os.sched_getaffinity(0))
@@ -142,7 +140,7 @@ def execute_native(command, root, limits, stdout, stderr):
         os.sched_setaffinity(0, available_cpus[:limits["cpus"]])
         resource.setrlimit(resource.RLIMIT_AS, (limits["memory_mib"] << 20,) * 2)
         resource.setrlimit(resource.RLIMIT_CPU, (limits["wall_time_seconds"],) * 2)
-        resource.setrlimit(resource.RLIMIT_FSIZE, (MAX_FILE_BYTES,) * 2)
+        resource.setrlimit(resource.RLIMIT_FSIZE, (file_limit,) * 2)
         resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
 
     process = subprocess.Popen(
