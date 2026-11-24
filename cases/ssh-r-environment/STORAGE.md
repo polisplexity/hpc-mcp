@@ -8,8 +8,8 @@ copying the file into the job's temporary directory on the same node.
 
 Add `source` and `size_bytes` to the declared input. The manifest's `path`
 still names the file the R script receives. Under this pilot the worker
-supports up to 32 MiB per referenced input. Inline files and declared
-outputs retain their 256 KiB limit. The R entrypoint stays inline and hashed.
+supports up to 32 MiB per referenced input and per referenced output.
+The R entrypoint and other inline files retain the 256 KiB limit.
 
 With `"output_mode": "reference"`, HPC MCP saves declared outputs from a
 successful R process in the private `objects/` directory. Each receipt
@@ -17,6 +17,14 @@ returns the artifact's `reference`, `sha256` and `size_bytes`.
 `hpc_verify_artifact` reopens and hashes the stored object on the configured
 SSH target. The reference remains valid across MCP sessions while that
 storage profile retains the object.
+
+`hpc_fetch_artifact` streams the referenced file over SSH using the same
+configured storage profile. Set `POLISPLEXITY_HPC_DOWNLOAD_ROOT` to an
+existing client directory. The tool hashes the downloaded bytes before
+publishing the file under its SHA-256 name and returns that filename, the
+number of bytes and the verified digest. Scope the directory to the operator
+who configured the MCP server. The MCP result carries the metadata, with the
+file saved on the client host.
 
 ## Repeat the acceptance case
 
@@ -52,3 +60,32 @@ account's transient free disk figure.
 Separate MCP checks rejected a wrong input byte count, a wrong input digest
 and path traversal before the R script launched. A local storage check
 rejected a symlink input and a tampered object.
+
+## Recover a large output from another Hermes session
+
+Use the seeded node dataset and the same SSH and R environment settings.
+The test launches two Hermes sessions with separate temporary profiles.
+The first runs `enrich-orders.R` and stores `orders-with-revenue.csv` by
+reference on the SSH host. The second receives the reference as its input
+and uses `hpc_verify_artifact` and `hpc_fetch_artifact`. The runner then
+reads the actual client file and checks its SHA-256 against an independent
+calculation from the source rows.
+
+```sh
+python -m tools.run_hermes_r_download --output runs/ssh-r-download
+python -m tools.run_hermes_r_download --verify-only --output runs/ssh-r-download
+```
+
+The runner configures `runs/ssh-r-download/download/` as the client
+destination. The two MCP traces contain the receipts and metadata for the
+transfer. The replay command checks them against the recorded client file
+digest and the independently calculated CSV digest.
+
+At CIMAT on November 24, 2026, the first session reused Rocker R 4.5.2 and
+saved a 1,146,924-byte CSV with 65,536 data rows. The second session verified
+and downloaded it using just the reference and the configured SSH storage
+and client download directories. Independent hashes of the file on CIMAT,
+the recovered client file and the reference calculation matched. A failed
+retrieval left the download directory empty, and repeating a valid
+retrieval preserved one verified file.
+[Save trace](evidence/cimat-download-20261124/save/mcp.jsonl) · [Fetch trace](evidence/cimat-download-20261124/fetch/mcp.jsonl) · [Verification record](evidence/cimat-download-20261124/record.json)

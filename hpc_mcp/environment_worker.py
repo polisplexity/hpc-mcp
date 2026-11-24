@@ -216,9 +216,15 @@ def r_operation(body, execute_job, execute_native, r_runtime, storage_factory):
 
 
 def environment_dispatch(request, execute_job, execute_native, r_runtime, storage_factory):
+    body = json.loads(request)
+    action = body["action"]
+    if action == "fetch_artifact":
+        try:
+            storage_factory(body["data_root"]).verify(body["reference"], sys.stdout.buffer)
+        except (OSError, ValueError) as error:
+            raise SystemExit(str(error)) from None
+        return
     try:
-        body = json.loads(request)
-        action = body["action"]
         if action == "probe":
             result = inventory(body["root"], body["locks"], r_runtime)
         elif action == "verify_artifact":

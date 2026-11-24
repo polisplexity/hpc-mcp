@@ -80,6 +80,12 @@ def hpc_verify_artifact(reference: str) -> dict[str, Any]:
 
 
 @server.tool()
+def hpc_fetch_artifact(reference: str) -> dict[str, Any]:
+    """Retrieve a stored SSH artifact and save the verified bytes under the configured client download directory."""
+    return environments.fetch_artifact(reference)
+
+
+@server.tool()
 def hpc_slurm_preflight() -> dict[str, Any]:
     """Inspect the authorized Slurm profile and its configured partition."""
     return SlurmProfile.configured().preflight()

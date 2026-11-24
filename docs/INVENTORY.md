@@ -100,8 +100,8 @@ or benchmark reference), research (later experiment).
 
 - **Upstream interface** — Linux account storage over the existing authorized SSH profile
 - **Reuse** — Use the trusted R manifest, input digests and portable result receipts.
-- **Build** — Stage a pinned node file beneath the private dataset root. Publish declared outputs by SHA-256 and verify a saved object through MCP.
-- **Acceptance test** — Run the same R script via Hermes against a node CSV above 256 KiB. Check the stored result against an independent calculation and verify the reference from a new session.
+- **Build** — Stage a pinned node file beneath the private dataset root. Publish declared outputs by SHA-256 and verify or retrieve saved objects through MCP.
+- **Acceptance test** — Run R via Hermes against a node CSV above 256 KiB and retain an output above 256 KiB. Recover the file from a second session and compare its size and SHA-256 with the stored object and independent calculation.
 - **Sources** — [Upstream source 1](https://docs.python.org/3/library/hashlib.html)
 
 <a id="openssh"></a>
