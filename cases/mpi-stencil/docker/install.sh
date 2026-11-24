@@ -17,8 +17,10 @@ apt_snapshot() {
 }
 
 apt_snapshot -qq update
-DEBIAN_FRONTEND=noninteractive apt_snapshot install -y -qq --no-install-recommends \
-    gcc libc6-dev libopenmpi-dev libssl-dev openmpi-bin
+if [ "$#" -eq 0 ]; then
+    set -- gcc libc6-dev libopenmpi-dev libssl-dev openmpi-bin
+fi
+DEBIAN_FRONTEND=noninteractive apt_snapshot install -y -qq --no-install-recommends "$@"
 rm -f /tmp/polis-mpi-debian.sources
 rmdir /tmp/polis-mpi-empty-sources
 apt-get clean
