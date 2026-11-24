@@ -12,8 +12,8 @@
     "version": {"const": "polisplexity.hpc.result.v1"},
     "job_id": {"type": "string", "format": "uuid"},
     "manifest_sha256": {"$ref": "#/$defs/digest"},
-    "profile": {"enum": ["local", "ssh", "ssh-env", "slurm"]},
-    "native_id": {"type": "string", "pattern": "^[1-9][0-9]*$"},
+    "profile": {"enum": ["local", "ssh", "ssh-env", "ssh-r", "slurm"]},
+    "native_id": {"type": "string"},
     "runtime_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
     "started_at": {"type": "string", "format": "date-time"},
     "finished_at": {"type": "string", "format": "date-time"},
@@ -41,6 +41,13 @@
       }
     }
   },
+  "allOf": [
+    {
+      "if": {"properties": {"profile": {"const": "ssh-r"}}},
+      "then": {"properties": {"native_id": {"pattern": "^([1-9][0-9]*|[a-f0-9]{64})$"}}},
+      "else": {"properties": {"native_id": {"pattern": "^[1-9][0-9]*$"}}}
+    }
+  ],
   "$defs": {
     "digest": {"type": "string", "minLength": 64, "maxLength": 64, "pattern": "^[a-f0-9]{64}$"},
     "artifact": {

@@ -15,7 +15,7 @@ from uuid import uuid4
 
 
 COMMANDS = (
-    "python3", "pip3", "gcc", "g++", "gfortran", "make", "cmake", "git", "R", "julia",
+    "python3", "pip3", "gcc", "g++", "gfortran", "make", "cmake", "git", "R", "Rscript", "julia",
     "mpirun", "mpicc", "mpifort", "docker", "podman", "apptainer", "singularity",
     "sbatch", "sinfo", "srun", "qsub", "qstat", "bsub", "modulecmd", "lmod",
     "conda", "micromamba", "spack", "nvidia-smi", "rocminfo", "rsync", "sftp", "quota",
@@ -75,7 +75,7 @@ def command_output(command, timeout, *, cwd=None, env=None):
     return result.stdout.strip()
 
 
-def inventory(root_value, locks):
+def inventory(root_value, locks, r_runtime):
     try:
         root = private_root(root_value)
     except ValueError:
@@ -124,6 +124,7 @@ def inventory(root_value, locks):
         "venv_module": importlib.util.find_spec("venv") is not None,
         "private_environment_root_ready": root is not None,
         "approved_environments": [
+            r_runtime.probe(name, lock) if "r_version" in lock else
             {"name": name, "packages": {item["name"]: item["version"] for item in lock["packages"]},
              "state": "ready" if root and ready(root / fingerprint(lock)) else "needs_preparation"}
             for name, lock in locks.items()
@@ -167,44 +168,64 @@ def install(directory, lock):
         raise ValueError("Venv creation or locked wheel installation failed. Check Python and PyPI connectivity.") from None
 
 
-def environment_dispatch(request, execute_job):
+def python_operation(root, body, execute_job):
+    lock = body["lock"]
+    directory = root / fingerprint(lock)
+    versions = {item["name"]: item["version"] for item in lock["packages"]}
+    python = directory / "bin/python"
+    record = ready(directory)
+    if body["action"] == "prepare":
+        if record is None:
+            install(directory, lock)
+        check_versions(python, versions)
+        if record is None:
+            record = {"environment_id": directory.name, "installation_id": str(uuid4())}
+            temporary = directory / "ready.tmp"
+            temporary.write_text(json.dumps(record), encoding="ascii")
+            temporary.replace(directory / "ready.json")
+            status = "installed"
+        else:
+            status = "reused"
+        return {**record, "status": status, "packages": versions}
+    if record is None:
+        raise ValueError("Prepare this approved environment before running the batch")
+    if body["expected_environment_id"] not in (None, record["environment_id"]):
+        raise ValueError("The environment changed since preparation")
+    check_versions(python, versions)
+    receipts = [
+        execute_job(job["manifest"], job["files"], body["profile"], python_executable=python)
+        for job in body["jobs"]
+    ]
+    return {**record, "parallel_jobs": 1, "receipts": receipts}
+
+
+def r_operation(body, execute_job, execute_native, r_runtime):
+    preparing = body["action"] == "prepare"
+    selected = r_runtime.select(body["lock"], allow_pull=preparing)
+    if preparing:
+        return selected
+    if body["expected_environment_id"] != selected["environment_id"]:
+        raise ValueError("The R environment changed since preparation")
+    receipts = [r_runtime.run(selected, job, execute_job, execute_native) for job in body["jobs"]]
+    return {**selected, "parallel_jobs": 1, "receipts": receipts}
+
+
+def environment_dispatch(request, execute_job, execute_native, r_runtime):
     try:
         body = json.loads(request)
         action = body["action"]
         if action == "probe":
-            result = inventory(body["root"], body["locks"])
-        else:
+            result = inventory(body["root"], body["locks"], r_runtime)
+        elif action in ("prepare", "batch"):
             root = private_root(body["root"])
-            lock = body["lock"]
-            directory = root / fingerprint(lock)
-            versions = {item["name"]: item["version"] for item in lock["packages"]}
-            python = directory / "bin/python"
             with account_lock(root):
-                record = ready(directory)
-                if action == "prepare":
-                    if record is None:
-                        install(directory, lock)
-                    check_versions(python, versions)
-                    if record is None:
-                        record = {"environment_id": directory.name, "installation_id": str(uuid4())}
-                        temporary = directory / "ready.tmp"
-                        temporary.write_text(json.dumps(record), encoding="ascii")
-                        temporary.replace(directory / "ready.json")
-                        status = "installed"
-                    else:
-                        status = "reused"
-                    result = {**record, "name": body["name"], "status": status, "packages": versions}
-                elif action == "batch":
-                    if record is None:
-                        raise ValueError("Prepare this approved environment before running the batch")
-                    check_versions(python, versions)
-                    receipts = [
-                        execute_job(job["manifest"], job["files"], body["profile"], python_executable=python)
-                        for job in body["jobs"]
-                    ]
-                    result = {**record, "name": body["name"], "parallel_jobs": 1, "receipts": receipts}
+                if "r_version" in body["lock"]:
+                    result = r_operation(body, execute_job, execute_native, r_runtime)
                 else:
-                    raise ValueError("Unknown environment action")
+                    result = python_operation(root, body, execute_job)
+            result["name"] = body["name"]
+        else:
+            raise ValueError("Unknown environment action")
         print(json.dumps({"result": result}))
     except ValueError as error:
         print(json.dumps({"error": str(error)}))

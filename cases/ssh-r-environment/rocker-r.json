@@ -1,0 +1,5 @@
+{
+  "r_version": "4.5.2",
+  "platform": "linux/amd64",
+  "image": "docker.io/rocker/r-ver@sha256:62a0fbe9896e02bf19b408a39518da1fa1bca0d6fb85b4076c8d0fd33e588123"
+}

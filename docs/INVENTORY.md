@@ -1,6 +1,6 @@
 # Polisplexity HPC MCP integration inventory
 
-Edition 2026-11-24 · 44 entries.
+Edition 2026-11-24 · 45 entries.
 
 Generated from [the source registry](../registry/tools.json).
 The catalog includes deployment targets, connectors, dependencies,
@@ -15,6 +15,7 @@ or benchmark reference), research (later experiment).
 
 - [CIMAT Guanajuato](#cimat) — Institutional targets
 - [Managed Python environment over SSH](#ssh-environment) — Workloads and acceptance
+- [Native R and pinned Rocker images over SSH](#ssh-r-environment) — Workloads and acceptance
 - [OpenSSH](#openssh) — Institutional targets
 - [OLDT Data Factory](#oldt-data-factory) — Workloads and acceptance
 - [Local CPU reference runner](#local-worker) — Workloads and acceptance
@@ -79,6 +80,17 @@ or benchmark reference), research (later experiment).
 - **Build** — Inspect visible resources and command availability. Prepare a pinned user environment and run a bounded batch with that interpreter.
 - **Acceptance test** — Start with a fresh private account directory. Have Hermes discover, install, run three DuckDB CSV jobs, and repeat while reusing the same installation. Verify artifact hashes and independently computed totals.
 - **Sources** — [Upstream source 1](https://docs.python.org/3/library/venv.html), [Upstream source 2](https://pip.pypa.io/en/stable/topics/secure-installs/), [Upstream source 3](https://pypi.org/project/duckdb/1.4.5/)
+
+<a id="ssh-r-environment"></a>
+## Native R and pinned Rocker images over SSH
+
+**Family** — Workloads and acceptance. **Decision** — pilot. **Status** — agent-reviewed.
+
+- **Upstream interface** — Rscript and Rocker runtime images on the account's local Docker daemon
+- **Reuse** — Use the managed environment tools, trusted workspace manifests, Rscript and verified job receipts.
+- **Build** — Select native R when its version matches the lock. Otherwise prepare a digest-pinned Docker image and bind jobs to the observed environment ID.
+- **Acceptance test** — Have Hermes discover R availability, prepare the approved environment, and run the same CSV summary twice. Compare independent totals and confirm the same environment and separate native jobs.
+- **Sources** — [Upstream source 1](https://rocker-project.org/images/versioned/r-ver), [Upstream source 2](https://docs.docker.com/reference/cli/docker/container/run/)
 
 <a id="openssh"></a>
 ## OpenSSH

@@ -41,3 +41,7 @@ jobs:
         run: |
           python -m tools.run_hermes_environment --verify-only \
             --output cases/ssh-environment/evidence/cimat-hermes-20261124
+      - name: Verify recorded Hermes R execution and environment reuse
+        run: |
+          python -m tools.run_hermes_r --verify-only \
+            --output cases/ssh-r-environment/evidence/cimat-hermes-20261124

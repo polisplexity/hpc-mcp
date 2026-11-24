@@ -90,4 +90,4 @@ python -m hpc_mcp.server
 
 Configure the same launch command in the MCP client. Use the documented
 workspace and authorized connection settings for each profile.
-[Local and SSH configuration](cases/portable-python/README.md) · [Slurm configuration](cases/portable-python/SLURM.md#configure-an-approved-allocation) · [Managed SSH environments](cases/ssh-environment/README.md)
+[Local and SSH configuration](cases/portable-python/README.md) · [Slurm configuration](cases/portable-python/SLURM.md#configure-an-approved-allocation) · [Managed SSH environments](cases/ssh-environment/README.md) · [R via SSH and Docker](cases/ssh-r-environment/README.md)
