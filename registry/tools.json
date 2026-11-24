@@ -337,13 +337,13 @@
       "family": "Execution environments",
       "decision": "evaluate",
       "upstream": "MPI runtime and launcher",
-      "reuse": "Reuse the scientific application's MPI implementation and the scheduler's allocation.",
-      "build": "Record ranks, CPUs per task, topology and image/host MPI compatibility. Leave scientific parallelization to the workload.",
-      "test": "Verify a two-rank numerical reduction with a serial reference before testing multi-node communication and speedup.",
+      "reuse": "Reuse Open MPI for process launch and communication within a Slurm allocation.",
+      "build": "Record ranks, allocated CPUs, rank affinity, transport and image versions. Leave scientific parallelization to the workload.",
+      "test": "Compare one, two and four ranks for a fixed periodic heat stencil on one node. Require identical field digests and agreement with the analytic solution, and record speedup separately for the kernel and launcher.",
       "sources": [
         "https://docs.open-mpi.org/en/main/"
       ],
-      "status": "candidate"
+      "status": "mcp-verified"
     },
     {
       "id": "nextflow",
