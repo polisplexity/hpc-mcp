@@ -29,3 +29,7 @@ jobs:
             echo "A claimed success without tool evidence passed verification" >&2
             exit 1
           fi
+      - name: Verify recorded Hermes MPI cancellation
+        run: |
+          stem=cases/mpi-copper/evidence/cimat-hermes-mpi-cancel-20261124
+          python -m tools.verify_agent_cancel --trace "$stem.jsonl" --answer "$stem.json" --run "$stem.json"
