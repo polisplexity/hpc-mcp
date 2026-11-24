@@ -86,6 +86,18 @@ def hpc_fetch_artifact(reference: str) -> dict[str, Any]:
 
 
 @server.tool()
+def hpc_ssh_submit(environment: str, manifest: str, request_id: str, expected_environment_id: str) -> dict[str, Any]:
+    """Start a detached Docker R job. Repeat the same request UUID and job to reconcile a lost response."""
+    return environments.ssh_submit(workspace(), environment, manifest, request_id, expected_environment_id)
+
+
+@server.tool()
+def hpc_ssh_status(request_id: str) -> dict[str, Any]:
+    """Find a detached SSH job by its request UUID and collect its verified artifact references on completion."""
+    return environments.ssh_status(request_id)
+
+
+@server.tool()
 def hpc_slurm_preflight() -> dict[str, Any]:
     """Inspect the authorized Slurm profile and its configured partition."""
     return SlurmProfile.configured().preflight()

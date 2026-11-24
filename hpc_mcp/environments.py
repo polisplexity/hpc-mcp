@@ -7,8 +7,9 @@ from pathlib import Path
 import re
 import subprocess
 from tempfile import NamedTemporaryFile
+from uuid import UUID
 
-from . import client, environment_worker, r_worker, remote_storage, worker
+from . import client, environment_worker, r_worker, remote_storage, ssh_jobs, worker
 
 
 ENV_ROOT = "POLISPLEXITY_HPC_SSH_ENV_ROOT"
@@ -63,14 +64,16 @@ def environment_lock(workspace, name):
 
 def remote_source(action, **payload):
     body = worker.canonical({"action": action, "root": os.getenv(ENV_ROOT), "data_root": os.getenv(DATA_ROOT), **payload})
-    modules = (worker, environment_worker, r_worker, remote_storage)
+    modules = (worker, environment_worker, r_worker, remote_storage, ssh_jobs)
     source = b"\n".join(Path(module.__file__).read_bytes() for module in modules)
     return source + (
         "\ndef storage_factory(path):\n"
         "    if not path:\n        raise ValueError('Configure private SSH data storage')\n"
         "    return RemoteStorage(private_root(path), ARTIFACT_REFERENCE, MAX_REFERENCED_OUTPUT_BYTES)\n"
-        f"environment_dispatch({body!r}, execute, execute_native, "
-        "RRuntime(MAX_FILE_BYTES, MAX_REFERENCED_OUTPUT_BYTES), storage_factory)\n"
+        "runtime = RRuntime(MAX_FILE_BYTES, MAX_REFERENCED_OUTPUT_BYTES)\n"
+        "def jobs_factory(path):\n"
+        "    return SSHJobs(runtime, storage_factory(path), stage_job, job_receipt, atomic_json)\n"
+        f"environment_dispatch({body!r}, execute, execute_native, runtime, storage_factory, jobs_factory)\n"
     ).encode("ascii")
 
 
@@ -139,6 +142,30 @@ def probe(workspace=None):
 def prepare(workspace, name):
     lock = environment_lock(workspace, name)
     return request("prepare", 215 if "r_version" in lock else 120, name=name, lock=lock)
+
+
+def ssh_submit(workspace, name, manifest, request_id, expected_environment_id):
+    job_id = str(UUID(request_id))
+    lock = environment_lock(workspace, name)
+    if "r_version" not in lock or not re.fullmatch(r"[a-f0-9]{64}", expected_environment_id):
+        raise ValueError("Use an approved Docker R environment and its prepared ID")
+    job = client.prepare(workspace, manifest, R_PROFILE)
+    result = request("ssh_submit", 50, name=name, job_id=job_id, job=job, lock=lock,
+                     expected_environment_id=expected_environment_id)
+    if (result["job_id"] != job_id or result["environment_id"] != expected_environment_id
+            or result["manifest_sha256"] != client.describe(job)["manifest_sha256"]):
+        raise RuntimeError("The SSH worker returned a different job")
+    if "receipt" in result:
+        client.verify_receipt(result["receipt"], job)
+    return result
+
+
+def ssh_status(request_id):
+    job_id = str(UUID(request_id))
+    result = request("ssh_status", 40, job_id=job_id)
+    if result["job_id"] != job_id:
+        raise RuntimeError("The SSH worker returned a different job")
+    return result
 
 
 def run_batch(workspace, name, manifests, expected_environment_id=None):

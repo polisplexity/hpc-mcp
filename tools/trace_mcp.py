@@ -18,7 +18,7 @@ def message(line):
     return value if isinstance(value, dict) else {}
 
 
-def trace_stdio(command, destination, backend_stderr=None):
+def trace_stdio(command, destination, backend_stderr=None, *, drop_response_to=None):
     descriptor = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
     with ExitStack() as files:
         trace = files.enter_context(os.fdopen(descriptor, "w", encoding="utf-8"))
@@ -27,7 +27,7 @@ def trace_stdio(command, destination, backend_stderr=None):
             log_fd = os.open(backend_stderr, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
             log = files.enter_context(os.fdopen(log_fd, "wb"))
         child = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=log)
-        pending = set()
+        pending = {}
         lock = Lock()
 
         def record(event):
@@ -43,7 +43,7 @@ def trace_stdio(command, destination, backend_stderr=None):
                     request_id = request.get("id")
                     if request.get("method") == "tools/call" and type(request_id) in (int, str):
                         with lock:
-                            pending.add(request_id)
+                            pending[request_id] = request.get("params", {}).get("name")
                             record({"request": request})
                     child.stdin.write(line)
                     child.stdin.flush()
@@ -61,7 +61,12 @@ def trace_stdio(command, destination, backend_stderr=None):
                 with lock:
                     if (type(response_id) in (int, str) and response_id in pending
                             and ("result" in response or "error" in response)):
-                        pending.remove(response_id)
+                        tool = pending.pop(response_id)
+                        if (drop_response_to and tool == drop_response_to and "result" in response
+                                and not response["result"].get("isError")):
+                            record({"dropped_response": response})
+                            child.terminate()
+                            break
                         record({"response": response})
                 sys.stdout.buffer.write(line)
                 sys.stdout.buffer.flush()
@@ -83,12 +88,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--trace", required=True, type=Path)
     parser.add_argument("--backend-stderr", type=Path, help="Write backend stderr to a separate new file")
+    parser.add_argument("--drop-response-to", help="Test-only: close the MCP connection before delivering this tool's reply")
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     command = args.command[1:] if args.command[:1] == ["--"] else args.command
     if not command:
         parser.error("Provide the MCP launch command after --")
-    sys.exit(trace_stdio(command, args.trace, args.backend_stderr))
+    sys.exit(trace_stdio(command, args.trace, args.backend_stderr, drop_response_to=args.drop_response_to))
 
 
 if __name__ == "__main__":

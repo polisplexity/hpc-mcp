@@ -12,6 +12,7 @@ from uuid import UUID
 
 from . import worker
 from .client import describe, verify_receipt
+from .worker import atomic_json
 
 
 STATE_ROOT = "POLISPLEXITY_HPC_SLURM_STATE"
@@ -54,20 +55,6 @@ def observed(command):
     if response.returncode:
         return None
     return [line.split("|") for line in response.stdout.decode("utf-8").splitlines() if line]
-
-
-def atomic_json(path, value):
-    temporary = path.with_suffix(".tmp")
-    with temporary.open("wb") as stream:
-        stream.write(worker.canonical(value))
-        stream.flush()
-        os.fsync(stream.fileno())
-    temporary.replace(path)
-    directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
-    try:
-        os.fsync(directory)
-    finally:
-        os.close(directory)
 
 
 def read_json(path):

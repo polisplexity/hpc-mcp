@@ -11,7 +11,7 @@ import shutil
 import stat
 import subprocess
 import sys
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 
 COMMANDS = (
@@ -215,7 +215,7 @@ def r_operation(body, execute_job, execute_native, r_runtime, storage_factory):
     return {**selected, "parallel_jobs": 1, "receipts": receipts}
 
 
-def environment_dispatch(request, execute_job, execute_native, r_runtime, storage_factory):
+def environment_dispatch(request, execute_job, execute_native, r_runtime, storage_factory, jobs_factory):
     body = json.loads(request)
     action = body["action"]
     if action == "fetch_artifact":
@@ -229,6 +229,11 @@ def environment_dispatch(request, execute_job, execute_native, r_runtime, storag
             result = inventory(body["root"], body["locks"], r_runtime)
         elif action == "verify_artifact":
             result = storage_factory(body["data_root"]).verify(body["reference"])
+        elif action in ("ssh_submit", "ssh_status"):
+            jobs = jobs_factory(body["data_root"])
+            job_id = str(UUID(body["job_id"]))
+            with account_lock(jobs.storage.root):
+                result = jobs.submit(job_id, body) if action == "ssh_submit" else jobs.status(job_id)
         elif action in ("prepare", "batch"):
             root = private_root(body["root"])
             with account_lock(root):
