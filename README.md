@@ -45,8 +45,9 @@ and MCP on a local worker and an authorized CIMAT SSH profile. The
 cluster and in a Docker development instance hosted at CIMAT. Both verified
 recovery after interruption.
 The independent workload passed in Codex and [Hermes
-Agent](cases/portable-python/HERMES.md). The [master
-record](MASTER_TEST_RECORD.md) links the observed results for each client.
+Agent](cases/portable-python/HERMES.md). Hermes also verified
+[cancellation of a running MPI job](cases/mpi-copper/CANCELLATION.md).
+The [master record](MASTER_TEST_RECORD.md) links the observations.
 The catalog verifier needs Python 3.10 or later and the standard library.
 
 ```sh

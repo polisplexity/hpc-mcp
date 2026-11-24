@@ -53,5 +53,15 @@ def hpc_slurm_status(request_id: str) -> dict[str, Any]:
     return SlurmProfile.configured().status(request_id)
 
 
+@server.tool()
+def hpc_slurm_cancel(request_id: str) -> dict[str, Any]:
+    """Request cancellation of a job registered by this profile's submit UUID.
+
+    Poll status until Slurm reports a terminal outcome. An active or unknown
+    response does not confirm cancellation. Reusing the UUID preserves the job.
+    """
+    return SlurmProfile.configured().cancel(request_id)
+
+
 if __name__ == "__main__":
     server.run()

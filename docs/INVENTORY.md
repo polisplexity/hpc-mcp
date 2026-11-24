@@ -108,8 +108,8 @@ or benchmark reference), research (later experiment).
 
 - **Upstream interface** — sbatch, squeue, sacct, scancel and site QoS
 - **Reuse** — Reuse native scheduler, resource requests, accounting and cancellation semantics.
-- **Build** — Map typed resource requests and native states, including arrays and jobs no longer visible in the queue. Reconcile unknown submission outcomes.
-- **Acceptance test** — Submit a small job and array using an authorized account. Check pending, success, failure, cancellation, accounting retention and native versus MCP output.
+- **Build** — Map typed resource requests and native states. Resolve cancellation through the registered request UUID and confirm the owned allocation in the queue.
+- **Acceptance test** — Check pending, success, failure, accounting retention and native versus MCP output. Verify that an agent cancels a running MPI allocation, then confirm native accounting, process shutdown, and rejection of an unknown UUID. Qualify job arrays separately.
 - **Sources** — [Upstream source 1](https://slurm.schedmd.com/quickstart.html), [Upstream source 2](https://slurm.schedmd.com/job_array.html)
 
 <a id="slurm-rest"></a>

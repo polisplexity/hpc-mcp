@@ -68,8 +68,8 @@
       "decision": "pilot",
       "upstream": "sbatch, squeue, sacct, scancel and site QoS",
       "reuse": "Reuse native scheduler, resource requests, accounting and cancellation semantics.",
-      "build": "Map typed resource requests and native states, including arrays and jobs no longer visible in the queue. Reconcile unknown submission outcomes.",
-      "test": "Submit a small job and array using an authorized account. Check pending, success, failure, cancellation, accounting retention and native versus MCP output.",
+      "build": "Map typed resource requests and native states. Resolve cancellation through the registered request UUID and confirm the owned allocation in the queue.",
+      "test": "Check pending, success, failure, accounting retention and native versus MCP output. Verify that an agent cancels a running MPI allocation, then confirm native accounting, process shutdown, and rejection of an unknown UUID. Qualify job arrays separately.",
       "sources": [
         "https://slurm.schedmd.com/quickstart.html",
         "https://slurm.schedmd.com/job_array.html"

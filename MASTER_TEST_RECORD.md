@@ -18,6 +18,7 @@ Edition: 2026-11-24.
 | Fixed-grid Open MPI with 1, 2 and 4 processes | Passed on CIMAT Docker | [MPI stencil report](cases/mpi-stencil/README.md) and [recorded samples](cases/mpi-stencil/evidence/cimat-mpi-20261123.json) verify CPU accounting, matching field digests and analytic correctness. The four-rank median was 2.59× faster in the kernel and 1.37× faster through the launcher than one rank. The case fits the existing single-node allocation. |
 | LAMMPS copper molecular dynamics with 1, 2 and 4 processes | Passed on CIMAT Docker | [Copper report](cases/mpi-copper/README.md) and [recorded samples](cases/mpi-copper/evidence/cimat-lammps-20261124.json) verify Slurm CPU accounting, atom conservation and thermodynamic agreement. Four ranks gave 3.65× integration speedup at 91% parallel efficiency. |
 | LAMMPS checkpoint handoff with two MPI processes | Passed on CIMAT Docker | [Checkpoint report](cases/mpi-copper/README.md#checkpoint-and-restart) and [recorded evidence](cases/mpi-copper/evidence/cimat-lammps-checkpoint-20261124.json) verify a 181,128-byte checkpoint at step 70, agreement with the continuous run through step 140, and rejection of altered input before Slurm allocation. |
+| Cancel a running LAMMPS job in Hermes Agent | Agent verified on CIMAT Docker | [Agent trace](cases/mpi-copper/evidence/cimat-hermes-mpi-cancel-20261124.jsonl) and [independent audit](cases/mpi-copper/evidence/cimat-hermes-mpi-cancel-20261124.json) show actual agent submit, running observation, cancellation, terminal confirmation, repeat cancellation, and rejection of an unknown UUID. The audit saw two LAMMPS processes before cancellation and zero after it. |
 | Site-managed Slurm and applied cases | As required by workloads | Qualify a site-managed queue when a workload calls for it. See the [Slurm qualification issue](https://github.com/polisplexity/hpc-mcp/issues/3) and [RFC 0001](docs/rfc/0001-hpc-job-contract.md). |
 
 Record each actual run with source revision, execution route, recipe and input
@@ -25,3 +26,8 @@ hashes, resource allocation, provider/worker job ID, timestamps, captured exit
 status, checksums and review of outputs and claims. Keep failed and partial
 attempts visible. State whether each resource measurement covers the job, a
 shared device or the complete node.
+
+A verifier using MCP stdio establishes the tool behavior. Agent validation
+requires a recorded agent tool exchange and agreement with independent
+execution evidence. The MPI comparisons and checkpoint handoff used MCP
+verifiers.

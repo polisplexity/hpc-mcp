@@ -1,0 +1,6 @@
+ARG BASE_IMAGE=polisplexity-hpc/mpi-copper:local
+FROM ${BASE_IMAGE}
+
+COPY hpc_mcp/ ./hpc_mcp/
+COPY tools/audit_slurm_cancel.py tools/check_slurm_job.py ./tools/
+CMD ["/opt/polis-venv/bin/python", "-m", "hpc_mcp.server"]

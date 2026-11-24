@@ -29,6 +29,8 @@ Set the account variable when the site requires it. Set
 if the compute node uses a different path from `/usr/bin/python3`. Profile
 settings and the state directory stay outside version control.
 
+Cancellation also uses the Slurm `scancel` client.
+
 ## Submit and recover
 
 1. Call `hpc_slurm_preflight` to check client availability and whether the
@@ -50,6 +52,24 @@ cannot establish what happened, the state remains `unknown` and retrying
 with that UUID does not enqueue another job. Keep the state directory and
 the scheduler's accounting record available for recovery. An operator
 should reconcile an unknown request before choosing a new UUID.
+
+## Cancel owned work
+
+Call `hpc_slurm_cancel` with the original submission UUID. The tool resolves
+the allocation from the private profile state and checks the live queue
+against the native job ID, user, partition and job name before calling
+`scancel`. An unregistered UUID is rejected. The same operation returns
+the observed terminal state when the job has already ended.
+
+After a cancellation request, poll `hpc_slurm_status` until accounting
+reports `native_state: CANCELLED` and the MCP state is `cancelled`.
+Calls may return an active or unknown state while Slurm reconciles the
+request. A cancelled result records scheduler accounting and can be
+returned after the worker exits without a result receipt.
+[Slurm cancellation](https://slurm.schedmd.com/scancel.html)
+
+See the [Hermes MPI cancellation test](../mpi-copper/CANCELLATION.md) for
+the live agent trace and the independent process audit on CIMAT Docker.
 
 Scheduler timestamps are returned as reported by `sacct`. They give the
 submit, start and end times, plus elapsed run time where available. Job

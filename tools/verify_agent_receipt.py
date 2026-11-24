@@ -44,7 +44,7 @@ def native_reference():
     return expected, data
 
 
-def final_claims(path):
+def claims_with_fields(path, fields):
     text = path.read_text(encoding="utf-8")
     decoder = json.JSONDecoder()
     candidates = []
@@ -55,14 +55,19 @@ def final_claims(path):
             item, _ = decoder.raw_decode(text, index)
         except json.JSONDecodeError:
             continue
-        if isinstance(item, dict) and item.keys() == UNAVAILABLE.keys():
-            require(type(item["exit_code"]) is int, "The submitted exit code must be an integer")
+        if isinstance(item, dict) and item.keys() == fields:
             candidates.append(item)
     require(len(candidates) == 1, "Expected exactly one structured agent answer")
     return candidates[0]
 
 
-def exchanges(path):
+def final_claims(path):
+    claims = claims_with_fields(path, UNAVAILABLE.keys())
+    require(type(claims["exit_code"]) is int, "The submitted exit code must be an integer")
+    return claims
+
+
+def exchanges(path, *, allow_tool_errors=False):
     calls = {}
     replies = {}
     for line in path.read_bytes().splitlines():
@@ -79,8 +84,13 @@ def exchanges(path):
             call_id = response["id"]
             require(call_id in calls and call_id not in replies, "Unmatched JSON-RPC response")
             result = response.get("result")
-            require("error" not in response and isinstance(result, dict) and not result.get("isError"),
-                    "MCP returned an error")
+            require("error" not in response and isinstance(result, dict), "MCP returned an error")
+            if allow_tool_errors and result.get("isError"):
+                replies[call_id] = {"tool_error": "\n".join(
+                    item["text"] for item in result["content"] if item["type"] == "text"
+                )}
+                continue
+            require(not result.get("isError"), "MCP returned a tool error")
             structured = result.get("structuredContent")
             replies[call_id] = structured if structured is not None else json.loads(result["content"][0]["text"])
         else:
