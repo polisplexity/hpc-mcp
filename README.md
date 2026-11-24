@@ -4,9 +4,10 @@ Open project for letting MCP-capable clients inspect compute accounts, prepare
 execution environments and run versioned jobs on high-performance computing
 infrastructure.
 
-Use the [installation and Hermes acceptance test](INSTALL.md) to build
-HPC MCP and reproduce the copper recipe workflow with your own Docker
-engine and configured Hermes model.
+Use the [alpha installation and Hermes acceptance test](INSTALL.md) to
+inspect an authorized SSH node, run R and retrieve the verified output from
+a second Hermes session. The installation guide also includes the
+[Slurm and Docker copper pilot](INSTALL.md#slurm-and-docker-copper-pilot).
 Use the [managed SSH environment test](cases/ssh-environment/README.md) to
 inspect an authorized Linux account, install a locked dependency and run and
 repeat an independent batch through Hermes.

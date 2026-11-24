@@ -1,4 +1,68 @@
-# Install HPC MCP and run the Hermes acceptance test
+# Install HPC MCP v0.1.0-alpha.3
+
+The SSH acceptance test starts with node discovery and ends with a verified
+CSV on the client. Use a Linux client with Git, Python 3.10 or later,
+`venv`, OpenSSH and a working Hermes CLI. Configure a model in Hermes's
+usual profile. The runner creates a separate temporary Hermes profile and
+MCP server for each session. [Hermes setup](https://hermes-agent.nousresearch.com/docs/getting-started/quickstart) · [Hermes profiles](https://hermes-agent.nousresearch.com/docs/user-guide/profiles)
+
+Use an authorized Linux SSH account that permits direct execution and has
+Python 3.10 or later. The example uses a compatible native R 4.5.2
+installation or the pinned Linux amd64 Rocker image. The Docker route
+requires access to the node's local Docker daemon and registry access if the
+image needs to be pulled. Use your own SSH alias with a trusted host key.
+
+## Set up a clean checkout
+
+```sh
+git clone --branch v0.1.0-alpha.3 --single-branch https://github.com/polisplexity/hpc-mcp.git
+cd hpc-mcp
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r cases/cimat-guanajuato/requirements-mcp.txt \
+  -r cases/mpi-copper/requirements-hermes-test.txt
+hermes --version
+```
+
+Use `--hermes` to specify the CLI executable or `--hermes-home` to select a
+configured Hermes profile when you run the test.
+
+## Discover the node, save the result and retrieve it by reference
+
+Replace `your-authorized-ssh-alias` with the alias for your account. These
+commands create fresh, private directories on the node and generate the
+synthetic CSV there. Use a new output directory for each acceptance run.
+
+```sh
+export POLISPLEXITY_HPC_SSH_PROFILE=your-authorized-ssh-alias
+POLISPLEXITY_HPC_SSH_ENV_ROOT=$(ssh -T -o BatchMode=yes -o StrictHostKeyChecking=yes \
+  "$POLISPLEXITY_HPC_SSH_PROFILE" 'umask 077; mktemp -d "$HOME/.hpc-mcp-env.XXXXXXXX"')
+POLISPLEXITY_HPC_SSH_DATA_ROOT=$(ssh -T -o BatchMode=yes -o StrictHostKeyChecking=yes \
+  "$POLISPLEXITY_HPC_SSH_PROFILE" 'umask 077; mktemp -d "$HOME/.hpc-mcp-data.XXXXXXXX"')
+export POLISPLEXITY_HPC_SSH_ENV_ROOT POLISPLEXITY_HPC_SSH_DATA_ROOT
+python -m tools.run_hermes_r_storage --seed-dataset
+python -m tools.run_hermes_r_download --output runs/alpha3
+```
+
+The first Hermes session calls `hpc_environment_probe`, prepares the
+approved R runtime and runs the job against the dataset on the node. The
+second starts from the saved artifact reference and calls
+`hpc_verify_artifact` and `hpc_fetch_artifact`. The runner rehashes the
+actual client file and checks it against an independent CSV calculation.
+Expect 65,536 data rows and 1,146,924 bytes. The expected SHA-256 and client
+filename are `1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3`.
+
+Open the CSV in `runs/alpha3/download/`. The run also writes
+`save/mcp.jsonl`, `fetch/mcp.jsonl` and `record.json`. Recheck the
+recorded exchanges and digest with:
+
+```sh
+python -m tools.run_hermes_r_download --verify-only --output runs/alpha3
+```
+
+[R case and storage details](cases/ssh-r-environment/STORAGE.md#recover-a-large-output-from-another-hermes-session)
+
+## Slurm and Docker copper pilot
 
 The Docker installation builds a single-node Slurm pilot with Open MPI,
 LAMMPS and the copper recipe. Use a Linux x86-64 Docker engine reachable
@@ -11,7 +75,7 @@ usual profile. The test uses that profile's model and provider settings
 in a temporary profile. The default source is `~/.hermes`, or the directory
 selected by `HERMES_HOME`. [Hermes setup](https://hermes-agent.nousresearch.com/docs/getting-started/quickstart) · [Hermes profiles](https://hermes-agent.nousresearch.com/docs/user-guide/profiles)
 
-## Build from the release
+### Build the alpha.2 copper case
 
 ```sh
 git clone --branch v0.1.0-alpha.2 --single-branch https://github.com/polisplexity/hpc-mcp.git
@@ -25,7 +89,7 @@ Expect `linux/amd64` from the Docker check. The build leaves the image
 `polisplexity-hpc/mpi-sweep:local` with the checkout's exact Git revision
 as an OCI label. The build uses committed source from that revision.
 
-## Run the acceptance test
+### Run the copper acceptance test
 
 On the Docker host, use `lscpu -e=CPU,CORE,SOCKET,NODE,ONLINE` to select two
 online logical CPU IDs on distinct physical cores in the same NUMA node.
