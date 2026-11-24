@@ -84,14 +84,15 @@ def run_batch(workspace, name, manifests):
     jobs = [client.prepare(workspace, manifest, PROFILE) for manifest in manifests]
     timeout = sum(job["manifest"]["resources"]["wall_time_seconds"] for job in jobs) + 35
     batch = request("batch", timeout, name=name, lock=lock, jobs=jobs, profile=PROFILE)
-    for manifest, receipt, job in zip(manifests, batch["receipts"], jobs, strict=True):
+    results = []
+    for manifest, receipt, job in zip(manifests, batch.pop("receipts"), jobs, strict=True):
         client.verify_receipt(receipt, job)
-        receipt["manifest"] = manifest
-        receipt["json_outputs"] = {}
+        json_outputs = {}
         for artifact in receipt["artifacts"]:
             if artifact["path"].endswith(".json") and artifact["size_bytes"] <= 4096:
                 try:
-                    receipt["json_outputs"][artifact["path"]] = json.loads(base64.b64decode(artifact["base64"]))
+                    json_outputs[artifact["path"]] = json.loads(base64.b64decode(artifact["base64"]))
                 except (ValueError, RecursionError):
                     pass
-    return batch
+        results.append({"manifest": manifest, "receipt": receipt, "json_outputs": json_outputs})
+    return {**batch, "results": results}

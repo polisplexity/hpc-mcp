@@ -1,11 +1,15 @@
 # Polisplexity HPC MCP
 
-Open project for letting MCP-capable clients prepare, submit, track and recover
-versioned scientific jobs on high-performance computing infrastructure.
+Open project for letting MCP-capable clients inspect compute accounts, prepare
+execution environments and run versioned jobs on high-performance computing
+infrastructure.
 
 Use the [installation and Hermes acceptance test](INSTALL.md) to build
 HPC MCP and reproduce the copper recipe workflow with your own Docker
 engine and configured Hermes model.
+Use the [managed SSH environment test](cases/ssh-environment/README.md) to
+inspect an authorized Linux account, install a locked dependency and run and
+repeat an independent batch through Hermes.
 
 Start with the [integration inventory](docs/INVENTORY.md), the
 [CIMAT connectivity pilot](cases/cimat-guanajuato/README.md) and

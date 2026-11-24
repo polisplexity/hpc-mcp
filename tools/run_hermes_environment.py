@@ -74,16 +74,17 @@ def verify(trace, claims, workspace):
         require(batch["installation_id"] == install_id and batch["environment_id"] == install["environment_id"]
                 and batch["parallel_jobs"] == 1 and batch["name"] == "duckdb", "Batch environment mismatch")
         rows = []
-        for manifest, job in zip(MANIFESTS, batch["receipts"], strict=True):
+        for manifest, result in zip(MANIFESTS, batch["results"], strict=True):
+            job = result["receipt"]
             client.verify_receipt(job, client.prepare(workspace, manifest, environments.PROFILE))
-            require(job["manifest"] == manifest and job["status"] == "succeeded" and job["exit_code"] == 0
+            require(result["manifest"] == manifest and job["status"] == "succeeded" and job["exit_code"] == 0
                     and job["native_id"].isdecimal() and job["job_id"] not in job_ids,
                     "An SSH job failed or its receipt was repeated")
             job_ids.add(job["job_id"])
             artifact, = job["artifacts"]
             value = expected(workspace, manifest)
             require(json.loads(base64.b64decode(artifact["base64"])) == value
-                    and job["json_outputs"] == {"summary.json": value},
+                    and result["json_outputs"] == {"summary.json": value},
                     "The retrieved artifact disagrees with the independent CSV calculation")
             rows.append({"manifest": manifest, "total_units": value["total_units"], "sha256": artifact["sha256"]})
         batches.append(rows)
