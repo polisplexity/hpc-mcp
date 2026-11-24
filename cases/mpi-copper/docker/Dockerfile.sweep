@@ -1,0 +1,6 @@
+ARG BASE_IMAGE=polisplexity-hpc/mpi-copper:local
+FROM ${BASE_IMAGE}
+
+COPY hpc_mcp/ ./hpc_mcp/
+COPY cases/mpi-copper/run.py cases/mpi-copper/in.copper ./cases/mpi-copper/
+COPY tools/audit_copper_sweep.py ./tools/

@@ -36,6 +36,10 @@ limits. The scheduler or worker runs the job. HPC MCP returns the job
 identity, observed state and artifact references. A client can use the same
 interface with its own program and data.
 
+The [copper temperature sweep](cases/mpi-copper/TEMPERATURE_SWEEP.md) shows
+an agent preparing new jobs from an operator-approved recipe and reading
+their verified JSON results.
+
 ## Current stage
 
 The [job](schemas/job-v1.json) and [result](schemas/result-v1.json) schemas cover

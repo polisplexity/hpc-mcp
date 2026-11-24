@@ -1,5 +1,8 @@
 # MPI molecular dynamics of crystalline copper
 
+The [agent temperature sweep](TEMPERATURE_SWEEP.md) exercises recipe
+discovery, parameterized preparation and retry through HPC MCP.
+
 The experiment models how a periodic face-centered cubic copper crystal
 redistributes energy after its initial velocities are set to 900 K. LAMMPS
 integrates the motion in the microcanonical ensemble at fixed volume, with a

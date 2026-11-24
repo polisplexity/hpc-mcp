@@ -69,14 +69,17 @@ def main():
     args = sys.argv[5:]
     script = "in.copper"
     first_step = 0
+    temperature_k = 900
     if args == ["save"]:
         script = "in.checkpoint"
     elif len(args) == 2 and args[0] == "resume":
         script = "in.resume"
         first_step = int(args[1])
+    elif len(args) == 2 and args[0] == "temperature":
+        temperature_k = int(args[1])
     elif args:
-        raise ValueError("Expected save or resume with a starting timestep")
-    if cells <= 0 or steps <= 0 or sample_every <= 0 or first_step < 0:
+        raise ValueError("Expected save, resume with a starting timestep, or temperature in kelvin")
+    if cells <= 0 or steps <= 0 or sample_every <= 0 or first_step < 0 or temperature_k <= 0:
         raise ValueError("Invalid copper simulation dimensions or time range")
     cpus = sorted(os.sched_getaffinity(0))
     if ranks not in (1, 2, 4) or ranks != len(cpus):
@@ -89,6 +92,7 @@ def main():
         "-in", script, "-log", "none", "-nocite",
         "-var", "cells", str(cells), "-var", "steps", str(steps),
         "-var", "sample_every", str(sample_every), "-var", "potential", "Cu_u3.eam",
+        "-var", "temperature_k", str(temperature_k),
     ]
     started = perf_counter()
     trial = subprocess.run(

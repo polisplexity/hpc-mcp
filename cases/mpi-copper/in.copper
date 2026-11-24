@@ -10,7 +10,7 @@ create_atoms 1 box
 
 pair_style eam
 pair_coeff * * ${potential}
-velocity all create 900.0 54973 mom yes dist gaussian loop geom
+velocity all create ${temperature_k} 54973 mom yes dist gaussian loop geom
 neighbor 2.0 bin
 neigh_modify delay 0 every 1 check yes
 

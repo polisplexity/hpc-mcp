@@ -328,8 +328,8 @@ or benchmark reference), research (later experiment).
 
 - **Upstream interface** — Molecular dynamics executable and documented input format
 - **Reuse** — Run the packaged MPI executable and use its distributed force calculations and thermodynamic output.
-- **Build** — Stage hashed simulation inputs and recover thermodynamic samples and a restart file through the Slurm job contract. Use the verified restart file as input to a successor job.
-- **Acceptance test** — Run fixed-volume copper dynamics with one, two and four ranks and check thermodynamic agreement, atom conservation and energy deviation. Compare a continuous run with two checkpointed jobs and reject an altered checkpoint before allocation.
+- **Build** — Stage hashed simulation inputs and recover thermodynamic samples and a restart file through the Slurm job contract. Expose bounded recipe parameters and let the agent read verified JSON results.
+- **Acceptance test** — Check fixed-volume copper dynamics across rank counts and across a checkpoint handoff. Have an agent run three initial temperatures from one recipe. Compare native thermodynamics and verify one Slurm allocation per UUID after a repeated submit.
 - **Sources** — [Upstream source 1](https://docs.lammps.org/stable/pair_eam.html), [Upstream source 2](https://doi.org/10.1103/PhysRevB.33.7983)
 
 <a id="nextflow"></a>
