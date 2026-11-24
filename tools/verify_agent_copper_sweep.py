@@ -14,6 +14,7 @@ from tools.verify_agent_receipt import claims_with_fields, exchanges, require
 TEMPERATURES = ("300", "600", "900")
 RECIPE = "copper-nve-v1"
 OUTPUT = "copper-result.json"
+CLAIMS_FIELDS = {"runs", "retry"}
 TOLERANCES = {"temperature_k": 0.002, "potential_ev_per_atom": 1e-6,
               "total_ev_per_atom": 1e-6, "pressure_bar": 0.02}
 
@@ -138,7 +139,7 @@ def verify(trace, answer, record):
                "artifact_sha256": results[temperature]["sha256"]}
         expected.append(row)
         verified_runs.append({**row, "max_difference_from_native": differences})
-    claims = claims_with_fields(answer, {"runs", "retry"})
+    claims = claims_with_fields(answer, CLAIMS_FIELDS)
     retry = {"temperature_k": 300, "native_id": native_ids["300"]}
     require(sorted(claims["runs"], key=lambda row: row["temperature_k"]) == expected and claims["retry"] == retry,
             "Agent's final comparison differs from the verified results or repeated-submit response")
