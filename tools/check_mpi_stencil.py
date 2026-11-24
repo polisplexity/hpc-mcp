@@ -3,8 +3,8 @@
 import argparse
 import asyncio
 import base64
-import math
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -17,8 +17,8 @@ from uuid import uuid4
 
 from hpc_mcp.slurm import SlurmProfile, observed
 from hpc_mcp.worker import JOB_VERSION, digest
-from tools.check_slurm_job import call, connect, terminal
 from tools.check_portable_job import check, schema, write_manifest
+from tools.check_slurm_job import call, connect, terminal
 
 
 CASE = Path(__file__).resolve().parents[1] / "cases" / "mpi-stencil"
@@ -95,8 +95,13 @@ async def measure(session, ranks, prepared, result_schema):
           and 0 < sample["kernel_seconds"] <= sample["launcher_seconds"], "Invalid timing evidence")
     check(bool(re.fullmatch("[a-f0-9]{64}", sample["field_digest"])), "Invalid field digest")
     print(f"MPI ranks={ranks}, Slurm job={native_id}, kernel={sample['kernel_seconds']:.3f}s", file=sys.stderr)
-    return {**sample, "request_id": request_id, "native_job_id": native_id,
-            "allocated_cpus": ranks, "native_exit_code": "0:0", "artifact_sha256": artifact["sha256"]}
+    return {
+        **sample, "request_id": request_id, "native_job_id": native_id,
+        "allocated_cpus": ranks, "native_state": status["native_state"],
+        "native_exit_code": status["native_exit_code"], "artifact_sha256": artifact["sha256"],
+        "manifest_sha256": receipt["manifest_sha256"],
+        "started_at": receipt["started_at"], "finished_at": receipt["finished_at"],
+    }
 
 
 def summarize(samples):

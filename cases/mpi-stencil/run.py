@@ -16,15 +16,20 @@ def main():
 
     binary = Path("heat").resolve()
     binary.chmod(0o700)
+    workspace = str(binary.parent)
     command = [
         "/usr/bin/mpirun", "--host", f"localhost:{ranks}", "--bind-to", "none",
         "--mca", "pml", "ob1", "--mca", "btl", "self,tcp", "--mca", "btl_tcp_if_include", "lo",
         "-n", str(ranks), str(binary), *map(str, (rows, cols, steps, *cpus)),
     ]
     start = perf_counter()
+    # The worker's file-size ceiling rules out PMIx file-backed storage.
     run = subprocess.run(
         command, stdout=subprocess.PIPE, check=True, timeout=25,
-        env={**os.environ, "PATH": "/usr/bin:/bin", "TMPDIR": str(Path.cwd())},
+        env={
+            **os.environ, "PATH": "/usr/bin:/bin", "HOME": workspace,
+            "TMPDIR": workspace, "PMIX_MCA_gds": "hash",
+        },
     )
     report = json.loads(run.stdout)
     report["launcher_seconds"] = perf_counter() - start
