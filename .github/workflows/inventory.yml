@@ -37,3 +37,7 @@ jobs:
         run: |
           stem=cases/mpi-copper/evidence/cimat-hermes-copper-sweep-20261124
           python -m tools.verify_agent_copper_sweep --trace "$stem.jsonl" --answer "$stem.json" --record "$stem.json"
+      - name: Verify recorded Hermes SSH environment and batch
+        run: |
+          python -m tools.run_hermes_environment --verify-only \
+            --output cases/ssh-environment/evidence/cimat-hermes-20261124

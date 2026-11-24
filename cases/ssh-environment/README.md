@@ -49,8 +49,8 @@ python -m tools.run_hermes_environment --output runs/ssh-environment
 
 Use a new output directory and a fresh private remote directory for each
 cold-install acceptance run. Keep the remote directory to reuse the same
-environment in subsequent jobs. The source registry, job manifests and
-synthetic data are generated in a temporary client workspace.
+environment in subsequent jobs. The runner copies the approved lock and
+generates the manifests and synthetic inputs in a temporary client workspace.
 
 The runner exposes the three environment tools to Hermes and captures the
 actual MCP exchanges. Verification checks the first installation, the same
@@ -65,3 +65,20 @@ python -m tools.run_hermes_environment --output runs/ssh-environment --verify-on
 The trace contains the tools' results, including account capability fields
 and job output. Review it before sharing and keep the backend diagnostics and
 connection configuration private.
+
+## CIMAT acceptance on November 24, 2026
+
+Hermes ran the checks through HPC MCP over the assigned SSH account. It
+installed DuckDB once, completed three jobs, reused the same installation
+and completed the same three jobs again. The sums for 1,000, 2,000 and 3,000
+rows were 48,941, 97,973 and 146,921. The verifier checked every returned
+artifact against the independent calculation and compared both rounds.
+[MCP trace](evidence/cimat-hermes-20261124/mcp.jsonl) · [Verified record](evidence/cimat-hermes-20261124/record.json)
+
+The first test reached DuckDB installation and failed to start the jobs
+under the 128 MiB virtual memory ceiling of the original SSH profile. An
+independent probe reproduced the failure and completed the query from 768
+MiB among the ceilings tested. The successful agent run used the 1,024 MiB
+managed profile. Separate MCP checks rejected unapproved environment names
+and over-budget jobs, and let the remaining jobs finish after one exited 7.
+The published trace redacts the SSH account's transient free disk figure.
