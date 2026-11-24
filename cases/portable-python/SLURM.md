@@ -105,12 +105,11 @@ two normal equations. Compare the result artifact and its digest with a direct
 run of `fit.py`. Record the client version, native job ID, receipt and final
 answer as separate observations.
 
-The [client receipt](evidence/slurm-clients-20261123.json) confirms the
-Codex result and direct Hermes MCP dispatch. Codex required an explicit
-authorization for the three test tools in the unattended session. The Hermes
-agent trial failed verification because its completion claims had no matching
-tool exchanges. Follow [issue #6](https://github.com/polisplexity/hpc-mcp/issues/6)
-for agent acceptance.
+The [initial client receipt](evidence/slurm-clients-20261123.json) confirms
+Codex and direct Hermes MCP dispatch. Codex required an explicit authorization
+for the three test tools in the unattended session. The [Hermes Agent
+reproduction](HERMES.md) records the startup setting and the later success with
+actual MCP exchanges.
 
 ## Reproduce the comparison
 
