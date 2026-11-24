@@ -1,0 +1,63 @@
+{
+  "request_id": "dc00f5ae-7e9b-494e-8773-bc92cc774af3",
+  "source_revision": "894d84a63cc7a5d3eb1189083261bf73f226c601",
+  "model": "claude-sonnet-4-6",
+  "submit_answer": {
+    "request_id": "dc00f5ae-7e9b-494e-8773-bc92cc774af3",
+    "acknowledged": false
+  },
+  "recover_answer": {
+    "job_id": "dc00f5ae-7e9b-494e-8773-bc92cc774af3",
+    "native_id": "d7c7720b68a98c8d0430f83f2163cddda0b3f7673191ecf74031953562ffed4f",
+    "reference": "hpc-artifact:sha256:1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3",
+    "sha256": "1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3",
+    "size_bytes": 1146924,
+    "verified": true
+  },
+  "downloaded_file": {
+    "size_bytes": 1146924,
+    "sha256": "1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3"
+  },
+  "docker_events": [
+    {
+      "request_id": "dc00f5ae-7e9b-494e-8773-bc92cc774af3",
+      "native_id": "d7c7720b68a98c8d0430f83f2163cddda0b3f7673191ecf74031953562ffed4f",
+      "event": "create",
+      "time_ns": 1795558247774439527
+    },
+    {
+      "request_id": "dc00f5ae-7e9b-494e-8773-bc92cc774af3",
+      "native_id": "d7c7720b68a98c8d0430f83f2163cddda0b3f7673191ecf74031953562ffed4f",
+      "event": "start",
+      "time_ns": 1795558247993078226
+    },
+    {
+      "request_id": "dc00f5ae-7e9b-494e-8773-bc92cc774af3",
+      "native_id": "d7c7720b68a98c8d0430f83f2163cddda0b3f7673191ecf74031953562ffed4f",
+      "event": "die",
+      "time_ns": 1795558248720085789,
+      "exit_code": 0
+    },
+    {
+      "request_id": "dc00f5ae-7e9b-494e-8773-bc92cc774af3",
+      "native_id": "d7c7720b68a98c8d0430f83f2163cddda0b3f7673191ecf74031953562ffed4f",
+      "event": "destroy",
+      "time_ns": 1795558275064329605
+    }
+  ],
+  "verified": {
+    "request_id": "dc00f5ae-7e9b-494e-8773-bc92cc774af3",
+    "native_id": "d7c7720b68a98c8d0430f83f2163cddda0b3f7673191ecf74031953562ffed4f",
+    "starts": 1,
+    "artifact": {
+      "path": "orders-with-revenue.csv",
+      "reference": "hpc-artifact:sha256:1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3",
+      "sha256": "1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3",
+      "size_bytes": 1146924
+    }
+  },
+  "independent_node_file": {
+    "size_bytes": 1146924,
+    "sha256": "1e551cb2446e45841a65fb51a6e7c8788df175cc7ed9422c1e0f4dc5bdb8e4e3"
+  }
+}

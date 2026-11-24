@@ -1,6 +1,6 @@
 # Polisplexity HPC MCP integration inventory
 
-Edition 2026-11-24 · 46 entries.
+Edition 2026-11-24 · 47 entries.
 
 Generated from [the source registry](../registry/tools.json).
 The catalog includes deployment targets, connectors, dependencies,
@@ -17,6 +17,7 @@ or benchmark reference), research (later experiment).
 - [Managed Python environment over SSH](#ssh-environment) — Workloads and acceptance
 - [Native R and pinned Rocker images over SSH](#ssh-r-environment) — Workloads and acceptance
 - [Node-resident datasets and stored output references](#ssh-data-references) — Data movement
+- [Detached Docker job recovery over SSH](#ssh-job-recovery) — Workloads and acceptance
 - [OpenSSH](#openssh) — Institutional targets
 - [OLDT Data Factory](#oldt-data-factory) — Workloads and acceptance
 - [Local CPU reference runner](#local-worker) — Workloads and acceptance
@@ -103,6 +104,17 @@ or benchmark reference), research (later experiment).
 - **Build** — Stage a pinned node file beneath the private dataset root. Publish declared outputs by SHA-256 and verify or retrieve saved objects through MCP.
 - **Acceptance test** — Run R via Hermes against a node CSV above 256 KiB and retain an output above 256 KiB. Recover the file from a second session and compare its size and SHA-256 with the stored object and independent calculation.
 - **Sources** — [Upstream source 1](https://docs.python.org/3/library/hashlib.html)
+
+<a id="ssh-job-recovery"></a>
+## Detached Docker job recovery over SSH
+
+**Family** — Workloads and acceptance. **Decision** — pilot. **Status** — agent-reviewed.
+
+- **Upstream interface** — Docker container start, inspect and event stream on an authorized Linux node
+- **Reuse** — Use the managed R environment, trusted job manifests, durable intent pattern and verified artifact storage.
+- **Build** — Bind a request UUID to one manifest and environment. Start a detached container and reconcile the stored intent with native state after a lost response.
+- **Acceptance test** — Drop Hermes's successful submit response, retry in another session and download the CSV. Verify one native start and the recovered file's SHA-256.
+- **Sources** — [Upstream source 1](https://docs.docker.com/reference/cli/docker/system/events/), [Upstream source 2](https://docs.docker.com/reference/cli/docker/inspect)
 
 <a id="openssh"></a>
 ## OpenSSH

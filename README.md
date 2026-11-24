@@ -16,6 +16,9 @@ whether native R can run a job and reuse an approved Docker image when needed.
 The [node storage case](cases/ssh-r-environment/STORAGE.md) runs that same
 script against a dataset already on the SSH host and verifies the stored
 result by reference.
+The [SSH recovery test](cases/ssh-r-environment/RECOVERY.md) loses the
+submit response and recovers the original Docker job in another Hermes
+session.
 
 Start with the [integration inventory](docs/INVENTORY.md), the
 [CIMAT connectivity pilot](cases/cimat-guanajuato/README.md) and
