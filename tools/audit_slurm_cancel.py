@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import sys
 from tempfile import TemporaryDirectory
-from time import sleep
+from time import monotonic, sleep
 from uuid import UUID
 
 from hpc_mcp.client import JOB_ROOT
@@ -59,19 +59,8 @@ def queue(job_name):
     return observed(["squeue", "--noheader", f"--user={os.getuid()}", f"--name={job_name}", "--format=%i|%T"])
 
 
-def audit(directory, request_id, manifest):
+def snapshot(request_id, manifest, before):
     job_name = f"polishpc-{request_id.hex}"
-    before = None
-    env = {**os.environ, JOB_ROOT: str(directory)}
-    with subprocess.Popen([sys.executable, "-m", "hpc_mcp.server"], env=env) as server:
-        while server.poll() is None:
-            if before is None:
-                live = processes()
-                if sum(item["process"] == "lmp" for item in live.values()) == RANKS:
-                    rows = queue(job_name)
-                    if rows and len(rows) == 1 and rows[0][1] == "RUNNING":
-                        before = {"queue": rows[0], "processes": live}
-            sleep(0.1)
     accounting = observed([
         "sacct", "--noheader", "--parsable2", "--allocations", f"--user={os.getuid()}", f"--name={job_name}",
         f"--starttime={(date.today() - timedelta(days=1)).isoformat()}",
@@ -79,13 +68,39 @@ def audit(directory, request_id, manifest):
     ])
     profile = SlurmProfile.configured()
     job_directory = profile.location / str(request_id)
-    record = {
+    return {
         "request_id": str(request_id), "manifest": manifest, "running": before,
         "final_queue": queue(job_name), "accounting": accounting, "remaining_processes": processes(),
         "cancel_acknowledged": (job_directory / "cancel-ack.json").is_file(),
         "worker_receipt_written": (job_directory / "receipt.json").is_file(),
     }
+
+
+def emit(record):
     print(f"CANCEL_AUDIT {json.dumps(record, sort_keys=True)}", file=sys.stderr, flush=True)
+
+
+def audit(directory, request_id, manifest):
+    job_name = f"polishpc-{request_id.hex}"
+    before = None
+    next_accounting = 0.0
+    env = {**os.environ, JOB_ROOT: str(directory)}
+    with subprocess.Popen([sys.executable, "-m", "hpc_mcp.server"], env=env) as server:
+        while server.poll() is None:
+            live = processes()
+            if before is None and sum(item["process"] == "lmp" for item in live.values()) == RANKS:
+                rows = queue(job_name)
+                if rows and len(rows) == 1 and rows[0][1] == "RUNNING":
+                    before = {"queue": rows[0], "processes": live}
+            if before and not live and monotonic() >= next_accounting:
+                record = snapshot(request_id, manifest, before)
+                rows = record["accounting"]
+                if rows and len(rows) == 1 and rows[0][1].split()[0] == "CANCELLED" and record["final_queue"] == []:
+                    emit(record)
+                    return server.wait()
+                next_accounting = monotonic() + 1
+            sleep(0.1)
+    emit(snapshot(request_id, manifest, before))
     return server.returncode
 
 
