@@ -40,10 +40,9 @@ and MCP on a local worker and an authorized CIMAT SSH profile. The
 [Slurm profile](cases/portable-python/SLURM.md) also ran the job in a development
 cluster and in a Docker development instance hosted at CIMAT. Both verified
 recovery after interruption.
-The independent workload passed in Codex. Direct Hermes MCP dispatch passed,
-and [Hermes agent verification](https://github.com/polisplexity/hpc-mcp/issues/6)
-remains open. The [master record](MASTER_TEST_RECORD.md) links the observed
-results for each client.
+The independent workload passed in Codex and [Hermes
+Agent](cases/portable-python/HERMES.md). The [master
+record](MASTER_TEST_RECORD.md) links the observed results for each client.
 The catalog verifier needs Python 3.10 or later and the standard library.
 
 ```sh

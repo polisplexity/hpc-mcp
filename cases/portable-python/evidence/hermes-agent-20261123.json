@@ -1,0 +1,66 @@
+{
+  "experiment": "Hermes Agent against the authorized CIMAT Docker test scheduler",
+  "docker_source_revision": "1ee420b73fad62ac88f18f04d66769b27428fd0a",
+  "slurm_package_version": "26.05.5-1",
+  "client": {
+    "name": "Hermes Agent",
+    "version": "0.18.2",
+    "revision": "b61c033c",
+    "model": "claude-sonnet-4-6"
+  },
+  "baseline": {
+    "mcp_discovery_timeout_seconds": 1.5,
+    "first_model_request_tools": [],
+    "request_id": "4d0f1127-cf7a-450f-a3b8-b7214a91660b",
+    "outcome": "unavailable",
+    "tool_calls": []
+  },
+  "verified": {
+    "mcp_discovery_timeout_seconds": 45,
+    "first_model_request_tools": [
+      "mcp__polisplexity_hpc__hpc_prepare",
+      "mcp__polisplexity_hpc__hpc_slurm_status",
+      "mcp__polisplexity_hpc__hpc_slurm_submit"
+    ],
+    "trace": "hermes-agent-mcp-20261123.jsonl",
+    "request_id": "9b507246-cdcd-42e3-ac64-fcce986ba9d9",
+    "outcome": "succeeded",
+    "tool_calls": [
+      "hpc_prepare",
+      "hpc_slurm_submit",
+      "hpc_slurm_status"
+    ],
+    "manifest_sha256": "9a7012be3c60037bd0ad9b0e7fdfa3c1865494f24cb672677c0bc2b367c759c5",
+    "scheduler": {
+      "native_id": "1",
+      "state": "COMPLETED",
+      "exit_code": "0:0"
+    },
+    "artifact": {
+      "path": "fit-result.json",
+      "sha256": "f1110031a3798ffebdb342f562a8c704d116f8ddbb01f0bc95a3e8ac5865f748",
+      "value": {
+        "intercept": "76/21",
+        "observations": 6,
+        "slope": "94/35"
+      }
+    },
+    "final_claims": {
+      "state": "succeeded",
+      "native_id": "1",
+      "artifact_sha256": "f1110031a3798ffebdb342f562a8c704d116f8ddbb01f0bc95a3e8ac5865f748",
+      "exit_code": 0
+    }
+  },
+  "disabled_server": {
+    "mcp_discovery_timeout_seconds": 45,
+    "first_model_request_tools": [],
+    "request_id": "2435e9f3-4e4e-46d3-9c1c-6ad461e790ee",
+    "outcome": "unavailable",
+    "tool_calls": []
+  },
+  "historical_unsupported_claim": {
+    "rejected": true,
+    "reason": "Missing prepare, submit or status tool evidence"
+  }
+}

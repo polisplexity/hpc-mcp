@@ -18,3 +18,14 @@ jobs:
       - run: python -m pip install -r cases/cimat-guanajuato/requirements-mcp.txt
       - run: python cases/cimat-guanajuato/check_fixture_mcp.py
       - run: python -m tools.check_portable_job
+      - name: Verify recorded Hermes Agent receipt
+        run: |
+          folder=cases/portable-python/evidence
+          evidence="$folder/hermes-agent-20261123.json"
+          request_id=$(python -c 'import json, sys; print(json.load(open(sys.argv[1]))["verified"]["request_id"])' "$evidence")
+          python -m tools.verify_agent_receipt --trace "$folder/hermes-agent-mcp-20261123.jsonl" \
+            --answer "$evidence" --request-id "$request_id"
+          if python -m tools.verify_agent_receipt --trace /dev/null --answer "$evidence" --request-id "$request_id"; then
+            echo "A claimed success without tool evidence passed verification" >&2
+            exit 1
+          fi
