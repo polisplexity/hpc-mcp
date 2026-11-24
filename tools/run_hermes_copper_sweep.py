@@ -1,6 +1,7 @@
 """Run and verify the copper MCP sweep using the operator's Docker and Hermes."""
 
 import argparse
+import ipaddress
 import json
 import os
 from pathlib import Path
@@ -22,7 +23,7 @@ TOOLS = [
 ]
 
 
-def make_profile(path, source, output, backend, cpu_ids):
+def make_profile(path, source, output, backend):
     import yaml
 
     existing = yaml.safe_load((source / "config.yaml").read_text(encoding="utf-8"))
@@ -36,7 +37,6 @@ def make_profile(path, source, output, backend, cpu_ids):
             "command": sys.executable,
             "args": [str(ROOT / "tools/trace_mcp.py"), "--trace", str(output / "mcp.jsonl"),
                      "--backend-stderr", str(output / "backend.stderr"), "--", *backend],
-            "env": {"POLISPLEXITY_SLURM_TEST_CPUS": "2", "POLISPLEXITY_SLURM_TEST_CPUSET": cpu_ids},
             "connect_timeout": 45, "timeout": 20,
             "tools": {"include": TOOLS, "resources": False, "prompts": False},
         }},
@@ -86,12 +86,15 @@ def run(args, output):
         raise ValueError("Build the sweep image from the current checkout with build-sweep.sh")
     hermes_version = subprocess.check_output([args.hermes, "--version"], text=True, timeout=20).splitlines()[0]
     requests = {temperature: str(uuid4()) for temperature in TEMPERATURES}
-    backend = ["bash", str(ROOT / "cases/portable-python/docker/check.sh"), args.image,
-               "/opt/polis-venv/bin/python", "-m", "tools.audit_copper_sweep"]
+    backend = [
+        "env", "POLISPLEXITY_SLURM_TEST_CPUS=2", f"POLISPLEXITY_SLURM_TEST_CPUSET={args.cpu_ids}",
+        f"POLISPLEXITY_SLURM_TEST_SUBNET={args.subnet or ''}", "bash",
+        str(ROOT / "cases/portable-python/docker/check.sh"), args.image,
+        "/opt/polis-venv/bin/python", "-m", "tools.audit_copper_sweep",
+    ]
     with TemporaryDirectory(prefix="hpc-hermes-sweep-") as temporary:
         working = Path(temporary)
-        model = make_profile(working / "profile", args.hermes_home, output,
-                             [*backend, *requests.values()], args.cpu_ids)
+        model = make_profile(working / "profile", args.hermes_home, output, [*backend, *requests.values()])
         env = {**os.environ, "HERMES_HOME": str(working / "profile")}
         with (output / "agent.txt").open("wb") as answer, (output / "hermes.stderr").open("wb") as error:
             subprocess.run(
@@ -105,9 +108,8 @@ def run(args, output):
     answer = claims_with_fields(output / "agent.txt", CLAIMS_FIELDS)
     if len(audits) != 1 or len(audits[0].get("accounting") or []) != 3:
         raise ValueError("Expected independent Slurm accounting for three allocations")
-    env = {**os.environ, "POLISPLEXITY_SLURM_TEST_CPUS": "2", "POLISPLEXITY_SLURM_TEST_CPUSET": args.cpu_ids}
     with (output / "native.json").open("wb") as native, (output / "native.stderr").open("wb") as error:
-        subprocess.run([*backend, "--native"], env=env, stdin=subprocess.DEVNULL, stdout=native, stderr=error,
+        subprocess.run([*backend, "--native"], stdin=subprocess.DEVNULL, stdout=native, stderr=error,
                        check=True, timeout=180)
     record = {
         "source_revision": revision, "docker_image_id": image_id,
@@ -124,6 +126,8 @@ def run(args, output):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cpu-ids", required=True, help="Two comma-separated CPU IDs on the Docker host")
+    parser.add_argument("--subnet", type=ipaddress.IPv4Network,
+                        help="An available IPv4 CIDR for the test's internal Docker network")
     parser.add_argument("--output", required=True, type=Path, help="A new directory for the trace and results")
     parser.add_argument("--image", default="polisplexity-hpc/mpi-sweep:local")
     parser.add_argument("--hermes", default="hermes", help="Hermes CLI executable or absolute path")
@@ -141,7 +145,7 @@ def main():
     try:
         output.mkdir(mode=0o700, parents=True, exist_ok=False)
         run(args, output)
-    except (ImportError, OSError, subprocess.SubprocessError, ValueError, KeyError, TypeError) as error:
+    except (ImportError, OSError, RuntimeError, subprocess.SubprocessError, ValueError, KeyError, TypeError) as error:
         parser.exit(1, f"Sweep failed: {error}\nInspect the run files in {output}\n")
 
 

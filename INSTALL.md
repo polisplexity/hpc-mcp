@@ -17,6 +17,7 @@ selected by `HERMES_HOME`. [Hermes setup](https://hermes-agent.nousresearch.com/
 git clone --branch v0.1.0-alpha.2 --single-branch https://github.com/polisplexity/hpc-mcp.git
 cd hpc-mcp
 docker version --format '{{.Server.Os}}/{{.Server.Arch}}'
+hermes --version
 bash cases/mpi-copper/docker/build-sweep.sh
 ```
 
@@ -60,6 +61,16 @@ Use `--hermes-home` to select a different configured profile directory or
 daemons in a disposable container on an internal Docker network. Hermes
 uses its configured model from the host. The tested combination is
 Hermes Agent 0.18.2 and Claude Sonnet 4.6. [Scientific case and evidence](cases/mpi-copper/TEMPERATURE_SWEEP.md)
+
+If Docker reports that its default address pools have been fully subnetted,
+repeat the test with an unused IPv4 CIDR on the Docker host and a fresh
+output directory. Replace the example range if it overlaps an existing route
+or Docker network.
+
+```sh
+python -m tools.run_hermes_copper_sweep --cpu-ids 0,2 \
+  --subnet 10.237.44.0/28 --output runs/copper-alpha2-subnet
+```
 
 If a run fails, inspect `hermes.stderr` for the model invocation,
 `backend.stderr` for Docker and Slurm, and `native.stderr` for the direct
