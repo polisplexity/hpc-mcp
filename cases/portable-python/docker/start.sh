@@ -1,6 +1,12 @@
 #!/bin/sh
 set -eu
 
+test_cpus=${POLISPLEXITY_SLURM_TEST_CPUS:-1}
+case "$test_cpus" in
+    1|2|3|4) ;;
+    *) echo "Set a test CPU count between 1 and 4" >&2; exit 2 ;;
+esac
+
 wait_for() {
     log=$1
     shift
@@ -72,9 +78,9 @@ AccountingStorageHost=127.0.0.1
 AccountingStorageEnforce=associations
 JobAcctGatherType=jobacct_gather/linux
 SlurmdParameters=config_overrides
-NodeName=polis-slurm NodeAddr=127.0.0.1 CPUs=1 RealMemory=512 State=UNKNOWN
-PartitionName=pilot Nodes=polis-slurm Default=YES MaxTime=00:02:00 State=UP
 SLURM
+printf 'NodeName=polis-slurm NodeAddr=127.0.0.1 CPUs=%s RealMemory=512 State=UNKNOWN\n' "$test_cpus" >>/etc/slurm/slurm.conf
+printf 'PartitionName=pilot Nodes=polis-slurm Default=YES MaxTime=00:02:00 State=UP\n' >>/etc/slurm/slurm.conf
 
 /usr/sbin/slurmdbd || { tail -n 30 /var/log/slurm/slurmdbd.log >&2; exit 1; }
 wait_for /var/log/slurm/slurmdbd.log sacctmgr -n list cluster

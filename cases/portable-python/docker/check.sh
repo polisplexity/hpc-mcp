@@ -10,6 +10,15 @@ stdin=()
 if (( $# > 0 )); then
     stdin=(--interactive)
 fi
+test_cpus=${POLISPLEXITY_SLURM_TEST_CPUS:-1}
+case "$test_cpus" in
+    1|2|3|4) ;;
+    *) echo "Set a test CPU count between 1 and 4" >&2; exit 2 ;;
+esac
+cpu_set=()
+if [[ -n ${POLISPLEXITY_SLURM_TEST_CPUSET:-} ]]; then
+    cpu_set=(--cpuset-cpus "$POLISPLEXITY_SLURM_TEST_CPUSET")
+fi
 read -r id </proc/sys/kernel/random/uuid
 container="polisplexity-slurm-test-$id"
 network="polisplexity-slurm-test-net-$id"
@@ -33,5 +42,6 @@ trap 'exit 143' TERM
 
 timeout --foreground 180 docker run --rm --init "${stdin[@]}" --name "$container" --label "$owner" \
     --network "$network" --hostname polis-slurm --add-host polis-slurm:127.0.0.1 \
-    --cpus 1 --memory 1g --memory-swap 1g --pids-limit 192 \
+    --cpus "$test_cpus" "${cpu_set[@]}" --env "POLISPLEXITY_SLURM_TEST_CPUS=$test_cpus" \
+    --memory 1g --memory-swap 1g --pids-limit 192 \
     --security-opt no-new-privileges --cap-drop NET_RAW "$image" "$@"
