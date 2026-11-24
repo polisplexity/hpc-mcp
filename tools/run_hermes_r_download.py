@@ -90,10 +90,11 @@ def verify(output, saved_claims, fetched_claims, workspace):
             "native_id": receipt["native_id"], "r_version": receipt["runtime_version"], "route": batch["route"]}
 
 
-def invoke(hermes, source, output, temp, backend, tools, prompt, fields):
+def invoke(hermes, source, output, temp, backend, tools, prompt, fields, *, trace_options=()):
     output.mkdir(mode=0o700)
     profile = temp / "profile"
-    model = make_profile(profile, source, output, backend, tools=tools, tool_timeout=260)
+    model = make_profile(profile, source, output, backend, tools=tools, tool_timeout=260,
+                         trace_options=trace_options)
     with (output / "agent.txt").open("wb") as answer, (output / "hermes.stderr").open("wb") as error:
         subprocess.run(
             [hermes, "chat", "--ignore-rules", "--quiet", "--max-turns", "14", "--source", "tool",

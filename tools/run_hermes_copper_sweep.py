@@ -23,7 +23,7 @@ TOOLS = [
 ]
 
 
-def make_profile(path, source, output, backend, *, tools=TOOLS, tool_timeout=20):
+def make_profile(path, source, output, backend, *, tools=TOOLS, tool_timeout=20, trace_options=()):
     import yaml
 
     existing = yaml.safe_load((source / "config.yaml").read_text(encoding="utf-8"))
@@ -36,7 +36,7 @@ def make_profile(path, source, output, backend, *, tools=TOOLS, tool_timeout=20)
         "mcp_servers": {"polisplexity_hpc": {
             "command": sys.executable,
             "args": [str(ROOT / "tools/trace_mcp.py"), "--trace", str(output / "mcp.jsonl"),
-                     "--backend-stderr", str(output / "backend.stderr"), "--", *backend],
+                     "--backend-stderr", str(output / "backend.stderr"), *trace_options, "--", *backend],
             "connect_timeout": 45, "timeout": tool_timeout,
             "tools": {"include": tools, "resources": False, "prompts": False},
         }},

@@ -36,6 +36,20 @@ def digest(data):
     return sha256(data).hexdigest()
 
 
+def atomic_json(path, value):
+    temporary = path.with_suffix(".tmp")
+    with temporary.open("wb") as stream:
+        stream.write(canonical(value))
+        stream.flush()
+        os.fsync(stream.fileno())
+    temporary.replace(path)
+    directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
+
+
 def checked_path(name):
     if not isinstance(name, str) or not all(PATH_SEGMENT.fullmatch(part) for part in name.split("/")):
         raise ValueError("Use relative POSIX paths with plain file names")
@@ -162,6 +176,64 @@ def execute_native(command, root, limits, stdout, stderr, *, file_limit=MAX_FILE
     return process.returncode, timed_out, str(process.pid)
 
 
+def stage_job(root, manifest, files, stage_input=None, *, profile=None):
+    if profile is not None:
+        validate_manifest(manifest, profile)
+    require_keys(files, {item["path"] for item in manifest["inputs"] if "source" not in item})
+    for item in manifest["inputs"]:
+        name = item["path"]
+        target = root / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if "source" in item:
+            if stage_input is None:
+                raise ValueError("This job requires configured SSH data storage")
+            stage_input(item, target)
+            continue
+        data = base64.b64decode(files[name], validate=True)
+        if len(data) > MAX_FILE_BYTES or digest(data) != item["sha256"]:
+            raise ValueError(f"Input digest or size mismatch: {name}")
+        target.write_bytes(data)
+
+
+def job_receipt(root, manifest, profile, job_id, native_id, runtime_version, started_at, finished_at,
+                exit_code, timed_out, store_output=None):
+    references = manifest.get("output_mode") == "reference"
+    artifacts, unavailable = [], []
+    for name in manifest["outputs"]:
+        if references and (timed_out or exit_code):
+            unavailable.append(name)
+            continue
+        item = artifact(root, name, store_output if references else None)
+        if item is None:
+            unavailable.append(name)
+        else:
+            artifacts.append(item)
+    if timed_out:
+        status = "timed_out"
+    elif exit_code:
+        status = "failed"
+    elif unavailable:
+        status = "missing_outputs"
+    else:
+        status = "succeeded"
+    return {
+        "version": RESULT_VERSION,
+        "job_id": job_id,
+        "manifest_sha256": digest(canonical(manifest)),
+        "profile": profile,
+        "native_id": native_id,
+        "runtime_version": runtime_version,
+        "started_at": started_at,
+        "finished_at": finished_at,
+        "resources": manifest["resources"],
+        "status": status,
+        "exit_code": exit_code,
+        "artifacts": artifacts,
+        "unavailable_outputs": unavailable,
+        "logs": {name: artifact(root, name) for name in ("stdout", "stderr")},
+    }
+
+
 def execute(manifest, files, profile, job_id=None, *, python_executable=None, launcher=None, runtime_version=None,
             stage_input=None, store_output=None):
     if sys.platform != "linux":
@@ -172,26 +244,13 @@ def execute(manifest, files, profile, job_id=None, *, python_executable=None, la
     slurm_id = os.getenv("SLURM_JOB_ID", "") if profile == "slurm" else None
     if slurm_id is not None and not re.fullmatch(r"[1-9][0-9]*", slurm_id):
         raise ValueError("A Slurm worker requires its native job ID before launch")
-    require_keys(files, {item["path"] for item in manifest["inputs"] if "source" not in item})
-    references = manifest.get("output_mode") == "reference"
-    node_inputs = any("source" in item for item in manifest["inputs"])
-    if (references and store_output is None) or (node_inputs and stage_input is None):
+    if manifest.get("output_mode") == "reference" and store_output is None:
         raise ValueError("This job requires configured SSH data storage")
     limits = manifest["resources"]
 
     with TemporaryDirectory(prefix="polisplexity-hpc-") as directory:
         root = Path(directory).resolve()
-        for item in manifest["inputs"]:
-            name = item["path"]
-            target = root / name
-            target.parent.mkdir(parents=True, exist_ok=True)
-            if "source" in item:
-                stage_input(item, target)
-                continue
-            data = base64.b64decode(files[name], validate=True)
-            if len(data) > MAX_FILE_BYTES or digest(data) != item["sha256"]:
-                raise ValueError(f"Input digest or size mismatch: {name}")
-            target.write_bytes(data)
+        stage_job(root, manifest, files, stage_input)
 
         started_at = timestamp()
         with (root / "stdout").open("wb") as stdout, (root / "stderr").open("wb") as stderr:
@@ -200,41 +259,9 @@ def execute(manifest, files, profile, job_id=None, *, python_executable=None, la
                 exit_code, timed_out, native_id = execute_native(command, root, limits, stdout, stderr)
             else:
                 exit_code, timed_out, native_id = launcher(root, manifest, stdout, stderr)
-        finished_at = timestamp()
-        artifacts, unavailable = [], []
-        for name in manifest["outputs"]:
-            if references and (timed_out or exit_code):
-                unavailable.append(name)
-                continue
-            item = artifact(root, name, store_output if references else None)
-            if item is None:
-                unavailable.append(name)
-            else:
-                artifacts.append(item)
-        if timed_out:
-            status = "timed_out"
-        elif exit_code:
-            status = "failed"
-        elif unavailable:
-            status = "missing_outputs"
-        else:
-            status = "succeeded"
-        return {
-            "version": RESULT_VERSION,
-            "job_id": job_id or str(uuid.uuid4()),
-            "manifest_sha256": digest(canonical(manifest)),
-            "profile": profile,
-            "native_id": slurm_id or native_id,
-            "runtime_version": runtime_version or ".".join(map(str, sys.version_info[:3])),
-            "started_at": started_at,
-            "finished_at": finished_at,
-            "resources": limits,
-            "status": status,
-            "exit_code": exit_code,
-            "artifacts": artifacts,
-            "unavailable_outputs": unavailable,
-            "logs": {name: artifact(root, name) for name in ("stdout", "stderr")},
-        }
+        return job_receipt(root, manifest, profile, job_id or str(uuid.uuid4()), slurm_id or native_id,
+                           runtime_version or ".".join(map(str, sys.version_info[:3])),
+                           started_at, timestamp(), exit_code, timed_out, store_output)
 
 
 def dispatch(request):

@@ -67,7 +67,7 @@ def final_claims(path):
     return claims
 
 
-def exchanges(path, *, allow_tool_errors=False):
+def exchanges(path, *, allow_tool_errors=False, allow_drop=False):
     calls = {}
     replies = {}
     for line in path.read_bytes().splitlines():
@@ -79,8 +79,9 @@ def exchanges(path, *, allow_tool_errors=False):
             call_id = request["id"]
             require(call_id not in calls, "Repeated JSON-RPC request ID")
             calls[call_id] = request["params"]
-        elif "response" in event:
-            response = event["response"]
+        elif "response" in event or (allow_drop and "dropped_response" in event):
+            dropped = "dropped_response" in event
+            response = event["dropped_response"] if dropped else event["response"]
             call_id = response["id"]
             require(call_id in calls and call_id not in replies, "Unmatched JSON-RPC response")
             result = response.get("result")
@@ -92,7 +93,8 @@ def exchanges(path, *, allow_tool_errors=False):
                 continue
             require(not result.get("isError"), "MCP returned a tool error")
             structured = result.get("structuredContent")
-            replies[call_id] = structured if structured is not None else json.loads(result["content"][0]["text"])
+            payload = structured if structured is not None else json.loads(result["content"][0]["text"])
+            replies[call_id] = {"dropped_response": payload} if dropped else payload
         else:
             raise ValueError("Unknown trace event")
     require(calls.keys() == replies.keys(), "Some MCP calls have no response")

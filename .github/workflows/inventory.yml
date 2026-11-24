@@ -53,3 +53,7 @@ jobs:
         run: |
           python -m tools.run_hermes_r_download --verify-only \
             --output cases/ssh-r-environment/evidence/cimat-download-20261124
+      - name: Verify recorded Hermes recovery after a dropped SSH job acknowledgment
+        run: |
+          python -m tools.run_hermes_ssh_recovery --verify-only \
+            --output cases/ssh-r-environment/evidence/cimat-recovery-20261124

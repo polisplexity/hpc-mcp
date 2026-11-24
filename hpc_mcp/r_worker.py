@@ -95,27 +95,37 @@ class RRuntime:
         return {"runtime": "rscript", "r_version": version, "route": "docker",
                 "environment_id": identity, "status": status, "image": lock["image"], "image_id": image_id}
 
-    def launch_container(self, selection, root, manifest, stdout, stderr, file_limit):
-        import resource
-
+    def create_container(self, selection, root, manifest, file_limit, name, *, labels=(), detached=False):
         resources = manifest["resources"]
         memory = f'{resources["memory_mib"]}m'
+        entrypoint = "Rscript"
+        command = ["--vanilla", manifest["entrypoint"], *manifest["argv"]]
+        if detached:
+            entrypoint = "/usr/bin/timeout"
+            command = ["--signal=KILL", f'{resources["wall_time_seconds"]}s', "Rscript", *command]
         if "," in str(root):
             raise ValueError("The job directory cannot contain a comma in Docker mode")
         container = self.docker_output(
             "container", "create", "--pull=never", "--network=none", "--read-only",
-            "--name", "polisplexity-hpc-r-" + uuid4().hex,
-            "--label", "org.polisplexity.hpc.runtime=rscript",
+            "--name", name, "--restart=no",
+            "--label", "org.polisplexity.hpc.runtime=rscript", *labels,
             "--cap-drop=ALL", "--security-opt=no-new-privileges", "--user", f"{os.getuid()}:{os.getgid()}",
             "--cpus", str(resources["cpus"]), "--memory", memory, "--memory-swap", memory,
             "--pids-limit=32", "--ulimit", f"fsize={file_limit}:{file_limit}", "--ulimit", "core=0:0",
             "--log-driver=none", "--tmpfs", "/tmp:rw,noexec,nosuid,nodev,size=32m",
             "--mount", f"type=bind,source={root},target=/job", "--workdir", "/job", "--env", "HOME=/tmp",
             "--env", "OPENBLAS_NUM_THREADS=1", "--env", "OMP_NUM_THREADS=1",
-            "--entrypoint", "Rscript", selection["image"], "--vanilla", manifest["entrypoint"], *manifest["argv"],
+            "--entrypoint", entrypoint, selection["image"], *command,
         )
         if not re.fullmatch(r"[a-f0-9]{64}", container):
             raise RuntimeError("Docker did not return a container ID")
+        return container
+
+    def launch_container(self, selection, root, manifest, stdout, stderr, file_limit):
+        import resource
+
+        resources = manifest["resources"]
+        container = self.create_container(selection, root, manifest, file_limit, "polisplexity-hpc-r-" + uuid4().hex)
 
         def limit_logs():
             resource.setrlimit(resource.RLIMIT_FSIZE, (self.inline_limit, self.inline_limit))

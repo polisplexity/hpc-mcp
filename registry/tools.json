@@ -63,6 +63,18 @@
       "status": "agent-reviewed"
     },
     {
+      "id": "ssh-job-recovery",
+      "name": "Detached Docker job recovery over SSH",
+      "family": "Workloads and acceptance",
+      "decision": "pilot",
+      "upstream": "Docker container start, inspect and event stream on an authorized Linux node",
+      "reuse": "Use the managed R environment, trusted job manifests, durable intent pattern and verified artifact storage.",
+      "build": "Bind a request UUID to one manifest and environment. Start a detached container and reconcile the stored intent with native state after a lost response.",
+      "test": "Drop Hermes's successful submit response, retry in another session and download the CSV. Verify one native start and the recovered file's SHA-256.",
+      "sources": ["https://docs.docker.com/reference/cli/docker/system/events/", "https://docs.docker.com/reference/cli/docker/inspect"],
+      "status": "agent-reviewed"
+    },
+    {
       "id": "openssh",
       "name": "OpenSSH",
       "family": "Institutional targets",
