@@ -33,3 +33,7 @@ jobs:
         run: |
           stem=cases/mpi-copper/evidence/cimat-hermes-mpi-cancel-20261124
           python -m tools.verify_agent_cancel --trace "$stem.jsonl" --answer "$stem.json" --run "$stem.json"
+      - name: Verify recorded Hermes copper temperature sweep
+        run: |
+          stem=cases/mpi-copper/evidence/cimat-hermes-copper-sweep-20261124
+          python -m tools.verify_agent_copper_sweep --trace "$stem.jsonl" --answer "$stem.json" --record "$stem.json"

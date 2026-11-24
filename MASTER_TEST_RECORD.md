@@ -19,6 +19,7 @@ Edition: 2026-11-24.
 | LAMMPS copper molecular dynamics with 1, 2 and 4 processes | Passed on CIMAT Docker | [Copper report](cases/mpi-copper/README.md) and [recorded samples](cases/mpi-copper/evidence/cimat-lammps-20261124.json) verify Slurm CPU accounting, atom conservation and thermodynamic agreement. Four ranks gave 3.65× integration speedup at 91% parallel efficiency. |
 | LAMMPS checkpoint handoff with two MPI processes | Passed on CIMAT Docker | [Checkpoint report](cases/mpi-copper/README.md#checkpoint-and-restart) and [recorded evidence](cases/mpi-copper/evidence/cimat-lammps-checkpoint-20261124.json) verify a 181,128-byte checkpoint at step 70, agreement with the continuous run through step 140, and rejection of altered input before Slurm allocation. |
 | Cancel a running LAMMPS job in Hermes Agent | Agent verified on CIMAT Docker | [Agent trace](cases/mpi-copper/evidence/cimat-hermes-mpi-cancel-20261124.jsonl) and [independent audit](cases/mpi-copper/evidence/cimat-hermes-mpi-cancel-20261124.json) show actual agent submit, running observation, cancellation, terminal confirmation, repeat cancellation, and rejection of an unknown UUID. The audit saw two LAMMPS processes before cancellation and zero after it. |
+| Prepare and run a three-temperature LAMMPS sweep in Hermes Agent | Agent verified on CIMAT Docker | [Agent trace](cases/mpi-copper/evidence/cimat-hermes-copper-sweep-20261124.jsonl) and [verified record](cases/mpi-copper/evidence/cimat-hermes-copper-sweep-20261124.json) show recipe discovery, three parameterized manifests, verified artifact retrieval, and three native Slurm allocations for four submit calls. Separate native runs reproduced the thermodynamic results. |
 | Site-managed Slurm and applied cases | As required by workloads | Qualify a site-managed queue when a workload calls for it. See the [Slurm qualification issue](https://github.com/polisplexity/hpc-mcp/issues/3) and [RFC 0001](docs/rfc/0001-hpc-job-contract.md). |
 
 Record each actual run with source revision, execution route, recipe and input
@@ -29,5 +30,5 @@ shared device or the complete node.
 
 A verifier using MCP stdio establishes the tool behavior. Agent validation
 requires a recorded agent tool exchange and agreement with independent
-execution evidence. The MPI comparisons and checkpoint handoff used MCP
+execution evidence. The MPI scaling comparisons and checkpoint handoff used MCP
 verifiers.
