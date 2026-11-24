@@ -1,6 +1,6 @@
 # Polisplexity HPC MCP integration inventory
 
-Edition 2026-11-22 · 42 entries.
+Edition 2026-11-24 · 43 entries.
 
 Generated from [the source registry](../registry/tools.json).
 The catalog includes deployment targets, connectors, dependencies,
@@ -37,6 +37,7 @@ or benchmark reference), research (later experiment).
 - [Environment Modules](#environment-modules) — Execution environments
 - [Spack](#spack) — Execution environments
 - [Open MPI](#openmpi) — Execution environments
+- [LAMMPS](#lammps) — Scientific workflows
 - [Nextflow](#nextflow) — Scientific workflows
 - [Snakemake](#snakemake) — Scientific workflows
 - [Parsl](#parsl) — Scientific workflows
@@ -319,6 +320,17 @@ or benchmark reference), research (later experiment).
 - **Build** — Record ranks, allocated CPUs, rank affinity, transport and image versions. Leave scientific parallelization to the workload.
 - **Acceptance test** — Compare one, two and four ranks for a fixed periodic heat stencil on one node. Require identical field digests and agreement with the analytic solution, and record speedup separately for the kernel and launcher.
 - **Sources** — [Upstream source 1](https://docs.open-mpi.org/en/main/)
+
+<a id="lammps"></a>
+## LAMMPS
+
+**Family** — Scientific workflows. **Decision** — evaluate. **Status** — mcp-verified.
+
+- **Upstream interface** — Molecular dynamics executable and documented input format
+- **Reuse** — Run the packaged MPI executable and use its distributed force calculations and thermodynamic output.
+- **Build** — Stage the simulation inputs with hashes and recover thermodynamic samples through the existing Slurm job contract.
+- **Acceptance test** — Run fixed-volume copper dynamics with one, two and four ranks. Require matching thermodynamic curves within tolerance, atom conservation and bounded energy deviation.
+- **Sources** — [Upstream source 1](https://docs.lammps.org/stable/pair_eam.html), [Upstream source 2](https://doi.org/10.1103/PhysRevB.33.7983)
 
 <a id="nextflow"></a>
 ## Nextflow

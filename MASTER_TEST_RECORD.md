@@ -1,6 +1,6 @@
 # HPC MCP master test record
 
-Edition: 2026-11-23.
+Edition: 2026-11-24.
 
 | Scope | Status | Evidence boundary |
 |---|---|---|
@@ -16,6 +16,7 @@ Edition: 2026-11-23.
 | Independent workload in Codex | Passed | [Client evidence](cases/portable-python/evidence/slurm-clients-20261123.json) records matching native bytes, actual MCP exchanges and final claims from a fresh Codex session. |
 | Independent workload in Hermes Agent | Passed on CIMAT Docker | [Hermes evidence](cases/portable-python/evidence/hermes-agent-20261123.json) and the [MCP trace](cases/portable-python/evidence/hermes-agent-mcp-20261123.jsonl) correlate prepare, submit, terminal Slurm accounting, the verified artifact and the final agent answer. The disabled server produced an unavailable answer with zero calls. [Earlier attempts](cases/portable-python/evidence/slurm-clients-20261123.json) remain recorded. |
 | Fixed-grid Open MPI with 1, 2 and 4 processes | Passed on CIMAT Docker | [MPI stencil report](cases/mpi-stencil/README.md) and [recorded samples](cases/mpi-stencil/evidence/cimat-mpi-20261123.json) verify CPU accounting, matching field digests and analytic correctness. The four-rank median was 2.59× faster in the kernel and 1.37× faster through the launcher than one rank. The case fits the existing single-node allocation. |
+| LAMMPS copper molecular dynamics with 1, 2 and 4 processes | Passed on CIMAT Docker | [Copper report](cases/mpi-copper/README.md) and [recorded samples](cases/mpi-copper/evidence/cimat-lammps-20261124.json) verify Slurm CPU accounting, atom conservation and thermodynamic agreement. Four ranks gave 3.65× integration speedup at 91% parallel efficiency. |
 | Site-managed Slurm and applied cases | As required by workloads | Qualify a site-managed queue when a workload calls for it. See the [Slurm qualification issue](https://github.com/polisplexity/hpc-mcp/issues/3) and [RFC 0001](docs/rfc/0001-hpc-job-contract.md). |
 
 Record each actual run with source revision, execution route, recipe and input

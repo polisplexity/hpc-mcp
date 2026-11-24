@@ -1,0 +1,1348 @@
+{
+  "environment": "authorized CIMAT single-node Docker pilot",
+  "date_local": "2026-11-24",
+  "timezone": "America/Mexico_City",
+  "source_revision": "cd1a9effbb3f2f8ab9572bdb9b1a50862e71eddb",
+  "base_source_revision": "f5a979e17e1b47b8dd1f3592e79888d3a128ef35",
+  "docker_image_id": "sha256:024a31858ff35d21ebe9c8e37920df5a4333344b9c95645a653f8f6c06b34798",
+  "base_docker_image_id": "sha256:715ef6bff750c76d2a42d2543889051aa79b16c15485ac21be496240ea2fd8ec",
+  "docker_engine": "29.4.1",
+  "model_source": "https://doi.org/10.1103/PhysRevB.33.7983",
+  "transport": "Open MPI ob1 with self,tcp over loopback; PMIx hash datastore",
+  "container_limits": {
+    "cpus": 4,
+    "memory_mib": 1024,
+    "pids": 192
+  },
+  "job_limits": {
+    "slurm_tasks": 1,
+    "requested_memory_mib": 512,
+    "worker_wall_seconds": 30,
+    "worker_file_bytes": 262144
+  },
+  "case": "microcanonical thermal relaxation of periodic fcc copper",
+  "workload": {
+    "cells_per_side": 32,
+    "atoms": 131072,
+    "steps": 140,
+    "sample_every": 20,
+    "timestep_ps": 0.002,
+    "initial_temperature_k": 900.0
+  },
+  "packages": {
+    "lammps": "20260704+dfsg-2",
+    "lammps-data": "20260704+dfsg-2"
+  },
+  "mpi_version": "mpirun (Open MPI) 6.0.0rc2",
+  "slurm_version": "slurm-wlm 26.05.5",
+  "topology": {
+    "physical_cores": 4,
+    "affinity_cpus": 4,
+    "numa_domains": 1
+  },
+  "input_sha256": {
+    "run.py": "7f59ff5eaf8141afe60c23cf034481e50127c6fd20ba8d5c96900fa74a2be56c",
+    "in.copper": "20713501039f8d5e967472ce87671de7036778aff8c0944c8acf2650f11de0c7",
+    "pin.py": "3461407e13b19ae0bafce06da8dfc13e0b1318173f03a88ceeca841bddce013b",
+    "Cu_u3.eam": "3436c491a4c75ea8b7141adbc6ee382a118f5fdb47f609c2a660fc1eb772599f"
+  },
+  "validation": {
+    "max_difference_vs_one_rank": {
+      "temperature_k": 1.5006662579253316e-11,
+      "potential_ev_per_atom": 8.243792315454357e-10,
+      "total_ev_per_atom": 8.243792315454357e-10,
+      "pressure_bar": 4.984030965715647e-10
+    },
+    "absolute_tolerances": {
+      "temperature_k": 0.002,
+      "potential_ev_per_atom": 1e-06,
+      "total_ev_per_atom": 1e-06,
+      "pressure_bar": 0.02
+    },
+    "max_energy_deviation_ev_per_atom": 0.00011251648251375812,
+    "energy_deviation_limit_ev_per_atom": 0.002
+  },
+  "samples": [
+    {
+      "atoms": 131072,
+      "kernel_seconds": 18.3504,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 19.360414064489305,
+      "pinned_cpus": 1,
+      "processor_grid": [
+        1,
+        1,
+        1
+      ],
+      "ranks": 1,
+      "steps": 140,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.5400000017420195,
+          "pressure_bar": 10520.9963404261,
+          "step": 0,
+          "temperature_k": 900.000000000011,
+          "total_ev_per_atom": -3.423666758800995
+        },
+        {
+          "potential_ev_per_atom": -3.4503621422282333,
+          "pressure_bar": 39671.9330855789,
+          "step": 20,
+          "temperature_k": 207.39651509921,
+          "total_ev_per_atom": -3.4235542431436157
+        },
+        {
+          "potential_ev_per_atom": -3.4793906585710523,
+          "pressure_bar": 28476.9236207969,
+          "step": 40,
+          "temperature_k": 431.482593778433,
+          "total_ev_per_atom": -3.4236175814523317
+        },
+        {
+          "potential_ev_per_atom": -3.4836014507304993,
+          "pressure_bar": 28596.1895122972,
+          "step": 60,
+          "temperature_k": 464.144990602229,
+          "total_ev_per_atom": -3.4236064596731794
+        },
+        {
+          "potential_ev_per_atom": -3.481634943110222,
+          "pressure_bar": 29053.3135797604,
+          "step": 80,
+          "temperature_k": 448.963480422335,
+          "total_ev_per_atom": -3.4236023012884216
+        },
+        {
+          "potential_ev_per_atom": -3.483873508318672,
+          "pressure_bar": 27964.6377329933,
+          "step": 100,
+          "temperature_k": 466.206671387835,
+          "total_ev_per_atom": -3.4236120261372376
+        },
+        {
+          "potential_ev_per_atom": -3.4781457804422304,
+          "pressure_bar": 30231.0877835066,
+          "step": 120,
+          "temperature_k": 421.995642946365,
+          "total_ev_per_atom": -3.423598978607864
+        },
+        {
+          "potential_ev_per_atom": -3.4841481568035126,
+          "pressure_bar": 27910.9252332903,
+          "step": 140,
+          "temperature_k": 468.340394005284,
+          "total_ev_per_atom": -3.423610871431389
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 0.32,
+        "Neigh": 0.0,
+        "Pair": 98.11
+      },
+      "request_id": "421eead7-3230-41f6-bb10-1c8e5d0982ce",
+      "native_job_id": "1",
+      "allocated_cpus": 1,
+      "native_state": "COMPLETED",
+      "native_exit_code": "0:0",
+      "artifact_sha256": "e5e3a6d70666461b7a194d5207a5fb9feb297fac0147aaaa9bf23359fbc14bc2",
+      "manifest_sha256": "bdf24192b302631f49c64a385611358cdaea230f8c4fc7dac57941f66cb6ceee",
+      "started_at": "2026-11-24T06:30:25.047+00:00",
+      "finished_at": "2026-11-24T06:30:44.464+00:00",
+      "submit_to_receipt_seconds": 20.325822318904102
+    },
+    {
+      "atoms": 131072,
+      "kernel_seconds": 9.37202,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 10.275851872749627,
+      "pinned_cpus": 2,
+      "processor_grid": [
+        1,
+        1,
+        2
+      ],
+      "ranks": 2,
+      "steps": 140,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.5400000025663987,
+          "pressure_bar": 10520.996340426,
+          "step": 0,
+          "temperature_k": 900.000000000008,
+          "total_ev_per_atom": -3.423666759625374
+        },
+        {
+          "potential_ev_per_atom": -3.450362142227478,
+          "pressure_bar": 39671.9330855788,
+          "step": 20,
+          "temperature_k": 207.396515099209,
+          "total_ev_per_atom": -3.4235542431428603
+        },
+        {
+          "potential_ev_per_atom": -3.479390658571312,
+          "pressure_bar": 28476.9236207966,
+          "step": 40,
+          "temperature_k": 431.482593778427,
+          "total_ev_per_atom": -3.4236175814525986
+        },
+        {
+          "potential_ev_per_atom": -3.4836014507302244,
+          "pressure_bar": 28596.1895122967,
+          "step": 60,
+          "temperature_k": 464.144990602232,
+          "total_ev_per_atom": -3.423606459672905
+        },
+        {
+          "potential_ev_per_atom": -3.4816349431106337,
+          "pressure_bar": 29053.31357976,
+          "step": 80,
+          "temperature_k": 448.963480422327,
+          "total_ev_per_atom": -3.4236023012888412
+        },
+        {
+          "potential_ev_per_atom": -3.483873508319557,
+          "pressure_bar": 27964.637732993,
+          "step": 100,
+          "temperature_k": 466.206671387831,
+          "total_ev_per_atom": -3.42361202613813
+        },
+        {
+          "potential_ev_per_atom": -3.4781457804415132,
+          "pressure_bar": 30231.0877835064,
+          "step": 120,
+          "temperature_k": 421.99564294636,
+          "total_ev_per_atom": -3.423598978607147
+        },
+        {
+          "potential_ev_per_atom": -3.484148156804039,
+          "pressure_bar": 27910.9252332904,
+          "step": 140,
+          "temperature_k": 468.340394005286,
+          "total_ev_per_atom": -3.423610871431915
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 1.39,
+        "Neigh": 0.0,
+        "Pair": 96.95
+      },
+      "request_id": "6e98fa7d-5e23-4600-bb48-46cf390ee6d1",
+      "native_job_id": "2",
+      "allocated_cpus": 2,
+      "native_state": "COMPLETED",
+      "native_exit_code": "0:0",
+      "artifact_sha256": "506bf3d7c5feb6cdf78e36d8f3a39a8311966dd151a1d49850a0ebc95d4f0244",
+      "manifest_sha256": "795b878446f54c6aeae08c52b24c671bbfec4a26cad83b8d71a97ae546455775",
+      "started_at": "2026-11-24T06:30:45.043+00:00",
+      "finished_at": "2026-11-24T06:30:55.388+00:00",
+      "submit_to_receipt_seconds": 11.211394507437944
+    },
+    {
+      "atoms": 131072,
+      "kernel_seconds": 5.03766,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 5.895704775117338,
+      "pinned_cpus": 4,
+      "processor_grid": [
+        1,
+        2,
+        2
+      ],
+      "ranks": 4,
+      "steps": 140,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.540000002439514,
+          "pressure_bar": 10520.9963404257,
+          "step": 0,
+          "temperature_k": 899.999999999996,
+          "total_ev_per_atom": -3.423666759498497
+        },
+        {
+          "potential_ev_per_atom": -3.4503621422273634,
+          "pressure_bar": 39671.9330855787,
+          "step": 20,
+          "temperature_k": 207.396515099209,
+          "total_ev_per_atom": -3.423554243142746
+        },
+        {
+          "potential_ev_per_atom": -3.4793906585713272,
+          "pressure_bar": 28476.9236207965,
+          "step": 40,
+          "temperature_k": 431.482593778425,
+          "total_ev_per_atom": -3.423617581452606
+        },
+        {
+          "potential_ev_per_atom": -3.4836014507307893,
+          "pressure_bar": 28596.1895122969,
+          "step": 60,
+          "temperature_k": 464.144990602228,
+          "total_ev_per_atom": -3.4236064596734694
+        },
+        {
+          "potential_ev_per_atom": -3.481634943110016,
+          "pressure_bar": 29053.3135797601,
+          "step": 80,
+          "temperature_k": 448.963480422325,
+          "total_ev_per_atom": -3.423602301288223
+        },
+        {
+          "potential_ev_per_atom": -3.483873508319603,
+          "pressure_bar": 27964.6377329929,
+          "step": 100,
+          "temperature_k": 466.206671387833,
+          "total_ev_per_atom": -3.423612026138176
+        },
+        {
+          "potential_ev_per_atom": -3.4781457804415514,
+          "pressure_bar": 30231.0877835063,
+          "step": 120,
+          "temperature_k": 421.995642946361,
+          "total_ev_per_atom": -3.423598978607185
+        },
+        {
+          "potential_ev_per_atom": -3.4841481568039705,
+          "pressure_bar": 27910.9252332902,
+          "step": 140,
+          "temperature_k": 468.340394005283,
+          "total_ev_per_atom": -3.4236108714318467
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 3.6,
+        "Neigh": 0.0,
+        "Pair": 94.29
+      },
+      "request_id": "48c58d20-fba2-46ef-87fd-a68c0c27ab11",
+      "native_job_id": "3",
+      "allocated_cpus": 4,
+      "native_state": "COMPLETED",
+      "native_exit_code": "0:0",
+      "artifact_sha256": "9d79ad114838f681cb22b453c027bf8f69ef539fcb3b7e02a8d0daa878d31c3c",
+      "manifest_sha256": "f4cbb508fbc4d04917c88c0083e547c0a359366629a7685d8466b0caea01614a",
+      "started_at": "2026-11-24T06:30:56.043+00:00",
+      "finished_at": "2026-11-24T06:31:02.020+00:00",
+      "submit_to_receipt_seconds": 6.360053353011608
+    },
+    {
+      "atoms": 131072,
+      "kernel_seconds": 9.34458,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 10.24758808221668,
+      "pinned_cpus": 2,
+      "processor_grid": [
+        1,
+        1,
+        2
+      ],
+      "ranks": 2,
+      "steps": 140,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.5400000025663987,
+          "pressure_bar": 10520.996340426,
+          "step": 0,
+          "temperature_k": 900.000000000008,
+          "total_ev_per_atom": -3.423666759625374
+        },
+        {
+          "potential_ev_per_atom": -3.450362142227478,
+          "pressure_bar": 39671.9330855788,
+          "step": 20,
+          "temperature_k": 207.396515099209,
+          "total_ev_per_atom": -3.4235542431428603
+        },
+        {
+          "potential_ev_per_atom": -3.479390658571312,
+          "pressure_bar": 28476.9236207966,
+          "step": 40,
+          "temperature_k": 431.482593778427,
+          "total_ev_per_atom": -3.4236175814525986
+        },
+        {
+          "potential_ev_per_atom": -3.4836014507302244,
+          "pressure_bar": 28596.1895122967,
+          "step": 60,
+          "temperature_k": 464.144990602232,
+          "total_ev_per_atom": -3.423606459672905
+        },
+        {
+          "potential_ev_per_atom": -3.4816349431106337,
+          "pressure_bar": 29053.31357976,
+          "step": 80,
+          "temperature_k": 448.963480422327,
+          "total_ev_per_atom": -3.4236023012888412
+        },
+        {
+          "potential_ev_per_atom": -3.483873508319557,
+          "pressure_bar": 27964.637732993,
+          "step": 100,
+          "temperature_k": 466.206671387831,
+          "total_ev_per_atom": -3.42361202613813
+        },
+        {
+          "potential_ev_per_atom": -3.4781457804415132,
+          "pressure_bar": 30231.0877835064,
+          "step": 120,
+          "temperature_k": 421.99564294636,
+          "total_ev_per_atom": -3.423598978607147
+        },
+        {
+          "potential_ev_per_atom": -3.484148156804039,
+          "pressure_bar": 27910.9252332904,
+          "step": 140,
+          "temperature_k": 468.340394005286,
+          "total_ev_per_atom": -3.423610871431915
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 1.39,
+        "Neigh": 0.0,
+        "Pair": 96.96
+      },
+      "request_id": "95c8f8d3-32c8-4e59-b82d-ea000cede1ac",
+      "native_job_id": "4",
+      "allocated_cpus": 2,
+      "native_state": "COMPLETED",
+      "native_exit_code": "0:0",
+      "artifact_sha256": "c9f8a1996d72e1619cd08c00ca8cca684936c08d8e13557e6f3f88576dcf7e90",
+      "manifest_sha256": "795b878446f54c6aeae08c52b24c671bbfec4a26cad83b8d71a97ae546455775",
+      "started_at": "2026-11-24T06:31:03.043+00:00",
+      "finished_at": "2026-11-24T06:31:13.337+00:00",
+      "submit_to_receipt_seconds": 11.159509643912315
+    },
+    {
+      "atoms": 131072,
+      "kernel_seconds": 5.02352,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 5.859364005737007,
+      "pinned_cpus": 4,
+      "processor_grid": [
+        1,
+        2,
+        2
+      ],
+      "ranks": 4,
+      "steps": 140,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.540000002439514,
+          "pressure_bar": 10520.9963404257,
+          "step": 0,
+          "temperature_k": 899.999999999996,
+          "total_ev_per_atom": -3.423666759498497
+        },
+        {
+          "potential_ev_per_atom": -3.4503621422273634,
+          "pressure_bar": 39671.9330855787,
+          "step": 20,
+          "temperature_k": 207.396515099209,
+          "total_ev_per_atom": -3.423554243142746
+        },
+        {
+          "potential_ev_per_atom": -3.4793906585713272,
+          "pressure_bar": 28476.9236207965,
+          "step": 40,
+          "temperature_k": 431.482593778425,
+          "total_ev_per_atom": -3.423617581452606
+        },
+        {
+          "potential_ev_per_atom": -3.4836014507307893,
+          "pressure_bar": 28596.1895122969,
+          "step": 60,
+          "temperature_k": 464.144990602228,
+          "total_ev_per_atom": -3.4236064596734694
+        },
+        {
+          "potential_ev_per_atom": -3.481634943110016,
+          "pressure_bar": 29053.3135797601,
+          "step": 80,
+          "temperature_k": 448.963480422325,
+          "total_ev_per_atom": -3.423602301288223
+        },
+        {
+          "potential_ev_per_atom": -3.483873508319603,
+          "pressure_bar": 27964.6377329929,
+          "step": 100,
+          "temperature_k": 466.206671387833,
+          "total_ev_per_atom": -3.423612026138176
+        },
+        {
+          "potential_ev_per_atom": -3.4781457804415514,
+          "pressure_bar": 30231.0877835063,
+          "step": 120,
+          "temperature_k": 421.995642946361,
+          "total_ev_per_atom": -3.423598978607185
+        },
+        {
+          "potential_ev_per_atom": -3.4841481568039705,
+          "pressure_bar": 27910.9252332902,
+          "step": 140,
+          "temperature_k": 468.340394005283,
+          "total_ev_per_atom": -3.4236108714318467
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 3.85,
+        "Neigh": 0.0,
+        "Pair": 94.21
+      },
+      "request_id": "7c608a8c-0110-4dbd-8368-6358fccfee0d",
+      "native_job_id": "5",
+      "allocated_cpus": 4,
+      "native_state": "COMPLETED",
+      "native_exit_code": "0:0",
+      "artifact_sha256": "1b11d4bb5abcc72a158ea24eb4817f83a336d8b6f1b0fb86ec21171f30735b5c",
+      "manifest_sha256": "f4cbb508fbc4d04917c88c0083e547c0a359366629a7685d8466b0caea01614a",
+      "started_at": "2026-11-24T06:31:14.043+00:00",
+      "finished_at": "2026-11-24T06:31:19.969+00:00",
+      "submit_to_receipt_seconds": 7.388502008281648
+    },
+    {
+      "atoms": 131072,
+      "kernel_seconds": 18.3161,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 19.320617141202092,
+      "pinned_cpus": 1,
+      "processor_grid": [
+        1,
+        1,
+        1
+      ],
+      "ranks": 1,
+      "steps": 140,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.5400000017420195,
+          "pressure_bar": 10520.9963404261,
+          "step": 0,
+          "temperature_k": 900.000000000011,
+          "total_ev_per_atom": -3.423666758800995
+        },
+        {
+          "potential_ev_per_atom": -3.4503621422282333,
+          "pressure_bar": 39671.9330855789,
+          "step": 20,
+          "temperature_k": 207.39651509921,
+          "total_ev_per_atom": -3.4235542431436157
+        },
+        {
+          "potential_ev_per_atom": -3.4793906585710523,
+          "pressure_bar": 28476.9236207969,
+          "step": 40,
+          "temperature_k": 431.482593778433,
+          "total_ev_per_atom": -3.4236175814523317
+        },
+        {
+          "potential_ev_per_atom": -3.4836014507304993,
+          "pressure_bar": 28596.1895122972,
+          "step": 60,
+          "temperature_k": 464.144990602229,
+          "total_ev_per_atom": -3.4236064596731794
+        },
+        {
+          "potential_ev_per_atom": -3.481634943110222,
+          "pressure_bar": 29053.3135797604,
+          "step": 80,
+          "temperature_k": 448.963480422335,
+          "total_ev_per_atom": -3.4236023012884216
+        },
+        {
+          "potential_ev_per_atom": -3.483873508318672,
+          "pressure_bar": 27964.6377329933,
+          "step": 100,
+          "temperature_k": 466.206671387835,
+          "total_ev_per_atom": -3.4236120261372376
+        },
+        {
+          "potential_ev_per_atom": -3.4781457804422304,
+          "pressure_bar": 30231.0877835066,
+          "step": 120,
+          "temperature_k": 421.995642946365,
+          "total_ev_per_atom": -3.423598978607864
+        },
+        {
+          "potential_ev_per_atom": -3.4841481568035126,
+          "pressure_bar": 27910.9252332903,
+          "step": 140,
+          "temperature_k": 468.340394005284,
+          "total_ev_per_atom": -3.423610871431389
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 0.32,
+        "Neigh": 0.0,
+        "Pair": 98.13
+      },
+      "request_id": "0a82de59-1bd8-41ef-9461-b4d836a64720",
+      "native_job_id": "6",
+      "allocated_cpus": 1,
+      "native_state": "COMPLETED",
+      "native_exit_code": "0:0",
+      "artifact_sha256": "d2ea9b1d8aeb60d10296804d7c9360bfee60509e78d5cfa9013df8f5d27a0045",
+      "manifest_sha256": "bdf24192b302631f49c64a385611358cdaea230f8c4fc7dac57941f66cb6ceee",
+      "started_at": "2026-11-24T06:31:22.046+00:00",
+      "finished_at": "2026-11-24T06:31:41.414+00:00",
+      "submit_to_receipt_seconds": 21.320989724248648
+    },
+    {
+      "atoms": 131072,
+      "kernel_seconds": 5.02595,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 5.876588586717844,
+      "pinned_cpus": 4,
+      "processor_grid": [
+        1,
+        2,
+        2
+      ],
+      "ranks": 4,
+      "steps": 140,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.540000002439514,
+          "pressure_bar": 10520.9963404257,
+          "step": 0,
+          "temperature_k": 899.999999999996,
+          "total_ev_per_atom": -3.423666759498497
+        },
+        {
+          "potential_ev_per_atom": -3.4503621422273634,
+          "pressure_bar": 39671.9330855787,
+          "step": 20,
+          "temperature_k": 207.396515099209,
+          "total_ev_per_atom": -3.423554243142746
+        },
+        {
+          "potential_ev_per_atom": -3.4793906585713272,
+          "pressure_bar": 28476.9236207965,
+          "step": 40,
+          "temperature_k": 431.482593778425,
+          "total_ev_per_atom": -3.423617581452606
+        },
+        {
+          "potential_ev_per_atom": -3.4836014507307893,
+          "pressure_bar": 28596.1895122969,
+          "step": 60,
+          "temperature_k": 464.144990602228,
+          "total_ev_per_atom": -3.4236064596734694
+        },
+        {
+          "potential_ev_per_atom": -3.481634943110016,
+          "pressure_bar": 29053.3135797601,
+          "step": 80,
+          "temperature_k": 448.963480422325,
+          "total_ev_per_atom": -3.423602301288223
+        },
+        {
+          "potential_ev_per_atom": -3.483873508319603,
+          "pressure_bar": 27964.6377329929,
+          "step": 100,
+          "temperature_k": 466.206671387833,
+          "total_ev_per_atom": -3.423612026138176
+        },
+        {
+          "potential_ev_per_atom": -3.4781457804415514,
+          "pressure_bar": 30231.0877835063,
+          "step": 120,
+          "temperature_k": 421.995642946361,
+          "total_ev_per_atom": -3.423598978607185
+        },
+        {
+          "potential_ev_per_atom": -3.4841481568039705,
+          "pressure_bar": 27910.9252332902,
+          "step": 140,
+          "temperature_k": 468.340394005283,
+          "total_ev_per_atom": -3.4236108714318467
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 3.35,
+        "Neigh": 0.0,
+        "Pair": 94.7
+      },
+      "request_id": "245b9d9b-dc8f-4d7d-9b45-42f715104a77",
+      "native_job_id": "7",
+      "allocated_cpus": 4,
+      "native_state": "COMPLETED",
+      "native_exit_code": "0:0",
+      "artifact_sha256": "c14e7f4e78d3557584fb818d33106960021e23c0744d46c61cb36b5a5d45966a",
+      "manifest_sha256": "f4cbb508fbc4d04917c88c0083e547c0a359366629a7685d8466b0caea01614a",
+      "started_at": "2026-11-24T06:31:44.046+00:00",
+      "finished_at": "2026-11-24T06:31:49.973+00:00",
+      "submit_to_receipt_seconds": 8.371572203934193
+    },
+    {
+      "atoms": 131072,
+      "kernel_seconds": 18.3304,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 19.339918985031545,
+      "pinned_cpus": 1,
+      "processor_grid": [
+        1,
+        1,
+        1
+      ],
+      "ranks": 1,
+      "steps": 140,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.5400000017420195,
+          "pressure_bar": 10520.9963404261,
+          "step": 0,
+          "temperature_k": 900.000000000011,
+          "total_ev_per_atom": -3.423666758800995
+        },
+        {
+          "potential_ev_per_atom": -3.4503621422282333,
+          "pressure_bar": 39671.9330855789,
+          "step": 20,
+          "temperature_k": 207.39651509921,
+          "total_ev_per_atom": -3.4235542431436157
+        },
+        {
+          "potential_ev_per_atom": -3.4793906585710523,
+          "pressure_bar": 28476.9236207969,
+          "step": 40,
+          "temperature_k": 431.482593778433,
+          "total_ev_per_atom": -3.4236175814523317
+        },
+        {
+          "potential_ev_per_atom": -3.4836014507304993,
+          "pressure_bar": 28596.1895122972,
+          "step": 60,
+          "temperature_k": 464.144990602229,
+          "total_ev_per_atom": -3.4236064596731794
+        },
+        {
+          "potential_ev_per_atom": -3.481634943110222,
+          "pressure_bar": 29053.3135797604,
+          "step": 80,
+          "temperature_k": 448.963480422335,
+          "total_ev_per_atom": -3.4236023012884216
+        },
+        {
+          "potential_ev_per_atom": -3.483873508318672,
+          "pressure_bar": 27964.6377329933,
+          "step": 100,
+          "temperature_k": 466.206671387835,
+          "total_ev_per_atom": -3.4236120261372376
+        },
+        {
+          "potential_ev_per_atom": -3.4781457804422304,
+          "pressure_bar": 30231.0877835066,
+          "step": 120,
+          "temperature_k": 421.995642946365,
+          "total_ev_per_atom": -3.423598978607864
+        },
+        {
+          "potential_ev_per_atom": -3.4841481568035126,
+          "pressure_bar": 27910.9252332903,
+          "step": 140,
+          "temperature_k": 468.340394005284,
+          "total_ev_per_atom": -3.423610871431389
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 0.31,
+        "Neigh": 0.0,
+        "Pair": 98.11
+      },
+      "request_id": "a6f0576a-2bc4-4ea8-9415-63fd4156cd40",
+      "native_job_id": "8",
+      "allocated_cpus": 1,
+      "native_state": "COMPLETED",
+      "native_exit_code": "0:0",
+      "artifact_sha256": "66716814dbd42b788eb2f6b4b42335a8b1d6a6534a99027193d61b7c43bb70d9",
+      "manifest_sha256": "bdf24192b302631f49c64a385611358cdaea230f8c4fc7dac57941f66cb6ceee",
+      "started_at": "2026-11-24T06:31:51.043+00:00",
+      "finished_at": "2026-11-24T06:32:10.460+00:00",
+      "submit_to_receipt_seconds": 20.31301587726921
+    },
+    {
+      "atoms": 131072,
+      "kernel_seconds": 9.39675,
+      "lammps_version": "4 Jul 2026",
+      "launcher_seconds": 10.29116060398519,
+      "pinned_cpus": 2,
+      "processor_grid": [
+        1,
+        1,
+        2
+      ],
+      "ranks": 2,
+      "steps": 140,
+      "thermo": [
+        {
+          "potential_ev_per_atom": -3.5400000025663987,
+          "pressure_bar": 10520.996340426,
+          "step": 0,
+          "temperature_k": 900.000000000008,
+          "total_ev_per_atom": -3.423666759625374
+        },
+        {
+          "potential_ev_per_atom": -3.450362142227478,
+          "pressure_bar": 39671.9330855788,
+          "step": 20,
+          "temperature_k": 207.396515099209,
+          "total_ev_per_atom": -3.4235542431428603
+        },
+        {
+          "potential_ev_per_atom": -3.479390658571312,
+          "pressure_bar": 28476.9236207966,
+          "step": 40,
+          "temperature_k": 431.482593778427,
+          "total_ev_per_atom": -3.4236175814525986
+        },
+        {
+          "potential_ev_per_atom": -3.4836014507302244,
+          "pressure_bar": 28596.1895122967,
+          "step": 60,
+          "temperature_k": 464.144990602232,
+          "total_ev_per_atom": -3.423606459672905
+        },
+        {
+          "potential_ev_per_atom": -3.4816349431106337,
+          "pressure_bar": 29053.31357976,
+          "step": 80,
+          "temperature_k": 448.963480422327,
+          "total_ev_per_atom": -3.4236023012888412
+        },
+        {
+          "potential_ev_per_atom": -3.483873508319557,
+          "pressure_bar": 27964.637732993,
+          "step": 100,
+          "temperature_k": 466.206671387831,
+          "total_ev_per_atom": -3.42361202613813
+        },
+        {
+          "potential_ev_per_atom": -3.4781457804415132,
+          "pressure_bar": 30231.0877835064,
+          "step": 120,
+          "temperature_k": 421.99564294636,
+          "total_ev_per_atom": -3.423598978607147
+        },
+        {
+          "potential_ev_per_atom": -3.484148156804039,
+          "pressure_bar": 27910.9252332904,
+          "step": 140,
+          "temperature_k": 468.340394005286,
+          "total_ev_per_atom": -3.423610871431915
+        }
+      ],
+      "timing_share_percent": {
+        "Comm": 1.3,
+        "Neigh": 0.0,
+        "Pair": 97.05
+      },
+      "request_id": "b54ae66c-1adf-4d4c-8be8-546d26a82479",
+      "native_job_id": "9",
+      "allocated_cpus": 2,
+      "native_state": "COMPLETED",
+      "native_exit_code": "0:0",
+      "artifact_sha256": "91253f6e5ab7b6eb982b6c07eb22d3ba9342bc47ef45036b41091ce84bb3f7de",
+      "manifest_sha256": "795b878446f54c6aeae08c52b24c671bbfec4a26cad83b8d71a97ae546455775",
+      "started_at": "2026-11-24T06:32:11.043+00:00",
+      "finished_at": "2026-11-24T06:32:21.385+00:00",
+      "submit_to_receipt_seconds": 11.190012730658054
+    }
+  ],
+  "summary": [
+    {
+      "ranks": 1,
+      "samples": 3,
+      "median_kernel_seconds": 18.3304,
+      "min_kernel_seconds": 18.3161,
+      "max_kernel_seconds": 18.3504,
+      "kernel_speedup": 1.0,
+      "kernel_parallel_efficiency": 1.0,
+      "median_launcher_seconds": 19.339918985031545,
+      "launcher_speedup": 1.0,
+      "median_submit_to_receipt_seconds": 20.325822318904102,
+      "median_timing_share_percent": {
+        "Pair": 98.11,
+        "Neigh": 0.0,
+        "Comm": 0.32
+      }
+    },
+    {
+      "ranks": 2,
+      "samples": 3,
+      "median_kernel_seconds": 9.37202,
+      "min_kernel_seconds": 9.34458,
+      "max_kernel_seconds": 9.39675,
+      "kernel_speedup": 1.9558643707546508,
+      "kernel_parallel_efficiency": 0.9779321853773254,
+      "median_launcher_seconds": 10.275851872749627,
+      "launcher_speedup": 1.8820745203926867,
+      "median_submit_to_receipt_seconds": 11.190012730658054,
+      "median_timing_share_percent": {
+        "Pair": 96.96,
+        "Neigh": 0.0,
+        "Comm": 1.39
+      }
+    },
+    {
+      "ranks": 4,
+      "samples": 3,
+      "median_kernel_seconds": 5.02595,
+      "min_kernel_seconds": 5.02352,
+      "max_kernel_seconds": 5.03766,
+      "kernel_speedup": 3.6471512848317236,
+      "kernel_parallel_efficiency": 0.9117878212079309,
+      "median_launcher_seconds": 5.876588586717844,
+      "launcher_speedup": 3.2910112218410643,
+      "median_submit_to_receipt_seconds": 7.388502008281648,
+      "median_timing_share_percent": {
+        "Pair": 94.29,
+        "Neigh": 0.0,
+        "Comm": 3.6
+      }
+    }
+  ],
+  "smoke": {
+    "case": "microcanonical thermal relaxation of periodic fcc copper",
+    "workload": {
+      "cells_per_side": 12,
+      "atoms": 6912,
+      "steps": 12,
+      "sample_every": 3,
+      "timestep_ps": 0.002,
+      "initial_temperature_k": 900.0
+    },
+    "packages": {
+      "lammps": "20260704+dfsg-2",
+      "lammps-data": "20260704+dfsg-2"
+    },
+    "mpi_version": "mpirun (Open MPI) 6.0.0rc2",
+    "slurm_version": "slurm-wlm 26.05.5",
+    "topology": {
+      "physical_cores": 4,
+      "affinity_cpus": 4,
+      "numa_domains": 1
+    },
+    "input_sha256": {
+      "run.py": "7f59ff5eaf8141afe60c23cf034481e50127c6fd20ba8d5c96900fa74a2be56c",
+      "in.copper": "20713501039f8d5e967472ce87671de7036778aff8c0944c8acf2650f11de0c7",
+      "pin.py": "3461407e13b19ae0bafce06da8dfc13e0b1318173f03a88ceeca841bddce013b",
+      "Cu_u3.eam": "3436c491a4c75ea8b7141adbc6ee382a118f5fdb47f609c2a660fc1eb772599f"
+    },
+    "validation": {
+      "max_difference_vs_one_rank": {
+        "temperature_k": 7.048583938740194e-12,
+        "potential_ev_per_atom": 6.437961275196358e-12,
+        "total_ev_per_atom": 6.437961275196358e-12,
+        "pressure_bar": 1.0186340659856796e-10
+      },
+      "absolute_tolerances": {
+        "temperature_k": 0.002,
+        "potential_ev_per_atom": 1e-06,
+        "total_ev_per_atom": 1e-06,
+        "pressure_bar": 0.02
+      },
+      "max_energy_deviation_ev_per_atom": 7.556918810713853e-05,
+      "energy_deviation_limit_ev_per_atom": 0.002
+    },
+    "samples": [
+      {
+        "atoms": 6912,
+        "kernel_seconds": 0.0985259,
+        "lammps_version": "4 Jul 2026",
+        "launcher_seconds": 0.8026496255770326,
+        "pinned_cpus": 1,
+        "processor_grid": [
+          1,
+          1,
+          1
+        ],
+        "ranks": 1,
+        "steps": 12,
+        "thermo": [
+          {
+            "potential_ev_per_atom": -3.5400000022731914,
+            "pressure_bar": 10519.5544595517,
+            "step": 0,
+            "temperature_k": 900.000000000002,
+            "total_ev_per_atom": -3.4236827025212384
+          },
+          {
+            "potential_ev_per_atom": -3.535579438867072,
+            "pressure_bar": 12109.2308454023,
+            "step": 3,
+            "temperature_k": 865.834040959179,
+            "total_ev_per_atom": -3.423677797002966
+          },
+          {
+            "potential_ev_per_atom": -3.5230803644179978,
+            "pressure_bar": 16539.6701752623,
+            "step": 6,
+            "temperature_k": 769.241605827557,
+            "total_ev_per_atom": -3.4236624683660883
+          },
+          {
+            "potential_ev_per_atom": -3.5048159875735534,
+            "pressure_bar": 22727.0143760767,
+            "step": 9,
+            "temperature_k": 628.115707092781,
+            "total_ev_per_atom": -3.4236374064837527
+          },
+          {
+            "potential_ev_per_atom": -3.484453787296253,
+            "pressure_bar": 29362.2486148601,
+            "step": 12,
+            "temperature_k": 470.798313559863,
+            "total_ev_per_atom": -3.4236071333395253
+          }
+        ],
+        "timing_share_percent": {
+          "Comm": 0.56,
+          "Neigh": 0.0,
+          "Pair": 98.33
+        },
+        "request_id": "91c86f13-b05b-4522-8cd7-5dcedc9ebfaf",
+        "native_job_id": "1",
+        "allocated_cpus": 1,
+        "native_state": "COMPLETED",
+        "native_exit_code": "0:0",
+        "artifact_sha256": "d2444d03bf026933924b4bf891038cf88cf3262fe9692ed111d9fa56c1c5b95d",
+        "manifest_sha256": "0bc01b634c925a16fb69c468b2be273fadad2f8a4093f9554d7d7c86020c8cdf",
+        "started_at": "2026-11-24T06:30:08.046+00:00",
+        "finished_at": "2026-11-24T06:30:08.914+00:00",
+        "submit_to_receipt_seconds": 2.048523864708841
+      },
+      {
+        "atoms": 6912,
+        "kernel_seconds": 0.0532921,
+        "lammps_version": "4 Jul 2026",
+        "launcher_seconds": 0.7889611339196563,
+        "pinned_cpus": 2,
+        "processor_grid": [
+          1,
+          1,
+          2
+        ],
+        "ranks": 2,
+        "steps": 12,
+        "thermo": [
+          {
+            "potential_ev_per_atom": -3.5400000022759985,
+            "pressure_bar": 10519.5544595516,
+            "step": 0,
+            "temperature_k": 899.999999999999,
+            "total_ev_per_atom": -3.423682702524045
+          },
+          {
+            "potential_ev_per_atom": -3.5355794388669413,
+            "pressure_bar": 12109.2308454023,
+            "step": 3,
+            "temperature_k": 865.834040959178,
+            "total_ev_per_atom": -3.423677797002836
+          },
+          {
+            "potential_ev_per_atom": -3.5230803644180844,
+            "pressure_bar": 16539.6701752622,
+            "step": 6,
+            "temperature_k": 769.24160582755,
+            "total_ev_per_atom": -3.423662468366175
+          },
+          {
+            "potential_ev_per_atom": -3.5048159875735534,
+            "pressure_bar": 22727.0143760766,
+            "step": 9,
+            "temperature_k": 628.11570709278,
+            "total_ev_per_atom": -3.4236374064837527
+          },
+          {
+            "potential_ev_per_atom": -3.484453787296354,
+            "pressure_bar": 29362.24861486,
+            "step": 12,
+            "temperature_k": 470.798313559859,
+            "total_ev_per_atom": -3.423607133339627
+          }
+        ],
+        "timing_share_percent": {
+          "Comm": 3.96,
+          "Neigh": 0.0,
+          "Pair": 94.18
+        },
+        "request_id": "89e5fdca-180c-4c37-9e8c-6d00d1c2d8a7",
+        "native_job_id": "2",
+        "allocated_cpus": 2,
+        "native_state": "COMPLETED",
+        "native_exit_code": "0:0",
+        "artifact_sha256": "6c9d4be1a826b5cea899a5ecb3a6ea430e0c8ee35c2ee5c81e33265edd5744ee",
+        "manifest_sha256": "50de1dd76b733c1ed5445313c956b92c1f054bc52395ec0b5fcd61863a7ba7ad",
+        "started_at": "2026-11-24T06:30:11.046+00:00",
+        "finished_at": "2026-11-24T06:30:11.913+00:00",
+        "submit_to_receipt_seconds": 3.100381520576775
+      },
+      {
+        "atoms": 6912,
+        "kernel_seconds": 0.0304802,
+        "lammps_version": "4 Jul 2026",
+        "launcher_seconds": 0.7760851308703423,
+        "pinned_cpus": 4,
+        "processor_grid": [
+          1,
+          2,
+          2
+        ],
+        "ranks": 4,
+        "steps": 12,
+        "thermo": [
+          {
+            "potential_ev_per_atom": -3.5400000022796294,
+            "pressure_bar": 10519.5544595516,
+            "step": 0,
+            "temperature_k": 899.999999999999,
+            "total_ev_per_atom": -3.4236827025276764
+          },
+          {
+            "potential_ev_per_atom": -3.5355794388669124,
+            "pressure_bar": 12109.2308454023,
+            "step": 3,
+            "temperature_k": 865.834040959176,
+            "total_ev_per_atom": -3.423677797002807
+          },
+          {
+            "potential_ev_per_atom": -3.523080364418099,
+            "pressure_bar": 16539.6701752622,
+            "step": 6,
+            "temperature_k": 769.241605827551,
+            "total_ev_per_atom": -3.423662468366189
+          },
+          {
+            "potential_ev_per_atom": -3.5048159875735965,
+            "pressure_bar": 22727.0143760766,
+            "step": 9,
+            "temperature_k": 628.115707092779,
+            "total_ev_per_atom": -3.4236374064837967
+          },
+          {
+            "potential_ev_per_atom": -3.4844537872962964,
+            "pressure_bar": 29362.24861486,
+            "step": 12,
+            "temperature_k": 470.798313559859,
+            "total_ev_per_atom": -3.4236071333395692
+          }
+        ],
+        "timing_share_percent": {
+          "Comm": 7.9,
+          "Neigh": 0.0,
+          "Pair": 88.51
+        },
+        "request_id": "820b747a-439d-47b8-b0c7-c56cfaa06841",
+        "native_job_id": "3",
+        "allocated_cpus": 4,
+        "native_state": "COMPLETED",
+        "native_exit_code": "0:0",
+        "artifact_sha256": "4100da27e42ad59e632aaa453534bb0ff4c49e4eeeaf269eac30d8ba4a282efa",
+        "manifest_sha256": "349d7c086194a038ac111fb5ccd262e1030670bf9601fe235ce667faa1bea2ed",
+        "started_at": "2026-11-24T06:30:14.046+00:00",
+        "finished_at": "2026-11-24T06:30:14.862+00:00",
+        "submit_to_receipt_seconds": 3.111639302223921
+      }
+    ],
+    "summary": [
+      {
+        "ranks": 1,
+        "samples": 1,
+        "median_kernel_seconds": 0.0985259,
+        "min_kernel_seconds": 0.0985259,
+        "max_kernel_seconds": 0.0985259,
+        "kernel_speedup": 1.0,
+        "kernel_parallel_efficiency": 1.0,
+        "median_launcher_seconds": 0.8026496255770326,
+        "launcher_speedup": 1.0,
+        "median_submit_to_receipt_seconds": 2.048523864708841,
+        "median_timing_share_percent": {
+          "Pair": 98.33,
+          "Neigh": 0.0,
+          "Comm": 0.56
+        }
+      },
+      {
+        "ranks": 2,
+        "samples": 1,
+        "median_kernel_seconds": 0.0532921,
+        "min_kernel_seconds": 0.0532921,
+        "max_kernel_seconds": 0.0532921,
+        "kernel_speedup": 1.848789970746133,
+        "kernel_parallel_efficiency": 0.9243949853730665,
+        "median_launcher_seconds": 0.7889611339196563,
+        "launcher_speedup": 1.0173500202593886,
+        "median_submit_to_receipt_seconds": 3.100381520576775,
+        "median_timing_share_percent": {
+          "Pair": 94.18,
+          "Neigh": 0.0,
+          "Comm": 3.96
+        }
+      },
+      {
+        "ranks": 4,
+        "samples": 1,
+        "median_kernel_seconds": 0.0304802,
+        "min_kernel_seconds": 0.0304802,
+        "max_kernel_seconds": 0.0304802,
+        "kernel_speedup": 3.232455823780684,
+        "kernel_parallel_efficiency": 0.808113955945171,
+        "median_launcher_seconds": 0.7760851308703423,
+        "launcher_speedup": 1.0342288412057314,
+        "median_submit_to_receipt_seconds": 3.111639302223921,
+        "median_timing_share_percent": {
+          "Pair": 88.51,
+          "Neigh": 0.0,
+          "Comm": 7.9
+        }
+      }
+    ]
+  },
+  "calibration": {
+    "atoms": 131072,
+    "kernel_seconds": 13.0838,
+    "lammps_version": "4 Jul 2026",
+    "launcher_seconds": 14.098517403937876,
+    "pinned_cpus": 1,
+    "processor_grid": [
+      1,
+      1,
+      1
+    ],
+    "ranks": 1,
+    "steps": 100,
+    "thermo": [
+      {
+        "potential_ev_per_atom": -3.5400000017420195,
+        "pressure_bar": 10520.9963404261,
+        "step": 0,
+        "temperature_k": 900.000000000011,
+        "total_ev_per_atom": -3.423666758800995
+      },
+      {
+        "potential_ev_per_atom": -3.4503621422282333,
+        "pressure_bar": 39671.9330855789,
+        "step": 20,
+        "temperature_k": 207.39651509921,
+        "total_ev_per_atom": -3.4235542431436157
+      },
+      {
+        "potential_ev_per_atom": -3.4793906585710523,
+        "pressure_bar": 28476.9236207969,
+        "step": 40,
+        "temperature_k": 431.482593778433,
+        "total_ev_per_atom": -3.4236175814523317
+      },
+      {
+        "potential_ev_per_atom": -3.4836014507304993,
+        "pressure_bar": 28596.1895122972,
+        "step": 60,
+        "temperature_k": 464.144990602229,
+        "total_ev_per_atom": -3.4236064596731794
+      },
+      {
+        "potential_ev_per_atom": -3.481634943110222,
+        "pressure_bar": 29053.3135797604,
+        "step": 80,
+        "temperature_k": 448.963480422335,
+        "total_ev_per_atom": -3.4236023012884216
+      },
+      {
+        "potential_ev_per_atom": -3.483873508318672,
+        "pressure_bar": 27964.6377329933,
+        "step": 100,
+        "temperature_k": 466.206671387835,
+        "total_ev_per_atom": -3.4236120261372376
+      }
+    ]
+  },
+  "native_reference": {
+    "atoms": 131072,
+    "kernel_seconds": 18.3838,
+    "lammps_version": "4 Jul 2026",
+    "launcher_seconds": 19.39608454797417,
+    "pinned_cpus": 1,
+    "processor_grid": [
+      1,
+      1,
+      1
+    ],
+    "ranks": 1,
+    "steps": 140,
+    "thermo": [
+      {
+        "potential_ev_per_atom": -3.5400000017420195,
+        "pressure_bar": 10520.9963404261,
+        "step": 0,
+        "temperature_k": 900.000000000011,
+        "total_ev_per_atom": -3.423666758800995
+      },
+      {
+        "potential_ev_per_atom": -3.4503621422282333,
+        "pressure_bar": 39671.9330855789,
+        "step": 20,
+        "temperature_k": 207.39651509921,
+        "total_ev_per_atom": -3.4235542431436157
+      },
+      {
+        "potential_ev_per_atom": -3.4793906585710523,
+        "pressure_bar": 28476.9236207969,
+        "step": 40,
+        "temperature_k": 431.482593778433,
+        "total_ev_per_atom": -3.4236175814523317
+      },
+      {
+        "potential_ev_per_atom": -3.4836014507304993,
+        "pressure_bar": 28596.1895122972,
+        "step": 60,
+        "temperature_k": 464.144990602229,
+        "total_ev_per_atom": -3.4236064596731794
+      },
+      {
+        "potential_ev_per_atom": -3.481634943110222,
+        "pressure_bar": 29053.3135797604,
+        "step": 80,
+        "temperature_k": 448.963480422335,
+        "total_ev_per_atom": -3.4236023012884216
+      },
+      {
+        "potential_ev_per_atom": -3.483873508318672,
+        "pressure_bar": 27964.6377329933,
+        "step": 100,
+        "temperature_k": 466.206671387835,
+        "total_ev_per_atom": -3.4236120261372376
+      },
+      {
+        "potential_ev_per_atom": -3.4781457804422304,
+        "pressure_bar": 30231.0877835066,
+        "step": 120,
+        "temperature_k": 421.995642946365,
+        "total_ev_per_atom": -3.423598978607864
+      },
+      {
+        "potential_ev_per_atom": -3.4841481568035126,
+        "pressure_bar": 27910.9252332903,
+        "step": 140,
+        "temperature_k": 468.340394005284,
+        "total_ev_per_atom": -3.423610871431389
+      }
+    ],
+    "timing_share_percent": {
+      "Comm": 0.31,
+      "Neigh": 0.0,
+      "Pair": 98.1
+    }
+  },
+  "max_difference_native_reference": {
+    "temperature_k": 0.0,
+    "potential_ev_per_atom": 0.0,
+    "total_ev_per_atom": 0.0,
+    "pressure_bar": 0.0
+  },
+  "illustrative_projection": {
+    "trajectory_ps": 10,
+    "steps": 5000,
+    "ranks": 4,
+    "estimated_integration_seconds": 179.49821428571428,
+    "basis": "Linear extrapolation of measured four-rank median loop throughput."
+  }
+}

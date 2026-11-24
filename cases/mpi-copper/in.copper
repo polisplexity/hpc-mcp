@@ -1,0 +1,22 @@
+# Microcanonical relaxation of a periodic fcc copper crystal after a heat pulse.
+units metal
+dimension 3
+boundary p p p
+atom_style atomic
+lattice fcc 3.615
+region crystal block 0 ${cells} 0 ${cells} 0 ${cells} units lattice
+create_box 1 crystal
+create_atoms 1 box
+
+pair_style eam
+pair_coeff * * ${potential}
+velocity all create 900.0 54973 mom yes dist gaussian loop geom
+neighbor 2.0 bin
+neigh_modify delay 0 every 1 check yes
+
+fix integrate all nve
+timestep 0.002
+thermo ${sample_every}
+thermo_style custom step atoms temp pe etotal press
+thermo_modify norm no lost error flush yes format float %.15g
+run ${steps}

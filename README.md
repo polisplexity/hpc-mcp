@@ -24,6 +24,8 @@ The [Docker recipe](cases/portable-python/SLURM.md#reproduce-from-a-clean-checko
 describes the inputs, package versions, limits and expected receipt.
 The [MPI heat stencil](cases/mpi-stencil/README.md) uses the same pilot to
 compare one, two and four processes on four physical cores at CIMAT.
+The [LAMMPS copper simulation](cases/mpi-copper/README.md) measures parallel
+scaling for a larger materials-science workload on that pilot.
 
 ## Job contract
 
